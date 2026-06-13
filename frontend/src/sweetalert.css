@@ -1,0 +1,52 @@
+.swal2-popup--rounded {
+  border-radius: 12px;
+  padding: 2.5rem 2.25rem;
+}
+
+.swal2-container {
+  z-index: 2000;
+}
+
+
+.swal2-title--serif {
+  font-family: "Poppins", "Times New Roman", serif;
+  font-weight: 600;
+}
+
+.swal2-html-container {
+  font-family: "Poppins", "Times New Roman", serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.swal2-confirm--gray {
+  background-color: #6b7280;
+  border: 2px solid #4b5563;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+}
+
+.swal2-confirm--gray:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.45);
+}
+
+.swal2-icon.swal2-success {
+  border-color: rgba(134, 239, 172, 0.55);
+  color: #86efac;
+}
+
+.swal2-icon.swal2-success [class^="swal2-success-line"] {
+  background-color: #86efac;
+}
+
+.swal2-icon.swal2-success .swal2-success-ring {
+  border-color: rgba(134, 239, 172, 0.35);
+}
+.swal2-button--pill {
+  border-radius: 9999px !important;
+  padding: 0.65rem 1.35rem !important;
+  font-weight: 600;
+}

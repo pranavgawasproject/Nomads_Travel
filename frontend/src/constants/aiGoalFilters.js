@@ -1,0 +1,107 @@
+export const goalFilterMap = {
+  "World Ranking": [
+    "Best for Explorers",
+    "Most Affordable",
+    "Safest Cities",
+    "Easy Visa / Long Stay",
+    "Strong Explorer Community",
+    "Healthcare Friendly",
+    "Startup / Business Opportunities",
+    "Clean Air / Environment",
+    "Best Work Infrastructure",
+  ],
+  "Work From Anywhere": [
+    "Best for Remote Work Setup",
+    "Cheapest Places",
+    "Best Connected Cities (Flights)",
+    "Strong Explorer Community",
+    "Fast Internet Cities",
+    "Best Work Infrastructure",
+  ],
+  "Increase Your Savings": [
+    "Maximum Savings",
+    "Low Taxation",
+    "Purchasing Power",
+    "Financial Stability(Low Risk)",
+    "Startup Setup Cost",
+    "Balanced Financial Lifestyle",
+  ],
+  "Advance Your Career": [
+    "Startup Ecosystems",
+    "Remote Job Opportunities",
+    "Founder Explorers",
+    "Tech Talent Density",
+    "Startup Funding & Support",
+    "Balanced Career Growth",
+    "Venture Capital Presence",
+    "Conferences & Events",
+  ],
+  "Find Your Community": [
+    "Social & Party Lifestyle",
+    "Chill & Wellness Lifestyle",
+    "Adventure & Exploration",
+    "Explorer Community & Networking",
+    "Couple - Friendly Lifestyle",
+    "Family - Friendly Lifestyle",
+    "Female - Friendly Lifestyle",
+    "Founder Explorers",
+    "Solo Explorers",
+  ],
+};
+
+export const defaultGoal = "Work From Anywhere";
+
+const goalOptionBadgeLabelMap = {
+  "Internet Speed Index": "Mbps",
+  "Internet Speed": "Mbps",
+  "Cost Of Living": "Dollars",
+  "Healthcare Cost Index": "Index",
+  "Healthcare Cost": "Index",
+  "Overall Ranking Index": "Score",
+  "Safety Ranking Index": "Score",
+  "Explorer Population Index": "Score",
+  "Air Quality Index": "AQI",
+  "Visa Flexibility": "Score",
+  "Startup Ecosystems (No Of Startups)": "Startups",
+  "Remote Working Infrastructure": "Score",
+  "Overall Work From Anywhere Index": "Score",
+  "Digital Explorer Visas": "Countries",
+  "Visa-Free Entry Length": "Days",
+  "Visa On Arrival": "Countries",
+  "Airport Connectivity": "Score",
+  "Direct International Flights": "Routes",
+  "Global Accessibility": "Score",
+  "Overall Savings Index": "Score",
+  "Lower Taxes (Company, Personal, Explorer)": "%",
+  "Purchasing Power": "Index",
+  "Inflation Stability": "Score",
+  "Startup Setup Cost": "USD",
+  "Overall For Career Index": "Score",
+  "Venture Capital Presence": "Score",
+  "Startup Funding & Support": "Hubs",
+  "Tech Talent Density": "Index",
+  "Conferences And Events": "Events",
+  "Remote Job Availability": "Openings",
+  "Founder Explorers": "Score",
+  "Overall Compatibility Index": "Score",
+  "Meetups And Events": "Events",
+  "Solo Explorer Traveller": "Score",
+  "Family Explorer Traveller": "Score",
+  "Girl Explorer Traveller": "Score",
+  "Couple Explorer Travellers": "Score",
+  "Party & Events Explorer Traveller": "Score",
+  "Founder Explorer Traveller": "Score",
+  "Nature Explorer Travelling": "Score",
+  "Adventure Explorer Travelling": "Score",
+  "Nightlife & Pubs": "Score",
+  Yoga: "Score",
+  "Explorer Community Presence": "Score",
+};
+
+export const getGoalOptionMetricLabel = (goalOption) => {
+  if (!goalOption) {
+    return "Mbps";
+  }
+
+  return goalOptionBadgeLabelMap[goalOption] || "Score";
+};
