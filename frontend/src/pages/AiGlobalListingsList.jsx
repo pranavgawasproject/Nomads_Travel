@@ -17,6 +17,8 @@ import {
   TbStar,
   TbWifi,
   TbCoin,
+  TbClock,
+  TbUsers,
 } from "react-icons/tb";
 
 /* ────────────── Data ────────────── */
@@ -39,6 +41,14 @@ const regions = [
   "Oceania",
 ];
 
+const priceRanges = [
+  "Any Price",
+  "Under $100/mo",
+  "$100 - $200/mo",
+  "$200 - $400/mo",
+  "$400+/mo",
+];
+
 const sampleListings = [
   {
     id: 1,
@@ -48,9 +58,12 @@ const sampleListings = [
     country: "Indonesia",
     region: "Asia",
     rating: 4.8,
+    reviews: 124,
     price: "$120/mo",
     wifi: "85 Mbps",
-    tags: ["24/7 Access", "Community Events", "Pool"],
+    hours: "24/7",
+    capacity: "50 seats",
+    tags: ["24/7 Access", "Pool", "Community Events"],
     gradient: "from-emerald-500/30 to-teal-600/30",
   },
   {
@@ -61,9 +74,12 @@ const sampleListings = [
     country: "Portugal",
     region: "Europe",
     rating: 4.7,
+    reviews: 98,
     price: "$200/mo",
     wifi: "120 Mbps",
-    tags: ["Design Space", "Rooftop", "Community"],
+    hours: "8am - 10pm",
+    capacity: "120 seats",
+    tags: ["Design Space", "Rooftop Terrace", "Community"],
     gradient: "from-amber-500/30 to-orange-600/30",
   },
   {
@@ -74,8 +90,11 @@ const sampleListings = [
     country: "Thailand",
     region: "Asia",
     rating: 4.9,
+    reviews: 87,
     price: "$450/mo",
     wifi: "50 Mbps",
+    hours: "24/7",
+    capacity: "20 rooms",
     tags: ["All-Inclusive", "Gym", "Events"],
     gradient: "from-green-500/30 to-emerald-600/30",
   },
@@ -87,8 +106,11 @@ const sampleListings = [
     country: "UAE",
     region: "Asia",
     rating: 4.6,
+    reviews: 56,
     price: "$350/mo",
     wifi: "200 Mbps",
+    hours: "24/7",
+    capacity: "80 seats",
     tags: ["Premium", "Meeting Rooms", "Parking"],
     gradient: "from-yellow-500/30 to-amber-600/30",
   },
@@ -100,8 +122,11 @@ const sampleListings = [
     country: "Hungary",
     region: "Europe",
     rating: 4.5,
+    reviews: 72,
     price: "$150/mo",
     wifi: "95 Mbps",
+    hours: "7am - 11pm",
+    capacity: "60 seats",
     tags: ["Design", "Central Location", "Coffee Bar"],
     gradient: "from-cyan-500/30 to-blue-600/30",
   },
@@ -113,8 +138,11 @@ const sampleListings = [
     country: "Colombia",
     region: "South America",
     rating: 4.4,
+    reviews: 145,
     price: "$380/mo",
     wifi: "40 Mbps",
+    hours: "24/7",
+    capacity: "30 rooms",
     tags: ["Social", "Cowork + Stay", "Tours"],
     gradient: "from-pink-500/30 to-rose-600/30",
   },
@@ -126,8 +154,11 @@ const sampleListings = [
     country: "Georgia",
     region: "Europe",
     rating: 4.3,
+    reviews: 34,
     price: "$80/mo",
     wifi: "55 Mbps",
+    hours: "9am - 9pm",
+    capacity: "40 seats",
     tags: ["Social Enterprise", "Affordable", "Community"],
     gradient: "from-violet-500/30 to-purple-600/30",
   },
@@ -139,8 +170,11 @@ const sampleListings = [
     country: "Mexico",
     region: "North America",
     rating: 4.6,
+    reviews: 210,
     price: "$5/day",
     wifi: "30 Mbps",
+    hours: "7am - 10pm",
+    capacity: "20 seats",
     tags: ["Great Coffee", "Artisan", "Laptop Friendly"],
     gradient: "from-red-500/30 to-orange-600/30",
   },
@@ -152,10 +186,61 @@ const sampleListings = [
     country: "New Zealand",
     region: "Oceania",
     rating: 4.5,
+    reviews: 45,
     price: "$250/mo",
     wifi: "100 Mbps",
+    hours: "7am - 10pm",
+    capacity: "70 seats",
     tags: ["Waterfront", "Innovation Hub", "Events"],
     gradient: "from-teal-500/30 to-cyan-600/30",
+  },
+  {
+    id: 10,
+    name: "Dojo Bali",
+    type: "coworking",
+    city: "Bali",
+    country: "Indonesia",
+    region: "Asia",
+    rating: 4.7,
+    reviews: 189,
+    price: "$100/mo",
+    wifi: "60 Mbps",
+    hours: "8am - 8pm",
+    capacity: "80 seats",
+    tags: ["Community", "Surf Breaks", "Networking"],
+    gradient: "from-emerald-500/30 to-green-600/30",
+  },
+  {
+    id: 11,
+    name: "Locus Workspace Prague",
+    type: "coworking",
+    city: "Prague",
+    country: "Czech Republic",
+    region: "Europe",
+    rating: 4.4,
+    reviews: 62,
+    price: "$130/mo",
+    wifi: "80 Mbps",
+    hours: "24/7",
+    capacity: "45 seats",
+    tags: ["Affordable", "Beer on Tap", "Central"],
+    gradient: "from-blue-500/30 to-indigo-600/30",
+  },
+  {
+    id: 12,
+    name: "Addis Caffe",
+    type: "cafe",
+    city: "Addis Ababa",
+    country: "Ethiopia",
+    region: "Africa",
+    rating: 4.2,
+    reviews: 28,
+    price: "$3/day",
+    wifi: "15 Mbps",
+    hours: "7am - 9pm",
+    capacity: "15 seats",
+    tags: ["Original Coffee", "Quiet", "Affordable"],
+    gradient: "from-orange-500/30 to-red-600/30",
   },
 ];
 
@@ -167,9 +252,11 @@ const AiGlobalListingsList = () => {
 
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeRegion, setActiveRegion] = useState("All Regions");
+  const [activePriceRange, setActivePriceRange] = useState("Any Price");
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState("grid");
   const [showRegionDropdown, setShowRegionDropdown] = useState(false);
+  const [showPriceDropdown, setShowPriceDropdown] = useState(false);
 
   // Parse URL params for initial destination
   useEffect(() => {
@@ -203,7 +290,7 @@ const AiGlobalListingsList = () => {
     }
 
     return results;
-  }, [activeCategory, activeRegion, searchQuery]);
+  }, [activeCategory, activeRegion, activePriceRange, searchQuery]);
 
   const handleListingClick = (listing) => {
     navigate(`/ai-listings/${encodeURIComponent(listing.name)}`, {
@@ -230,7 +317,7 @@ const AiGlobalListingsList = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search destinations, spaces, cities..."
+              placeholder="Search spaces, cities, countries..."
               className="w-full pl-11 pr-4 py-3 rounded-xl bg-surface-50 border border-glass-border text-gray-200 placeholder-gray-500 text-sm outline-none focus:border-accent/50 focus:shadow-glow-sm transition-all duration-200"
             />
             {searchQuery && (
@@ -246,7 +333,7 @@ const AiGlobalListingsList = () => {
           {/* Region filter dropdown */}
           <div className="relative hidden sm:block">
             <button
-              onClick={() => setShowRegionDropdown(!showRegionDropdown)}
+              onClick={() => { setShowRegionDropdown(!showRegionDropdown); setShowPriceDropdown(false); }}
               className="flex items-center gap-2 px-4 py-3 rounded-xl bg-surface-50 border border-glass-border text-sm text-gray-300 hover:text-white hover:border-white/20 transition-all"
             >
               <TbMapPin className="w-4 h-4" />
@@ -258,10 +345,7 @@ const AiGlobalListingsList = () => {
                 {regions.map((region) => (
                   <button
                     key={region}
-                    onClick={() => {
-                      setActiveRegion(region);
-                      setShowRegionDropdown(false);
-                    }}
+                    onClick={() => { setActiveRegion(region); setShowRegionDropdown(false); }}
                     className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors ${
                       activeRegion === region
                         ? "bg-accent/20 text-accent"
@@ -269,6 +353,35 @@ const AiGlobalListingsList = () => {
                     }`}
                   >
                     {region}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Price filter */}
+          <div className="relative hidden md:block">
+            <button
+              onClick={() => { setShowPriceDropdown(!showPriceDropdown); setShowRegionDropdown(false); }}
+              className="flex items-center gap-2 px-4 py-3 rounded-xl bg-surface-50 border border-glass-border text-sm text-gray-300 hover:text-white hover:border-white/20 transition-all"
+            >
+              <TbCoin className="w-4 h-4" />
+              {activePriceRange}
+              <TbChevronDown className={`w-3.5 h-3.5 transition-transform ${showPriceDropdown ? "rotate-180" : ""}`} />
+            </button>
+            {showPriceDropdown && (
+              <div className="absolute top-full right-0 z-50 mt-2 w-48 glass-card p-2 animate-fade-in">
+                {priceRanges.map((range) => (
+                  <button
+                    key={range}
+                    onClick={() => { setActivePriceRange(range); setShowPriceDropdown(false); }}
+                    className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                      activePriceRange === range
+                        ? "bg-accent/20 text-accent"
+                        : "text-gray-300 hover:bg-white/5 hover:text-white"
+                    }`}
+                  >
+                    {range}
                   </button>
                 ))}
               </div>
@@ -339,13 +452,14 @@ const AiGlobalListingsList = () => {
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-400 text-sm">
             <span className="text-white font-semibold">{filteredListings.length}</span> spaces found
+            {activeRegion !== "All Regions" && <span className="text-gray-500 ml-1">in {activeRegion}</span>}
           </p>
-          {activeRegion !== "All Regions" && (
+          {(activeRegion !== "All Regions" || activeCategory !== "all") && (
             <button
-              onClick={() => setActiveRegion("All Regions")}
+              onClick={() => { setActiveRegion("All Regions"); setActiveCategory("all"); }}
               className="text-xs text-accent hover:text-white transition-colors"
             >
-              Clear region filter
+              Clear filters
             </button>
           )}
         </div>
@@ -401,14 +515,18 @@ const AiGlobalListingsList = () => {
                   </div>
 
                   {/* Stats */}
-                  <div className="flex items-center justify-between text-xs pt-1">
-                    <div className="flex items-center gap-1.5">
-                      <TbCoin className="w-3.5 h-3.5 text-accent" />
-                      <span className="text-gray-300">{listing.price}</span>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="flex items-center gap-1">
+                      <TbCoin className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                      <span className="text-gray-300 truncate">{listing.price}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <TbWifi className="w-3.5 h-3.5 text-accent" />
-                      <span className="text-gray-300">{listing.wifi}</span>
+                    <div className="flex items-center gap-1">
+                      <TbWifi className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                      <span className="text-gray-300 truncate">{listing.wifi}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <TbClock className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                      <span className="text-gray-300 truncate">{listing.hours}</span>
                     </div>
                   </div>
 
@@ -455,11 +573,12 @@ const AiGlobalListingsList = () => {
                   <div className="flex items-center gap-1">
                     <TbStar className="w-3.5 h-3.5 text-yellow-400" />
                     <span className="text-sm font-medium text-gray-200">{listing.rating}</span>
+                    <span className="text-gray-500 text-xs">({listing.reviews})</span>
                   </div>
                   <span className="text-accent text-sm font-semibold">{listing.price}</span>
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
-                    <TbWifi className="w-3 h-3" />
-                    {listing.wifi}
+                  <div className="flex items-center gap-3 text-xs text-gray-500">
+                    <span className="flex items-center gap-1"><TbWifi className="w-3 h-3" />{listing.wifi}</span>
+                    <span className="flex items-center gap-1"><TbClock className="w-3 h-3" />{listing.hours}</span>
                   </div>
                 </div>
 
@@ -479,6 +598,7 @@ const AiGlobalListingsList = () => {
               onClick={() => {
                 setActiveCategory("all");
                 setActiveRegion("All Regions");
+                setActivePriceRange("Any Price");
                 setSearchQuery("");
               }}
               className="btn-primary text-sm py-2 px-6"

@@ -1,6 +1,19 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { TbSparkles, TbArrowRight, TbBrain, TbClock, TbUserStar } from "react-icons/tb";
+import {
+  TbSparkles,
+  TbArrowRight,
+  TbBrain,
+  TbClock,
+  TbUserStar,
+  TbMapSearch,
+  TbChartBar,
+  TbMessageChatbot,
+  TbPlaneDeparture,
+  TbUsers,
+  TbCalculator,
+  TbRocket,
+} from "react-icons/tb";
 import useNomadLoginState from "../hooks/useNomadLoginState";
 import useAuth from "../hooks/useAuth";
 
@@ -9,96 +22,97 @@ import useAuth from "../hooks/useAuth";
 const getTypingSeenKey = (isLoggedIn) =>
   `roamiq-ai-home-typing-seen-${isLoggedIn ? "logged-in" : "logged-out"}`;
 
-const gatedRecommendationTitles = new Set([
-  "Work From Anywhere",
-  "Increase Your Savings",
-  "Find Your Community",
-]);
-
-const freeRecommendationTitles = new Set([
-  "World Ranking",
-  "Explore Destinations",
-]);
-
-const goalSlugByTitle = {
-  "World Ranking": "worldranking",
-  "Work From Anywhere": "workfromanywhere",
-  "Increase Your Savings": "increaseyoursavings",
-  "Find Your Community": "findyourcommunity",
-};
-
-const getSearchPathForGoal = (goalTitle) => {
-  const goalSlug = goalSlugByTitle[goalTitle];
-  return goalSlug ? `/search/${goalSlug}/results` : "/search/results";
-};
-
-/* ── Quick Action Cards ── */
+/* ── Quick Action Cards — ALL WORKING ── */
 const quickActionCards = [
-  {
-    emoji: "🌍",
-    title: "Work From Anywhere",
-    description: "Discover the best remote-work destinations",
-    path: getSearchPathForGoal("Work From Anywhere"),
-    isGated: true,
-  },
-  {
-    emoji: "💰",
-    title: "Increase Savings",
-    description: "Cities that maximize your savings potential",
-    path: "/savings",
-    isGated: true,
-  },
-  {
-    emoji: "🤝",
-    title: "Find Community",
-    description: "Connect with like-minded explorers",
-    path: "/compatible",
-    isGated: true,
-  },
   {
     emoji: "🗺️",
     title: "Explore Destinations",
-    description: "Browse destinations by vertical & category",
+    description: "Browse coworking, coliving & cafes worldwide",
     path: "/ai-verticals",
-    isGated: false,
+    isWorking: true,
   },
   {
     emoji: "📊",
     title: "World Rankings",
-    description: "50+ global factors ranked for you",
-    path: getSearchPathForGoal("World Ranking"),
-    isGated: false,
+    description: "Cities ranked by budget, WiFi, visa & more",
+    path: "/world-rankings",
+    isWorking: true,
+  },
+  {
+    emoji: "💬",
+    title: "AI Trip Planner",
+    description: "Tell us your dream trip, AI plans it",
+    path: "/search",
+    isWorking: true,
+  },
+  {
+    emoji: "✈️",
+    title: "Travel Deals",
+    description: "Best flight & stay deals this month",
+    path: "/savings",
+    isWorking: false,
+  },
+  {
+    emoji: "🤝",
+    title: "Community",
+    description: "Connect with like-minded explorers",
+    path: "/compatible",
+    isWorking: false,
   },
 ];
 
 /* ── Trending Destinations ── */
 const trendingDestinations = [
-  { city: "Bali", country: "Indonesia", desc: "Surf, sunsets & coworking hubs", gradient: "from-emerald-500/40 to-teal-600/40" },
-  { city: "Lisbon", country: "Portugal", desc: "Europe's digital nomad capital", gradient: "from-amber-500/40 to-orange-600/40" },
-  { city: "Dubai", country: "UAE", desc: "Tax-free living & luxury coworking", gradient: "from-yellow-500/40 to-amber-600/40" },
-  { city: "Chiang Mai", country: "Thailand", desc: "Affordable paradise for remote workers", gradient: "from-green-500/40 to-emerald-600/40" },
-  { city: "Medellín", country: "Colombia", desc: "Spring-like weather & vibrant culture", gradient: "from-pink-500/40 to-rose-600/40" },
-  { city: "Tbilisi", country: "Georgia", desc: "Budget-friendly & visa-free entry", gradient: "from-violet-500/40 to-purple-600/40" },
-  { city: "Mexico City", country: "Mexico", desc: "Culture, food & creative energy", gradient: "from-red-500/40 to-orange-600/40" },
-  { city: "Budapest", country: "Hungary", desc: "Thermal baths & thriving startup scene", gradient: "from-cyan-500/40 to-blue-600/40" },
+  { city: "Bali", country: "Indonesia", desc: "Surf, sunsets & coworking hubs", budget: "$800/mo", gradient: "from-emerald-500/40 to-teal-600/40" },
+  { city: "Lisbon", country: "Portugal", desc: "Europe's digital nomad capital", budget: "$1,800/mo", gradient: "from-amber-500/40 to-orange-600/40" },
+  { city: "Dubai", country: "UAE", desc: "Tax-free living & luxury coworking", budget: "$2,500/mo", gradient: "from-yellow-500/40 to-amber-600/40" },
+  { city: "Chiang Mai", country: "Thailand", desc: "Affordable paradise for remote workers", budget: "$650/mo", gradient: "from-green-500/40 to-emerald-600/40" },
+  { city: "Medellín", country: "Colombia", desc: "Spring-like weather & vibrant culture", budget: "$900/mo", gradient: "from-pink-500/40 to-rose-600/40" },
+  { city: "Tbilisi", country: "Georgia", desc: "Budget-friendly & visa-free entry", budget: "$700/mo", gradient: "from-violet-500/40 to-purple-600/40" },
+  { city: "Mexico City", country: "Mexico", desc: "Culture, food & creative energy", budget: "$1,100/mo", gradient: "from-red-500/40 to-orange-600/40" },
+  { city: "Budapest", country: "Hungary", desc: "Thermal baths & thriving startup scene", budget: "$1,200/mo", gradient: "from-cyan-500/40 to-blue-600/40" },
 ];
 
-/* ── Features ── */
+/* ── Features — Specific, not generic ── */
 const features = [
   {
     icon: TbBrain,
-    title: "AI-Powered Intelligence",
-    desc: "Advanced algorithms analyze hundreds of data points to surface the perfect destination match for your lifestyle.",
+    title: "AI That Knows Nomads",
+    desc: "Tells you Bangkok is cheaper than Bali this month, with real visa & WiFi data — not generic travel advice.",
   },
   {
     icon: TbClock,
-    title: "Real-Time Data",
-    desc: "Live cost-of-living, visa requirements, internet speed & safety metrics updated continuously.",
+    title: "Live Cost Comparison",
+    desc: "Chiang Mai: $650/mo vs Lisbon: $1,800/mo — see exact breakdowns for rent, food, transport & coworking.",
   },
   {
     icon: TbUserStar,
-    title: "Personalized Recommendations",
-    desc: "Tailored suggestions based on your goals, budget, career path, and community preferences.",
+    title: "Built For Your Lifestyle",
+    desc: "Remote dev? Bangkok. Designer? Lisbon. Budget traveler? Tbilisi. Recommendations that match how you actually live.",
+  },
+];
+
+/* ── Coming Soon ── */
+const comingSoonItems = [
+  {
+    icon: TbMessageChatbot,
+    title: "AI Trip Planner",
+    desc: "Tell us your budget and dates — AI builds your full itinerary",
+  },
+  {
+    icon: TbPlaneDeparture,
+    title: "One-Click Booking",
+    desc: "Plan your trip, then book flights & stays in one click",
+  },
+  {
+    icon: TbUsers,
+    title: "Nomad Community",
+    desc: "Meet fellow travelers in your city, share tips & events",
+  },
+  {
+    icon: TbCalculator,
+    title: "Savings Calculator",
+    desc: "Compare your current city costs vs 100+ nomad destinations",
   },
 ];
 
@@ -114,6 +128,7 @@ const AiHome = () => {
   const [visibleCards, setVisibleCards] = useState(0);
   const [visibleDestinations, setVisibleDestinations] = useState(0);
   const [visibleFeatures, setVisibleFeatures] = useState(0);
+  const [visibleComingSoon, setVisibleComingSoon] = useState(0);
 
   const { auth } = useAuth();
   const hasNomadLoginState = useNomadLoginState();
@@ -199,6 +214,20 @@ const AiHome = () => {
     return () => clearTimeout(t);
   }, [mounted]);
 
+  useEffect(() => {
+    if (!mounted) return;
+    const t = setTimeout(() => {
+      let count = 0;
+      const interval = setInterval(() => {
+        count += 1;
+        setVisibleComingSoon(count);
+        if (count >= comingSoonItems.length) clearInterval(interval);
+      }, 120);
+      return () => clearInterval(interval);
+    }, 1800);
+    return () => clearTimeout(t);
+  }, [mounted]);
+
   /* ── Chat submit ── */
   const handleSubmit = useCallback(
     (e) => {
@@ -210,35 +239,19 @@ const AiHome = () => {
     [query, navigate]
   );
 
-  /* ── Quick action click (with gating) ── */
+  /* ── Quick action click ── */
   const handleQuickAction = useCallback(
     (card) => {
-      if (!isLoggedIn && card.isGated) {
-        const goalSlug = goalSlugByTitle[card.title];
-        const loginPath = goalSlug ? `/ai-login/${goalSlug}` : "/ai-login";
-        navigate(`${loginPath}${location.search}`, {
-          state: {
-            loginContext: { title: card.title, description: card.description },
-            redirectTo: card.path,
-          },
-        });
-        return;
-      }
-      navigate(card.path, {
-        state: card.path.includes("/search") && card.path.includes("/results")
-          ? { selectedGoal: card.title }
-          : undefined,
-      });
+      if (!card.isWorking) return; // Coming soon — do nothing
+      navigate(card.path);
     },
-    [isLoggedIn, navigate, location.search]
+    [navigate]
   );
 
   /* ── Trending destination click ── */
   const handleDestinationClick = useCallback(
     (dest) => {
-      navigate(
-        `/search/results?q=${encodeURIComponent(dest.city + " " + dest.country)}`
-      );
+      navigate(`/world-rankings`);
     },
     [navigate]
   );
@@ -275,19 +288,15 @@ const AiHome = () => {
           {/* ════════════ 1. Hero Section ════════════ */}
           <section className="text-center space-y-4 animate-fade-in">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              {isLoggedIn ? (
-                <span className="gradient-text">{displayedHeading}</span>
-              ) : (
-                <span className="gradient-text">{displayedHeading}</span>
-              )}
+              <span className="gradient-text">{displayedHeading}</span>
               {displayedHeading.length < headingText.length && (
                 <span className="inline-block w-[3px] h-[0.85em] bg-accent ml-1 align-middle animate-typing" />
               )}
             </h1>
 
             <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-              Ask RoamIQ anything about travel, destinations, workation, or
-              living opportunities worldwide
+              Your AI-powered travel intelligence. Discover cities, compare costs,
+              find workspaces — all in one place.
             </p>
           </section>
 
@@ -345,7 +354,12 @@ const AiHome = () => {
                 <button
                   key={card.title}
                   onClick={() => handleQuickAction(card)}
-                  className={`flex-shrink-0 w-[160px] sm:w-[180px] glass-card-hover p-4 sm:p-5 text-left group snap-start transition-all duration-500 cursor-pointer ${
+                  disabled={!card.isWorking}
+                  className={`flex-shrink-0 w-[160px] sm:w-[180px] p-4 sm:p-5 text-left group snap-start transition-all duration-500 rounded-xl border ${
+                    card.isWorking
+                      ? "glass-card-hover cursor-pointer"
+                      : "bg-surface-50/30 border-glass-border/50 cursor-not-allowed opacity-60"
+                  } ${
                     index < visibleCards
                       ? "opacity-100 translate-y-0"
                       : "opacity-0 translate-y-4"
@@ -355,20 +369,21 @@ const AiHome = () => {
                   <span className="text-2xl sm:text-3xl block mb-3 group-hover:scale-110 transition-transform duration-300">
                     {card.emoji}
                   </span>
-                  <h3 className="text-gray-200 text-sm sm:text-[0.9rem] font-semibold leading-snug mb-1 group-hover:text-accent transition-colors duration-200">
+                  <h3 className={`text-sm sm:text-[0.9rem] font-semibold leading-snug mb-1 transition-colors duration-200 ${
+                    card.isWorking ? "text-gray-200 group-hover:text-accent" : "text-gray-400"
+                  }`}>
                     {card.title}
                   </h3>
                   <p className="text-gray-500 text-xs leading-relaxed">
                     {card.description}
                   </p>
-                  {!isLoggedIn && card.isGated && (
-                    <span className="inline-block mt-2 text-[10px] text-accent/70 font-medium tracking-wide uppercase">
-                      Login required
-                    </span>
-                  )}
-                  {!isLoggedIn && !card.isGated && (
+                  {card.isWorking ? (
                     <span className="inline-block mt-2 text-[10px] text-emerald-500/70 font-medium tracking-wide uppercase">
-                      Free access
+                      Live
+                    </span>
+                  ) : (
+                    <span className="inline-block mt-2 text-[10px] text-amber-500/70 font-medium tracking-wide uppercase">
+                      Coming Soon
                     </span>
                   )}
                 </button>
@@ -385,12 +400,12 @@ const AiHome = () => {
               <div className="h-[2px] flex-1 bg-gradient-to-r from-accent/50 to-transparent rounded-full" />
             </div>
 
-            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 snap-x snap-mandatory">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {trendingDestinations.map((dest, index) => (
                 <button
                   key={dest.city}
                   onClick={() => handleDestinationClick(dest)}
-                  className={`flex-shrink-0 w-[200px] sm:w-[220px] glass-card-hover overflow-hidden group snap-start cursor-pointer transition-all duration-500 ${
+                  className={`glass-card-hover overflow-hidden group cursor-pointer transition-all duration-500 ${
                     index < visibleDestinations
                       ? "opacity-100 translate-y-0"
                       : "opacity-0 translate-y-4"
@@ -399,27 +414,30 @@ const AiHome = () => {
                 >
                   {/* Gradient image placeholder */}
                   <div
-                    className={`h-28 sm:h-32 bg-gradient-to-br ${dest.gradient} relative overflow-hidden`}
+                    className={`h-24 sm:h-28 bg-gradient-to-br ${dest.gradient} relative overflow-hidden`}
                   >
                     <div className="absolute inset-0 bg-surface/30" />
-                    <div className="absolute bottom-3 left-4 right-4">
-                      <h3 className="text-white font-bold text-base sm:text-lg leading-tight drop-shadow-lg">
+                    <div className="absolute bottom-2 left-3 right-3">
+                      <h3 className="text-white font-bold text-sm sm:text-base leading-tight drop-shadow-lg">
                         {dest.city}
                       </h3>
-                      <p className="text-white/70 text-xs font-medium">
+                      <p className="text-white/70 text-[11px] font-medium">
                         {dest.country}
                       </p>
                     </div>
                     {/* Hover shine effect */}
                     <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors duration-300" />
                   </div>
-                  <div className="p-3 sm:p-4">
-                    <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
+                  <div className="p-2.5 sm:p-3">
+                    <p className="text-gray-400 text-[11px] sm:text-xs leading-relaxed mb-1.5">
                       {dest.desc}
                     </p>
-                    <span className="inline-flex items-center gap-1 mt-2 text-accent text-xs font-medium group-hover:gap-2 transition-all duration-200">
-                      Explore <TbArrowRight className="w-3 h-3" />
-                    </span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-accent text-xs font-semibold">{dest.budget}</span>
+                      <span className="inline-flex items-center gap-0.5 text-gray-500 text-[10px] group-hover:text-accent group-hover:gap-1 transition-all duration-200">
+                        View <TbArrowRight className="w-2.5 h-2.5" />
+                      </span>
+                    </div>
                   </div>
                 </button>
               ))}
@@ -463,10 +481,54 @@ const AiHome = () => {
             </div>
           </section>
 
+          {/* ════════════ 6. Coming Soon Section ════════════ */}
+          <section className="w-full space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <TbRocket className="w-5 h-5 text-accent" />
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-200">
+                  Coming Soon
+                </h2>
+              </div>
+              <div className="h-[2px] flex-1 bg-gradient-to-r from-accent/50 to-transparent rounded-full" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {comingSoonItems.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.title}
+                    className={`glass-card p-4 sm:p-5 flex items-start gap-4 transition-all duration-500 ${
+                      index < visibleComingSoon
+                        ? "opacity-100 translate-y-0"
+                        : "opacity-0 translate-y-4"
+                    }`}
+                    style={{ transitionDelay: `${index * 80}ms` }}
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-accent/5 border border-accent/10 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-5 h-5 text-accent/60" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-gray-300 font-semibold text-sm mb-1">
+                        {item.title}
+                      </h3>
+                      <p className="text-gray-500 text-xs leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500/80 text-[10px] font-semibold tracking-wide uppercase flex-shrink-0">
+                      Soon
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
           {/* ── Footer disclaimer ── */}
           <p className="text-center text-gray-600 text-xs mt-4 pb-4">
-            RoamIQ is in Beta and can make mistakes. Building the future of
-            global explorer living, one update at a time.
+            RoamIQ is in Beta. Building the future of AI-powered travel intelligence.
           </p>
         </div>
       </main>
