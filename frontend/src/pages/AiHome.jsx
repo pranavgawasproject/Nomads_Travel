@@ -16,6 +16,7 @@ import {
 } from "react-icons/tb";
 import useNomadLoginState from "../hooks/useNomadLoginState";
 import useAuth from "../hooks/useAuth";
+import { getCities } from "../services/supabaseService";
 
 /* ───────────────────────────── constants ───────────────────────────── */
 
@@ -61,8 +62,8 @@ const quickActionCards = [
   },
 ];
 
-/* ── Trending Destinations ── */
-const trendingDestinations = [
+/* ── Trending Destinations (fallback) ── */
+const fallbackDestinations = [
   { city: "Bali", country: "Indonesia", desc: "Surf, sunsets & coworking hubs", budget: "$800/mo", gradient: "from-emerald-500/40 to-teal-600/40" },
   { city: "Lisbon", country: "Portugal", desc: "Europe's digital nomad capital", budget: "$1,800/mo", gradient: "from-amber-500/40 to-orange-600/40" },
   { city: "Dubai", country: "UAE", desc: "Tax-free living & luxury coworking", budget: "$2,500/mo", gradient: "from-yellow-500/40 to-amber-600/40" },
@@ -129,11 +130,56 @@ const AiHome = () => {
   const [visibleDestinations, setVisibleDestinations] = useState(0);
   const [visibleFeatures, setVisibleFeatures] = useState(0);
   const [visibleComingSoon, setVisibleComingSoon] = useState(0);
+  const [trendingDestinations, setTrendingDestinations] = useState(fallbackDestinations);
 
   const { auth } = useAuth();
   const hasNomadLoginState = useNomadLoginState();
   const isLoggedIn = Boolean(auth?.user) || hasNomadLoginState;
   const userFirstName = auth?.user?.fullName?.split(" ")?.[0] || "Explorer";
+
+  // Fetch trending destinations from Supabase cities
+  useEffect(() => {
+    async function fetchCities() {
+      try {
+        const cities = await getCities();
+        if (cities && cities.length > 0) {
+          const gradients = [
+            "from-emerald-500/40 to-teal-600/40",
+            "from-amber-500/40 to-orange-600/40",
+            "from-yellow-500/40 to-amber-600/40",
+            "from-green-500/40 to-emerald-600/40",
+            "from-pink-500/40 to-rose-600/40",
+            "from-violet-500/40 to-purple-600/40",
+            "from-red-500/40 to-orange-600/40",
+            "from-cyan-500/40 to-blue-600/40",
+          ];
+          const descriptions = [
+            "Surf, sunsets & coworking hubs",
+            "Europe's digital nomad capital",
+            "Tax-free living & luxury coworking",
+            "Affordable paradise for remote workers",
+            "Spring-like weather & vibrant culture",
+            "Budget-friendly & visa-free entry",
+            "Culture, food & creative energy",
+            "Thermal baths & thriving startup scene",
+          ];
+          const mapped = cities.slice(0, 8).map((c, i) => ({
+            city: c.name,
+            country: c.country,
+            desc: descriptions[i % descriptions.length],
+            budget: c.cost_usd ? `$${c.cost_usd}/mo` : '',
+            gradient: gradients[i % gradients.length],
+          }));
+          if (mapped.length > 0) {
+            setTrendingDestinations(mapped);
+          }
+        }
+      } catch (err) {
+        console.warn('[AiHome] Failed to fetch cities, using fallback:', err.message || err);
+      }
+    }
+    fetchCities();
+  }, []);
 
   /* ── Simplified typing animation for heading ── */
   const [displayedHeading, setDisplayedHeading] = useState("");

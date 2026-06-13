@@ -20,6 +20,7 @@ import {
   TbClock,
   TbUsers,
 } from "react-icons/tb";
+import { getListings, getListingsContinents } from "../services/supabaseService";
 
 /* ────────────── Data ────────────── */
 
@@ -28,10 +29,11 @@ const categories = [
   { id: "coworking", label: "Coworking", icon: TbBriefcase },
   { id: "coliving", label: "Coliving", icon: TbHome },
   { id: "cafe", label: "Cafes", icon: TbCoffee },
-  { id: "office", label: "Offices", icon: TbBuilding },
+  { id: "hostel", label: "Hostels", icon: TbBuilding },
+  { id: "workation", label: "Workation", icon: TbSparkles },
 ];
 
-const regions = [
+const defaultRegions = [
   "All Regions",
   "Asia",
   "Europe",
@@ -49,200 +51,16 @@ const priceRanges = [
   "$400+/mo",
 ];
 
-const sampleListings = [
-  {
-    id: 1,
-    name: "Hub53 Coworking",
-    type: "coworking",
-    city: "Bali",
-    country: "Indonesia",
-    region: "Asia",
-    rating: 4.8,
-    reviews: 124,
-    price: "$120/mo",
-    wifi: "85 Mbps",
-    hours: "24/7",
-    capacity: "50 seats",
-    tags: ["24/7 Access", "Pool", "Community Events"],
-    gradient: "from-emerald-500/30 to-teal-600/30",
-  },
-  {
-    id: 2,
-    name: "Second Home Lisboa",
-    type: "coworking",
-    city: "Lisbon",
-    country: "Portugal",
-    region: "Europe",
-    rating: 4.7,
-    reviews: 98,
-    price: "$200/mo",
-    wifi: "120 Mbps",
-    hours: "8am - 10pm",
-    capacity: "120 seats",
-    tags: ["Design Space", "Rooftop Terrace", "Community"],
-    gradient: "from-amber-500/30 to-orange-600/30",
-  },
-  {
-    id: 3,
-    name: "Outpost Chiang Mai",
-    type: "coliving",
-    city: "Chiang Mai",
-    country: "Thailand",
-    region: "Asia",
-    rating: 4.9,
-    reviews: 87,
-    price: "$450/mo",
-    wifi: "50 Mbps",
-    hours: "24/7",
-    capacity: "20 rooms",
-    tags: ["All-Inclusive", "Gym", "Events"],
-    gradient: "from-green-500/30 to-emerald-600/30",
-  },
-  {
-    id: 4,
-    name: "The Workspace Dubai",
-    type: "office",
-    city: "Dubai",
-    country: "UAE",
-    region: "Asia",
-    rating: 4.6,
-    reviews: 56,
-    price: "$350/mo",
-    wifi: "200 Mbps",
-    hours: "24/7",
-    capacity: "80 seats",
-    tags: ["Premium", "Meeting Rooms", "Parking"],
-    gradient: "from-yellow-500/30 to-amber-600/30",
-  },
-  {
-    id: 5,
-    name: "Kaptarr Budapest",
-    type: "coworking",
-    city: "Budapest",
-    country: "Hungary",
-    region: "Europe",
-    rating: 4.5,
-    reviews: 72,
-    price: "$150/mo",
-    wifi: "95 Mbps",
-    hours: "7am - 11pm",
-    capacity: "60 seats",
-    tags: ["Design", "Central Location", "Coffee Bar"],
-    gradient: "from-cyan-500/30 to-blue-600/30",
-  },
-  {
-    id: 6,
-    name: "Selina Medellin",
-    type: "coliving",
-    city: "Medellin",
-    country: "Colombia",
-    region: "South America",
-    rating: 4.4,
-    reviews: 145,
-    price: "$380/mo",
-    wifi: "40 Mbps",
-    hours: "24/7",
-    capacity: "30 rooms",
-    tags: ["Social", "Cowork + Stay", "Tours"],
-    gradient: "from-pink-500/30 to-rose-600/30",
-  },
-  {
-    id: 7,
-    name: "Impact Hub Tbilisi",
-    type: "coworking",
-    city: "Tbilisi",
-    country: "Georgia",
-    region: "Europe",
-    rating: 4.3,
-    reviews: 34,
-    price: "$80/mo",
-    wifi: "55 Mbps",
-    hours: "9am - 9pm",
-    capacity: "40 seats",
-    tags: ["Social Enterprise", "Affordable", "Community"],
-    gradient: "from-violet-500/30 to-purple-600/30",
-  },
-  {
-    id: 8,
-    name: "Cafe Negro CDMX",
-    type: "cafe",
-    city: "Mexico City",
-    country: "Mexico",
-    region: "North America",
-    rating: 4.6,
-    reviews: 210,
-    price: "$5/day",
-    wifi: "30 Mbps",
-    hours: "7am - 10pm",
-    capacity: "20 seats",
-    tags: ["Great Coffee", "Artisan", "Laptop Friendly"],
-    gradient: "from-red-500/30 to-orange-600/30",
-  },
-  {
-    id: 9,
-    name: "GridAKL",
-    type: "coworking",
-    city: "Auckland",
-    country: "New Zealand",
-    region: "Oceania",
-    rating: 4.5,
-    reviews: 45,
-    price: "$250/mo",
-    wifi: "100 Mbps",
-    hours: "7am - 10pm",
-    capacity: "70 seats",
-    tags: ["Waterfront", "Innovation Hub", "Events"],
-    gradient: "from-teal-500/30 to-cyan-600/30",
-  },
-  {
-    id: 10,
-    name: "Dojo Bali",
-    type: "coworking",
-    city: "Bali",
-    country: "Indonesia",
-    region: "Asia",
-    rating: 4.7,
-    reviews: 189,
-    price: "$100/mo",
-    wifi: "60 Mbps",
-    hours: "8am - 8pm",
-    capacity: "80 seats",
-    tags: ["Community", "Surf Breaks", "Networking"],
-    gradient: "from-emerald-500/30 to-green-600/30",
-  },
-  {
-    id: 11,
-    name: "Locus Workspace Prague",
-    type: "coworking",
-    city: "Prague",
-    country: "Czech Republic",
-    region: "Europe",
-    rating: 4.4,
-    reviews: 62,
-    price: "$130/mo",
-    wifi: "80 Mbps",
-    hours: "24/7",
-    capacity: "45 seats",
-    tags: ["Affordable", "Beer on Tap", "Central"],
-    gradient: "from-blue-500/30 to-indigo-600/30",
-  },
-  {
-    id: 12,
-    name: "Addis Caffe",
-    type: "cafe",
-    city: "Addis Ababa",
-    country: "Ethiopia",
-    region: "Africa",
-    rating: 4.2,
-    reviews: 28,
-    price: "$3/day",
-    wifi: "15 Mbps",
-    hours: "7am - 9pm",
-    capacity: "15 seats",
-    tags: ["Original Coffee", "Quiet", "Affordable"],
-    gradient: "from-orange-500/30 to-red-600/30",
-  },
-];
+/* ── Gradient picker based on type ── */
+const typeGradients = {
+  coworking: "from-cyan-500/30 to-blue-600/30",
+  coliving: "from-green-500/30 to-emerald-600/30",
+  cafe: "from-amber-500/30 to-orange-600/30",
+  hostel: "from-pink-500/30 to-rose-600/30",
+  workation: "from-violet-500/30 to-purple-600/30",
+  meetingroom: "from-yellow-500/30 to-amber-600/30",
+  privatestay: "from-teal-500/30 to-cyan-600/30",
+};
 
 /* ────────────── Component ────────────── */
 
@@ -258,6 +76,33 @@ const AiGlobalListingsList = () => {
   const [showRegionDropdown, setShowRegionDropdown] = useState(false);
   const [showPriceDropdown, setShowPriceDropdown] = useState(false);
 
+  // ── Data from Supabase ──
+  const [listings, setListings] = useState([]);
+  const [regions, setRegions] = useState(defaultRegions);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch listings from Supabase
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const [listingsData, continentsData] = await Promise.all([
+          getListings(),
+          getListingsContinents(),
+        ]);
+        setListings(listingsData);
+        if (continentsData.length > 0) {
+          setRegions(["All Regions", ...continentsData]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch listings:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
   // Parse URL params for initial destination
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -268,33 +113,36 @@ const AiGlobalListingsList = () => {
   }, [location.search]);
 
   const filteredListings = useMemo(() => {
-    let results = [...sampleListings];
+    let results = [...listings];
 
     if (activeCategory !== "all") {
-      results = results.filter((l) => l.type === activeCategory);
+      results = results.filter((l) => (l.company_type || l.type) === activeCategory);
     }
 
     if (activeRegion !== "All Regions") {
-      results = results.filter((l) => l.region === activeRegion);
+      results = results.filter((l) => (l.continent || l.region) === activeRegion);
     }
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       results = results.filter(
         (l) =>
-          l.name.toLowerCase().includes(q) ||
-          l.city.toLowerCase().includes(q) ||
-          l.country.toLowerCase().includes(q) ||
-          l.tags.some((t) => t.toLowerCase().includes(q))
+          (l.company_name || l.name || '').toLowerCase().includes(q) ||
+          (l.city || '').toLowerCase().includes(q) ||
+          (l.country || '').toLowerCase().includes(q) ||
+          (l.state || '').toLowerCase().includes(q) ||
+          ((l.tags && l.tags.some) ? l.tags.some((t) => t.toLowerCase().includes(q)) : false)
       );
     }
 
     return results;
-  }, [activeCategory, activeRegion, activePriceRange, searchQuery]);
+  }, [listings, activeCategory, activeRegion, activePriceRange, searchQuery]);
 
   const handleListingClick = (listing) => {
-    navigate(`/ai-listings/${encodeURIComponent(listing.name)}`, {
-      state: { companyId: listing.id, type: listing.type },
+    const name = listing.company_name || listing.name;
+    const type = listing.company_type || listing.type;
+    navigate(`/ai-listings/${encodeURIComponent(name)}`, {
+      state: { companyId: listing.id || listing.business_id, type },
     });
   };
 
@@ -425,8 +273,8 @@ const AiGlobalListingsList = () => {
             const Icon = cat.icon;
             const isActive = activeCategory === cat.id;
             const count = cat.id === "all"
-              ? sampleListings.length
-              : sampleListings.filter((l) => l.type === cat.id).length;
+              ? listings.length
+              : listings.filter((l) => (l.company_type || l.type) === cat.id).length;
 
             return (
               <button
@@ -464,33 +312,38 @@ const AiGlobalListingsList = () => {
           )}
         </div>
 
-        {/* ── Grid View ── */}
-        {viewMode === "grid" ? (
+        {/* ── Loading State ── */}
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full" />
+            <span className="ml-3 text-gray-400 text-sm">Loading spaces...</span>
+          </div>
+        ) : viewMode === "grid" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredListings.map((listing) => (
               <button
-                key={listing.id}
+                key={listing.id || listing.business_id}
                 onClick={() => handleListingClick(listing)}
                 className="glass-card-hover overflow-hidden text-left group cursor-pointer"
               >
                 {/* Header gradient */}
-                <div className={`relative h-32 bg-gradient-to-br ${listing.gradient} overflow-hidden`}>
+                <div className={`relative h-32 bg-gradient-to-br ${listing.gradient || typeGradients[listing.company_type || listing.type] || typeGradients.coworking} overflow-hidden`}>
                   <div className="absolute inset-0 bg-surface/40" />
 
                   {/* Type badge */}
                   <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-surface/80 backdrop-blur-sm border border-glass-border">
-                    <span className="text-[11px] font-medium text-gray-300 capitalize">{listing.type}</span>
+                    <span className="text-[11px] font-medium text-gray-300 capitalize">{listing.company_type || listing.type}</span>
                   </div>
 
                   {/* Rating */}
                   <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-lg bg-surface/80 backdrop-blur-sm border border-glass-border">
                     <TbStar className="w-3 h-3 text-yellow-400" />
-                    <span className="text-xs font-medium text-gray-200">{listing.rating}</span>
+                    <span className="text-xs font-medium text-gray-200">{listing.ratings || listing.rating || 0}</span>
                   </div>
 
                   {/* Name overlay */}
                   <div className="absolute bottom-3 left-4 right-4">
-                    <h3 className="text-white font-bold text-base drop-shadow-lg truncate">{listing.name}</h3>
+                    <h3 className="text-white font-bold text-base drop-shadow-lg truncate">{listing.company_name || listing.name}</h3>
                     <p className="text-white/70 text-sm">
                       {listing.city}, {listing.country}
                     </p>
@@ -504,7 +357,7 @@ const AiGlobalListingsList = () => {
                 <div className="p-4 space-y-3">
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1.5">
-                    {listing.tags.map((tag) => (
+                    {(listing.tags || []).map((tag) => (
                       <span
                         key={tag}
                         className="px-2 py-0.5 rounded-md bg-white/5 text-gray-400 text-[11px] font-medium"
@@ -518,15 +371,15 @@ const AiGlobalListingsList = () => {
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div className="flex items-center gap-1">
                       <TbCoin className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                      <span className="text-gray-300 truncate">{listing.price}</span>
+                      <span className="text-gray-300 truncate">{listing.cost || listing.starting_price || listing.price}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <TbWifi className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                      <span className="text-gray-300 truncate">{listing.wifi}</span>
+                      <span className="text-gray-300 truncate">{listing.wifi_speed || listing.wifi}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <TbClock className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                      <span className="text-gray-300 truncate">{listing.hours}</span>
+                      <span className="text-gray-300 truncate">{listing.open_hours || listing.hours}</span>
                     </div>
                   </div>
 
@@ -543,24 +396,24 @@ const AiGlobalListingsList = () => {
           <div className="space-y-3">
             {filteredListings.map((listing) => (
               <button
-                key={listing.id}
+                key={listing.id || listing.business_id}
                 onClick={() => handleListingClick(listing)}
                 className="w-full glass-card-hover flex items-center gap-4 p-4 text-left group cursor-pointer"
               >
                 {/* Mini gradient */}
-                <div className={`hidden sm:flex w-20 h-20 rounded-xl bg-gradient-to-br ${listing.gradient} items-center justify-center flex-shrink-0`}>
-                  <span className="text-white/80 text-2xl font-bold">{listing.name.charAt(0)}</span>
+                <div className={`hidden sm:flex w-20 h-20 rounded-xl bg-gradient-to-br ${listing.gradient || typeGradients[listing.company_type || listing.type] || typeGradients.coworking} items-center justify-center flex-shrink-0`}>
+                  <span className="text-white/80 text-2xl font-bold">{(listing.company_name || listing.name || '?').charAt(0)}</span>
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-gray-200 font-semibold text-sm truncate">{listing.name}</h3>
-                    <span className="px-2 py-0.5 rounded-md bg-white/5 text-gray-400 text-[10px] font-medium capitalize">{listing.type}</span>
+                    <h3 className="text-gray-200 font-semibold text-sm truncate">{listing.company_name || listing.name}</h3>
+                    <span className="px-2 py-0.5 rounded-md bg-white/5 text-gray-400 text-[10px] font-medium capitalize">{listing.company_type || listing.type}</span>
                   </div>
                   <p className="text-gray-400 text-xs mb-2">{listing.city}, {listing.country}</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {listing.tags.slice(0, 3).map((tag) => (
+                    {(listing.tags || []).slice(0, 3).map((tag) => (
                       <span key={tag} className="px-2 py-0.5 rounded-md bg-white/5 text-gray-500 text-[10px]">
                         {tag}
                       </span>
@@ -572,13 +425,13 @@ const AiGlobalListingsList = () => {
                 <div className="hidden md:flex flex-col items-end gap-2 flex-shrink-0">
                   <div className="flex items-center gap-1">
                     <TbStar className="w-3.5 h-3.5 text-yellow-400" />
-                    <span className="text-sm font-medium text-gray-200">{listing.rating}</span>
-                    <span className="text-gray-500 text-xs">({listing.reviews})</span>
+                    <span className="text-sm font-medium text-gray-200">{listing.ratings || listing.rating || 0}</span>
+                    <span className="text-gray-500 text-xs">({listing.total_reviews || listing.reviews || 0})</span>
                   </div>
-                  <span className="text-accent text-sm font-semibold">{listing.price}</span>
+                  <span className="text-accent text-sm font-semibold">{listing.cost || listing.starting_price || listing.price}</span>
                   <div className="flex items-center gap-3 text-xs text-gray-500">
-                    <span className="flex items-center gap-1"><TbWifi className="w-3 h-3" />{listing.wifi}</span>
-                    <span className="flex items-center gap-1"><TbClock className="w-3 h-3" />{listing.hours}</span>
+                    <span className="flex items-center gap-1"><TbWifi className="w-3 h-3" />{listing.wifi_speed || listing.wifi}</span>
+                    <span className="flex items-center gap-1"><TbClock className="w-3 h-3" />{listing.open_hours || listing.hours}</span>
                   </div>
                 </div>
 

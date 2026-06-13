@@ -33,6 +33,7 @@ import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
 import { FiShare2 } from "react-icons/fi";
 import { ArrowLeft, Globe } from "lucide-react";
 import Map from "../components/Map";
+import { getListingById, getListingReviews } from "../services/supabaseService";
 
 /* ────────────── Sample Data (used when API unavailable) ────────────── */
 
@@ -173,11 +174,64 @@ const AiProduct = () => {
   });
   const [enquirySubmitted, setEnquirySubmitted] = useState(false);
 
-  // Try to fetch from API, fall back to sample data
+  // Try Supabase first, then API, then fall back to sample data
   useEffect(() => {
     let isMounted = true;
     const fetchCompany = async () => {
       try {
+        // 1. Try Supabase by business_id or UUID
+        const companyId = locationState.companyId;
+        if (companyId) {
+          const supabaseData = await getListingById(companyId);
+          if (isMounted && supabaseData) {
+            // Map Supabase fields to the format the component expects
+            const mapped = {
+              ...supabaseData,
+              companyName: supabaseData.company_name || supabaseData.companyName,
+              companyTitle: supabaseData.company_title || supabaseData.companyTitle,
+              companyType: supabaseData.company_type || supabaseData.companyType,
+              totalReviews: supabaseData.total_reviews || supabaseData.totalReviews || 0,
+              reviewCount: supabaseData.total_reviews || supabaseData.reviewCount || 0,
+              websiteTemplateLink: supabaseData.website_template_link || supabaseData.websiteTemplateLink,
+              registeredEntityName: supabaseData.registered_entity_name || supabaseData.registeredEntityName,
+              googleMap: supabaseData.google_map || supabaseData.googleMap,
+              logoUrl: supabaseData.logo_url || supabaseData.logoUrl,
+              wifiSpeed: supabaseData.wifi_speed || supabaseData.wifiSpeed,
+              startingPrice: supabaseData.starting_price || supabaseData.startingPrice,
+              openHours: supabaseData.open_hours || supabaseData.openHours,
+              contactName: supabaseData.contact_name || supabaseData.contactName,
+              contactDesignation: supabaseData.contact_designation || supabaseData.contactDesignation,
+              contactEmail: supabaseData.contact_email || supabaseData.contactEmail,
+              contactPhone: supabaseData.contact_phone || supabaseData.contactPhone,
+              socialLinks: supabaseData.social_links || supabaseData.socialLinks,
+              isPublic: supabaseData.is_public ?? supabaseData.isPublic ?? true,
+              isRegistered: supabaseData.is_registered ?? supabaseData.isRegistered ?? false,
+              isActive: supabaseData.is_active ?? supabaseData.isActive ?? true,
+            };
+
+            // Fetch reviews from Supabase
+            const reviewsData = await getListingReviews(supabaseData.id);
+            if (reviewsData && reviewsData.length > 0) {
+              mapped.reviews = reviewsData.map((r) => ({
+                _id: r.id,
+                name: r.name,
+                starCount: r.star_count,
+                description: r.description,
+                createdAt: r.created_at,
+              }));
+            }
+
+            setCompanyDetails(mapped);
+            setIsLoading(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('[AiProduct] Supabase fetch failed, trying API:', err.message || err);
+      }
+
+      try {
+        // 2. Try REST API
         const axios = (await import("../utils/axios")).default;
         const params = new URLSearchParams();
         if (locationState.companyId) params.set("companyId", locationState.companyId);
@@ -193,10 +247,11 @@ const AiProduct = () => {
           return;
         }
       } catch {
-        // API unavailable, use sample data
+        // API unavailable
       }
+
+      // 3. Fall back to sample data
       if (isMounted) {
-        // Customize sample based on URL param
         const customListing = {
           ...sampleListing,
           companyName: company ? company.replace(/-/g, " ") : sampleListing.companyName,
@@ -218,7 +273,14 @@ const AiProduct = () => {
     }
   }, [companyDetails?.isLiked]);
 
-  const images = companyDetails?.images?.slice(0, 5) || [];
+  // Normalize images: Supabase returns string[] but component expects [{_id, url}]
+  const rawImages = companyDetails?.images?.slice(0, 5) || [];
+  const images = rawImages.map((img, idx) => {
+    if (typeof img === 'string') {
+      return { _id: `img-${idx}`, url: img };
+    }
+    return img; // already an object { _id, url }
+  });
   const inclusions = companyDetails?.inclusions
     ? companyDetails.inclusions.split(",").map((s) => s.trim()).filter(Boolean)
     : sampleListing.inclusions.split(",").map((s) => s.trim());

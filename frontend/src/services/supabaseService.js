@@ -8,6 +8,149 @@
 import supabase from '../lib/supabase';
 
 /* ══════════════════════════════════════════════════════════════════════════
+   FIELD MAPPING — Supabase (snake_case) → Frontend (camelCase + nested)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Map a Supabase cities row to the format frontend components expect.
+ * DB columns: overall_score, cost_score, … → Frontend: scores.overall, costUSD, …
+ */
+function mapCityRow(row) {
+  return {
+    ...row,
+    scores: {
+      overall: Number(row.overall_score ?? row.overall ?? 0),
+      cost:    Number(row.cost_score    ?? row.cost    ?? 0),
+      internet:Number(row.internet_score?? row.internet?? 0),
+      safety:  Number(row.safety_score  ?? row.safety  ?? 0),
+      fun:     Number(row.fun_score     ?? row.fun     ?? 0),
+      walkability: Number(row.walkability_score ?? row.walkability ?? 0),
+      nightlife:   Number(row.nightlife_score    ?? row.nightlife   ?? 0),
+      air:     Number(row.air_score     ?? row.air     ?? 0),
+    },
+    costUSD:         row.cost_usd       ?? row.costUSD       ?? 0,
+    internetMbps:    row.internet_mbps  ?? row.internetMbps  ?? 0,
+    avgTemp:         row.avg_temp       ?? row.avgTemp       ?? 0,
+    visaDifficulty:  row.visa_difficulty?? row.visaDifficulty?? 'Medium',
+    airQuality:      row.air_quality    ?? row.airQuality    ?? 'Moderate',
+  };
+}
+
+/**
+ * Map a Supabase cost_of_living row to the format AiCostOfLiving expects.
+ * DB has flat columns (housing, coworking…) + tip1/tip2/tip3.
+ * Frontend expects: { costs: { housing, … }, tips: […], name, country, flag }
+ */
+async function mapCostRow(row) {
+  // cost_of_living has city_id FK but no name/country/flag — fetch from cities
+  let cityName = row.name || '';
+  let countryName = row.country || '';
+  let flag = row.flag || '';
+
+  if (row.city_id && !cityName) {
+    try {
+      const { data } = await supabase
+        .from('cities')
+        .select('name, country, flag')
+        .eq('id', row.city_id)
+        .single();
+      if (data) {
+        cityName  = data.name    || '';
+        countryName = data.country || '';
+        flag      = data.flag    || '';
+      }
+    } catch (_) { /* ignore */ }
+  }
+
+  const tips = [row.tip1, row.tip2, row.tip3].filter(Boolean);
+
+  return {
+    ...row,
+    id:     row.city_id || row.id,
+    name:   cityName,
+    country:countryName,
+    flag,
+    costs: {
+      housing:       row.housing       ?? 0,
+      coworking:     row.coworking     ?? 0,
+      food:          row.food          ?? 0,
+      transport:     row.transport     ?? 0,
+      internet:      row.internet      ?? 0,
+      entertainment: row.entertainment ?? 0,
+      health:        row.health        ?? 0,
+      visa:          row.visa          ?? 0,
+      misc:          row.misc          ?? 0,
+    },
+    tips,
+    currency: row.currency || { EUR: 0.92, GBP: 0.79 },
+  };
+}
+
+/**
+ * Simple relative-time formatter for forum posts (DB returns ISO timestamps).
+ */
+function formatTimeAgo(dateStr) {
+  try {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    if (days < 30) return `${days}d ago`;
+    const months = Math.floor(days / 30);
+    return `${months}mo ago`;
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Map a Supabase visa_info row to the format AiVisaTracker expects.
+ * DB: tourist_days, has_dn_visa, dn_visa_cost, dn_visa_duration
+ * Frontend: touristDays, dnVisa, dnCost, dnDuration
+ */
+function mapVisaRow(row) {
+  return {
+    ...row,
+    touristDays:  row.tourist_days   ?? row.touristDays   ?? 90,
+    dnVisa:       row.has_dn_visa    ?? row.dnVisa        ?? false,
+    dnCost:       row.dn_visa_cost   ?? row.dnCost        ?? 'N/A',
+    dnDuration:   row.dn_visa_duration ?? row.dnDuration  ?? 'N/A',
+  };
+}
+
+/**
+ * Map a Supabase nomad_profiles row to the format AiNearbyNomads expects.
+ * DB: work_type, home_country, avatar_gradient, last_active
+ * Frontend: workType, homeCountry, gradient, lastActive
+ */
+function mapNomadRow(row) {
+  return {
+    ...row,
+    workType:      row.work_type      ?? row.workType      ?? '',
+    homeCountry:   row.home_country   ?? row.homeCountry   ?? '',
+    gradient:      row.avatar_gradient?? row.gradient      ?? 'from-cyan-500 to-blue-500',
+    lastActive:    row.last_active    ?? row.lastActive    ?? '',
+  };
+}
+
+/**
+ * Map a Supabase meetups row to the format AiNearbyNomads expects.
+ * DB: max_attendees, created_by, created_at
+ * Frontend: maxAttendees, createdBy, createdAt
+ */
+function mapMeetupRow(row) {
+  return {
+    ...row,
+    maxAttendees:  row.max_attendees  ?? row.maxAttendees  ?? 20,
+    createdBy:     row.created_by     ?? row.createdBy     ?? null,
+    createdAt:     row.created_at     ?? row.createdAt     ?? '',
+  };
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
    STATIC FALLBACK DATA — extracted from the 6 page components
    ══════════════════════════════════════════════════════════════════════════ */
 
@@ -503,6 +646,296 @@ const staticForumPosts = [
 ];
 
 /* ══════════════════════════════════════════════════════════════════════════
+   STATIC FALLBACK — Listings (from AiGlobalListingsList + AiProduct)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+const staticListings = [
+  {
+    id: 'static-1',
+    business_id: 'hub53-canggu-bali',
+    company_name: 'Hub53 Coworking',
+    company_title: 'Hub53 Coworking — Your Digital Home in Bali',
+    company_type: 'coworking',
+    city: 'Bali',
+    state: 'Bali',
+    country: 'Indonesia',
+    continent: 'Asia',
+    address: 'Jl. Pantai Batu Bolong No.88, Canggu',
+    latitude: -8.6523,
+    longitude: 115.1388,
+    ratings: 4.8,
+    total_reviews: 124,
+    cost: '$120/mo',
+    wifi_speed: '85 Mbps',
+    open_hours: '24/7',
+    capacity: '50 seats',
+    starting_price: '$120/mo',
+    images: ['https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80'],
+    inclusions: 'High-Speed WiFi, Ergonomic Chairs, Standing Desks, Pool, Community Events',
+    tags: ['24/7 Access', 'Pool', 'Community Events'],
+    about: 'Hub53 is Bali\'s premier coworking space designed for digital nomads, remote workers, and entrepreneurs.',
+    website: 'https://hub53.co',
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-2',
+    business_id: 'second-home-lisboa',
+    company_name: 'Second Home Lisboa',
+    company_title: 'Second Home Lisboa — Creative Workspace in Lisbon',
+    company_type: 'coworking',
+    city: 'Lisbon',
+    state: 'Lisbon',
+    country: 'Portugal',
+    continent: 'Europe',
+    ratings: 4.7,
+    total_reviews: 98,
+    cost: '$200/mo',
+    wifi_speed: '120 Mbps',
+    open_hours: '8am - 10pm',
+    capacity: '120 seats',
+    starting_price: '$200/mo',
+    images: [],
+    inclusions: 'Design Space, Rooftop Terrace, Community',
+    tags: ['Design Space', 'Rooftop Terrace', 'Community'],
+    about: 'Second Home Lisboa is a creative coworking space in the heart of Lisbon.',
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-3',
+    business_id: 'outpost-chiangmai',
+    company_name: 'Outpost Chiang Mai',
+    company_title: 'Outpost Chiang Mai — Coliving for Nomads',
+    company_type: 'coliving',
+    city: 'Chiang Mai',
+    state: 'Chiang Mai',
+    country: 'Thailand',
+    continent: 'Asia',
+    ratings: 4.9,
+    total_reviews: 87,
+    cost: '$450/mo',
+    wifi_speed: '50 Mbps',
+    open_hours: '24/7',
+    capacity: '20 rooms',
+    starting_price: '$450/mo',
+    images: [],
+    inclusions: 'All-Inclusive, Gym, Events',
+    tags: ['All-Inclusive', 'Gym', 'Events'],
+    about: 'Outpost is a coliving space designed for digital nomads in Chiang Mai.',
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-4',
+    business_id: 'workspace-dubai',
+    company_name: 'The Workspace Dubai',
+    company_title: 'The Workspace — Premium Offices in Dubai',
+    company_type: 'coworking',
+    city: 'Dubai',
+    state: 'Dubai',
+    country: 'UAE',
+    continent: 'Asia',
+    ratings: 4.6,
+    total_reviews: 56,
+    cost: '$350/mo',
+    wifi_speed: '200 Mbps',
+    open_hours: '24/7',
+    capacity: '80 seats',
+    starting_price: '$350/mo',
+    images: [],
+    inclusions: 'Premium, Meeting Rooms, Parking',
+    tags: ['Premium', 'Meeting Rooms', 'Parking'],
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-5',
+    business_id: 'kaptarr-budapest',
+    company_name: 'Kaptarr Budapest',
+    company_title: 'Kaptarr — Design Coworking in Budapest',
+    company_type: 'coworking',
+    city: 'Budapest',
+    state: 'Budapest',
+    country: 'Hungary',
+    continent: 'Europe',
+    ratings: 4.5,
+    total_reviews: 72,
+    cost: '$150/mo',
+    wifi_speed: '95 Mbps',
+    open_hours: '7am - 11pm',
+    capacity: '60 seats',
+    starting_price: '$150/mo',
+    images: [],
+    inclusions: 'Design, Central Location, Coffee Bar',
+    tags: ['Design', 'Central Location', 'Coffee Bar'],
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-6',
+    business_id: 'selina-medellin',
+    company_name: 'Selina Medellin',
+    company_title: 'Selina — Coliving + Coworking in Medellín',
+    company_type: 'coliving',
+    city: 'Medellín',
+    state: 'Antioquia',
+    country: 'Colombia',
+    continent: 'South America',
+    ratings: 4.4,
+    total_reviews: 145,
+    cost: '$380/mo',
+    wifi_speed: '40 Mbps',
+    open_hours: '24/7',
+    capacity: '30 rooms',
+    starting_price: '$380/mo',
+    images: [],
+    inclusions: 'Social, Cowork + Stay, Tours',
+    tags: ['Social', 'Cowork + Stay', 'Tours'],
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-7',
+    business_id: 'impact-hub-tbilisi',
+    company_name: 'Impact Hub Tbilisi',
+    company_title: 'Impact Hub — Social Enterprise Hub in Tbilisi',
+    company_type: 'coworking',
+    city: 'Tbilisi',
+    state: 'Tbilisi',
+    country: 'Georgia',
+    continent: 'Europe',
+    ratings: 4.3,
+    total_reviews: 34,
+    cost: '$80/mo',
+    wifi_speed: '55 Mbps',
+    open_hours: '9am - 9pm',
+    capacity: '40 seats',
+    starting_price: '$80/mo',
+    images: [],
+    inclusions: 'Social Enterprise, Affordable, Community',
+    tags: ['Social Enterprise', 'Affordable', 'Community'],
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-8',
+    business_id: 'cafe-negro-cdmx',
+    company_name: 'Cafe Negro CDMX',
+    company_title: 'Cafe Negro — Laptop-Friendly Cafe in Mexico City',
+    company_type: 'cafe',
+    city: 'Mexico City',
+    state: 'CDMX',
+    country: 'Mexico',
+    continent: 'North America',
+    ratings: 4.6,
+    total_reviews: 210,
+    cost: '$5/day',
+    wifi_speed: '30 Mbps',
+    open_hours: '7am - 10pm',
+    capacity: '20 seats',
+    starting_price: '$5/day',
+    images: [],
+    inclusions: 'Great Coffee, Artisan, Laptop Friendly',
+    tags: ['Great Coffee', 'Artisan', 'Laptop Friendly'],
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-9',
+    business_id: 'dojo-bali',
+    company_name: 'Dojo Bali',
+    company_title: 'Dojo Bali — Community Coworking in Canggu',
+    company_type: 'coworking',
+    city: 'Bali',
+    state: 'Bali',
+    country: 'Indonesia',
+    continent: 'Asia',
+    ratings: 4.7,
+    total_reviews: 189,
+    cost: '$100/mo',
+    wifi_speed: '60 Mbps',
+    open_hours: '8am - 8pm',
+    capacity: '80 seats',
+    starting_price: '$100/mo',
+    images: [],
+    inclusions: 'Community, Surf Breaks, Networking',
+    tags: ['Community', 'Surf Breaks', 'Networking'],
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-10',
+    business_id: 'locus-prague',
+    company_name: 'Locus Workspace Prague',
+    company_title: 'Locus — Affordable Coworking in Prague',
+    company_type: 'coworking',
+    city: 'Prague',
+    state: 'Prague',
+    country: 'Czech Republic',
+    continent: 'Europe',
+    ratings: 4.4,
+    total_reviews: 62,
+    cost: '$130/mo',
+    wifi_speed: '80 Mbps',
+    open_hours: '24/7',
+    capacity: '45 seats',
+    starting_price: '$130/mo',
+    images: [],
+    inclusions: 'Affordable, Beer on Tap, Central',
+    tags: ['Affordable', 'Beer on Tap', 'Central'],
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-11',
+    business_id: 'addis-caffe',
+    company_name: 'Addis Caffe',
+    company_title: 'Addis Caffe — Quiet Workspace in Addis Ababa',
+    company_type: 'cafe',
+    city: 'Addis Ababa',
+    state: 'Addis Ababa',
+    country: 'Ethiopia',
+    continent: 'Africa',
+    ratings: 4.2,
+    total_reviews: 28,
+    cost: '$3/day',
+    wifi_speed: '15 Mbps',
+    open_hours: '7am - 9pm',
+    capacity: '15 seats',
+    starting_price: '$3/day',
+    images: [],
+    inclusions: 'Original Coffee, Quiet, Affordable',
+    tags: ['Original Coffee', 'Quiet', 'Affordable'],
+    is_active: true,
+    is_public: true,
+  },
+  {
+    id: 'static-12',
+    business_id: 'gridakl-auckland',
+    company_name: 'GridAKL',
+    company_title: 'GridAKL — Waterfront Innovation Hub in Auckland',
+    company_type: 'coworking',
+    city: 'Auckland',
+    state: 'Auckland',
+    country: 'New Zealand',
+    continent: 'Oceania',
+    ratings: 4.5,
+    total_reviews: 45,
+    cost: '$250/mo',
+    wifi_speed: '100 Mbps',
+    open_hours: '7am - 10pm',
+    capacity: '70 seats',
+    starting_price: '$250/mo',
+    images: [],
+    inclusions: 'Waterfront, Innovation Hub, Events',
+    tags: ['Waterfront', 'Innovation Hub', 'Events'],
+    is_active: true,
+    is_public: true,
+  },
+];
+
+/* ══════════════════════════════════════════════════════════════════════════
    SERVICE FUNCTIONS
    ══════════════════════════════════════════════════════════════════════════ */
 
@@ -519,7 +952,11 @@ export async function getCities() {
       .select('*')
       .order('name');
     if (error) throw error;
-    if (data && data.length > 0) return data;
+    if (data && data.length > 0) {
+      console.log(`[supabaseService] getCities: ✅ ${data.length} cities from DB`);
+      return data.map(mapCityRow);
+    }
+    console.warn('[supabaseService] getCities: DB returned 0 rows, using static fallback');
     return staticCities;
   } catch (err) {
     console.warn('[supabaseService] getCities fallback to static:', err.message || err);
@@ -538,7 +975,10 @@ export async function getCityById(id) {
       .eq('id', id)
       .single();
     if (error) throw error;
-    if (data) return data;
+    if (data) {
+      console.log(`[supabaseService] getCityById: ✅ city "${data.name}" from DB`);
+      return mapCityRow(data);
+    }
     return staticCities.find((c) => c.id === id) || null;
   } catch (err) {
     console.warn('[supabaseService] getCityById fallback to static:', err.message || err);
@@ -560,7 +1000,8 @@ export async function compareCities(id1, id2) {
       // Preserve order: city1 first, city2 second
       const city1 = data.find((c) => c.id === id1);
       const city2 = data.find((c) => c.id === id2);
-      return [city1, city2];
+      console.log(`[supabaseService] compareCities: ✅ comparing "${city1.name}" vs "${city2.name}" from DB`);
+      return [mapCityRow(city1), mapCityRow(city2)];
     }
     throw new Error('Not enough cities returned');
   } catch (err) {
@@ -579,13 +1020,17 @@ export async function compareCities(id1, id2) {
  */
 export async function getCostOfLiving(cityId) {
   try {
+    // Query by city_id (FK to cities table), not by the serial id
     const { data, error } = await supabase
       .from('cost_of_living')
       .select('*')
-      .eq('id', cityId)
+      .eq('city_id', cityId)
       .single();
     if (error) throw error;
-    if (data) return data;
+    if (data) {
+      console.log(`[supabaseService] getCostOfLiving: ✅ cost data for city_id="${cityId}" from DB`);
+      return await mapCostRow(data);
+    }
     return staticCostData.find((c) => c.id === cityId) || null;
   } catch (err) {
     console.warn('[supabaseService] getCostOfLiving fallback to static:', err.message || err);
@@ -605,7 +1050,11 @@ export async function getVisaInfo() {
       .select('*')
       .order('country');
     if (error) throw error;
-    if (data && data.length > 0) return data;
+    if (data && data.length > 0) {
+      console.log(`[supabaseService] getVisaInfo: ✅ ${data.length} visa records from DB`);
+      return data.map(mapVisaRow);
+    }
+    console.warn('[supabaseService] getVisaInfo: DB returned 0 rows, using static fallback');
     return staticVisaInfo;
   } catch (err) {
     console.warn('[supabaseService] getVisaInfo fallback to static:', err.message || err);
@@ -779,7 +1228,10 @@ export async function getNomadProfiles(filters = {}) {
 
     const { data, error } = await query;
     if (error) throw error;
-    if (data && data.length > 0) return data;
+    if (data && data.length > 0) {
+      console.log(`[supabaseService] getNomadProfiles: ✅ ${data.length} profiles from DB`);
+      return data.map(mapNomadRow);
+    }
     // If Supabase returned empty, fall back to static
   } catch (err) {
     console.warn('[supabaseService] getNomadProfiles fallback to static:', err.message || err);
@@ -808,7 +1260,10 @@ export async function getMeetups(city) {
 
     const { data, error } = await query;
     if (error) throw error;
-    if (data && data.length > 0) return data;
+    if (data && data.length > 0) {
+      console.log(`[supabaseService] getMeetups: ✅ ${data.length} meetups from DB`);
+      return data.map(mapMeetupRow);
+    }
   } catch (err) {
     console.warn('[supabaseService] getMeetups fallback to static:', err.message || err);
   }
@@ -853,7 +1308,17 @@ export async function getForumPosts(category, sort = 'latest') {
 
     const { data, error } = await query;
     if (error) throw error;
-    if (data && data.length > 0) return data;
+    if (data && data.length > 0) {
+      console.log(`[supabaseService] getForumPosts: ✅ ${data.length} posts from DB`);
+      // Map DB fields to what frontend expects
+      return data.map((post) => ({
+        ...post,
+        replies: post.reply_count ?? post.replies ?? 0,
+        timeAgo: post.created_at ? formatTimeAgo(post.created_at) : (post.timeAgo || ''),
+        author: post.author || { name: 'Anonymous', initials: 'AN', gradient: 'from-gray-500 to-gray-600' },
+        replyList: post.replyList || [],
+      }));
+    }
   } catch (err) {
     console.warn('[supabaseService] getForumPosts fallback to static:', err.message || err);
   }
@@ -894,7 +1359,15 @@ export async function getForumReplies(postId) {
       .eq('post_id', postId)
       .order('created_at', { ascending: true });
     if (error) throw error;
-    if (data) return data;
+    if (data && data.length > 0) {
+      console.log(`[supabaseService] getForumReplies: ✅ ${data.length} replies from DB`);
+      return data.map((r) => ({
+        ...r,
+        timeAgo: r.created_at ? formatTimeAgo(r.created_at) : (r.timeAgo || ''),
+        author: r.author || { name: 'Anonymous', initials: 'AN', gradient: 'from-gray-500 to-gray-600' },
+      }));
+    }
+    return [];
   } catch (err) {
     console.warn('[supabaseService] getForumReplies fallback to static:', err.message || err);
   }
@@ -1027,6 +1500,148 @@ export async function toggleLike(userId, postId) {
   } catch (err) {
     console.error('[supabaseService] toggleLike failed:', err.message || err);
     throw err;
+  }
+}
+
+// ── Listings (Coworking, Coliving, Hostels, Cafes, etc.) ────────────────────
+
+/**
+ * Get all listings with optional filters.
+ * Tries Supabase `listings` table first, falls back to static data.
+ * @param {Object} filters - Optional filters
+ * @param {string} filters.company_type - Filter by type (coworking, coliving, etc.)
+ * @param {string} filters.continent - Filter by continent
+ * @param {string} filters.city - Filter by city
+ * @param {string} filters.country - Filter by country
+ * @param {string} filters.search - Search in name, city, country, tags
+ */
+export async function getListings(filters = {}) {
+  try {
+    let query = supabase
+      .from('listings')
+      .select('*')
+      .eq('is_active', true)
+      .eq('is_public', true)
+      .order('ratings', { ascending: false });
+
+    if (filters.company_type) {
+      query = query.eq('company_type', filters.company_type);
+    }
+    if (filters.continent) {
+      query = query.eq('continent', filters.continent);
+    }
+    if (filters.city) {
+      query = query.ilike('city', `%${filters.city}%`);
+    }
+    if (filters.country) {
+      query = query.ilike('country', `%${filters.country}%`);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      // Apply text search filter client-side (Supabase text search requires setup)
+      let results = data;
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        results = results.filter((l) =>
+          (l.company_name || '').toLowerCase().includes(q) ||
+          (l.city || '').toLowerCase().includes(q) ||
+          (l.country || '').toLowerCase().includes(q) ||
+          (l.state || '').toLowerCase().includes(q) ||
+          (l.tags || []).some((t) => t.toLowerCase().includes(q)) ||
+          (l.inclusions || '').toLowerCase().includes(q)
+        );
+      }
+      console.log(`[supabaseService] getListings: ✅ ${results.length} listings from DB`);
+      return results;
+    }
+    console.warn('[supabaseService] getListings: DB returned 0 rows, using static fallback');
+    return staticListings;
+  } catch (err) {
+    console.warn('[supabaseService] getListings fallback to static:', err.message || err);
+    return staticListings;
+  }
+}
+
+/**
+ * Get a single listing by its id or business_id.
+ * Tries Supabase first, falls back to static data.
+ * @param {string} id - UUID or business_id
+ */
+export async function getListingById(id) {
+  try {
+    // Try by id (UUID) first
+    let { data, error } = await supabase
+      .from('listings')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    // If not found, try by business_id
+    if (error || !data) {
+      const result = await supabase
+        .from('listings')
+        .select('*')
+        .eq('business_id', id)
+        .single();
+      data = result.data;
+      error = result.error;
+    }
+
+    if (error) throw error;
+    if (data) {
+      console.log(`[supabaseService] getListingById: ✅ listing "${data.company_name}" from DB`);
+      return data;
+    }
+
+    return staticListings.find((l) => l.id === id || l.business_id === id) || null;
+  } catch (err) {
+    console.warn('[supabaseService] getListingById fallback to static:', err.message || err);
+    return staticListings.find((l) => l.id === id || l.business_id === id) || null;
+  }
+}
+
+/**
+ * Get reviews for a listing.
+ * Tries Supabase `listing_reviews` table first.
+ * @param {string} listingId - UUID of the listing
+ */
+export async function getListingReviews(listingId) {
+  try {
+    const { data, error } = await supabase
+      .from('listing_reviews')
+      .select('*')
+      .eq('listing_id', listingId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  } catch (err) {
+    console.warn('[supabaseService] getListingReviews failed:', err.message || err);
+    return [];
+  }
+}
+
+/**
+ * Get unique continents that have listings (for filter dropdowns).
+ */
+export async function getListingsContinents() {
+  try {
+    const { data, error } = await supabase
+      .from('listings')
+      .select('continent')
+      .eq('is_active', true)
+      .eq('is_public', true);
+    if (error) throw error;
+    if (data && data.length > 0) {
+      const unique = [...new Set(data.map((d) => d.continent).filter(Boolean))].sort();
+      return unique.length > 0 ? unique : ['Asia', 'Europe', 'North America', 'South America', 'Africa', 'Oceania'];
+    }
+    return ['Asia', 'Europe', 'North America', 'South America', 'Africa', 'Oceania'];
+  } catch (err) {
+    console.warn('[supabaseService] getListingsContinents fallback:', err.message || err);
+    return ['Asia', 'Europe', 'North America', 'South America', 'Africa', 'Oceania'];
   }
 }
 

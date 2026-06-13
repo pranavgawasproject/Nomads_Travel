@@ -152,6 +152,84 @@ CREATE TABLE IF NOT EXISTS post_likes (
   UNIQUE(user_id, post_id)
 );
 
+-- 11. LISTINGS TABLE (coworking, coliving, hostels, cafes, workation, meeting rooms, private stays)
+CREATE TABLE IF NOT EXISTS listings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  -- Identity
+  business_id TEXT UNIQUE,                    -- e.g. "hub53-canggu-bali"
+  company_name TEXT NOT NULL,                  -- e.g. "Hub53 Coworking"
+  company_title TEXT,                          -- e.g. "Hub53 Coworking — Your Digital Home in Bali"
+  registered_entity_name TEXT,                 -- Legal entity name (optional)
+
+  -- Type & Category
+  company_type TEXT NOT NULL                   -- coworking | coliving | workation | meetingroom | privatestay | hostel | cafe
+    CHECK (company_type IN ('coworking','coliving','workation','meetingroom','privatestay','hostel','cafe')),
+
+  -- Location
+  address TEXT,
+  city TEXT NOT NULL,
+  state TEXT NOT NULL,
+  country TEXT NOT NULL,
+  continent TEXT NOT NULL,
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION,
+  google_map TEXT,                             -- Google Maps link
+
+  -- Media
+  logo_url TEXT,
+  images TEXT[] DEFAULT '{}',                  -- Array of image URLs (ordered)
+
+  -- Details
+  about TEXT,                                  -- Full description
+  inclusions TEXT,                             -- Comma-separated amenities/features
+  services TEXT,                               -- Comma-separated services offered
+  cost TEXT,                                   -- e.g. "$120/mo", "€50/day"
+  units TEXT,                                  -- e.g. "50 seats", "20 rooms"
+  total_seats INTEGER,
+  description TEXT,                            -- Short description / tagline
+  product_name TEXT,                           -- Product/plan name
+
+  -- Quick Stats (for AiProduct detail page)
+  wifi_speed TEXT,                             -- e.g. "250 Mbps"
+  starting_price TEXT,                         -- e.g. "$150/mo"
+  open_hours TEXT,                             -- e.g. "24/7 Access", "8am - 10pm"
+  capacity TEXT,                               -- e.g. "120 Seats"
+
+  -- Contact & Links
+  website TEXT,
+  website_template_link TEXT,
+  contact_name TEXT,                           -- POC name
+  contact_designation TEXT,                    -- POC role
+  contact_email TEXT,
+  contact_phone TEXT,
+  social_links JSONB DEFAULT '{}',             -- e.g. {"whatsapp": "...", "instagram": "..."}
+
+  -- Ratings & Reviews
+  ratings NUMERIC(2,1) DEFAULT 0 CHECK (ratings >= 0 AND ratings <= 5),
+  total_reviews INTEGER DEFAULT 0,
+
+  -- Flags
+  is_active BOOLEAN DEFAULT true,
+  is_public BOOLEAN DEFAULT true,              -- Visible on public site
+  is_registered BOOLEAN DEFAULT false,         -- Has verified registration
+
+  -- Metadata
+  tags TEXT[] DEFAULT '{}',                    -- e.g. ["24/7 Access", "Pool", "Community Events"]
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 12. LISTING REVIEWS TABLE (public read, auth write)
+CREATE TABLE IF NOT EXISTS listing_reviews (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  listing_id UUID REFERENCES listings(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  star_count INTEGER NOT NULL CHECK (star_count >= 1 AND star_count <= 5),
+  description TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- =============================================
 -- ROW LEVEL SECURITY
 -- =============================================
@@ -212,6 +290,18 @@ CREATE POLICY "Users can read own likes" ON post_likes FOR SELECT USING (true);
 CREATE POLICY "Authenticated users can like" ON post_likes FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can unlike" ON post_likes FOR DELETE USING (auth.uid() = user_id);
 
+-- Listings: public read, admin write
+ALTER TABLE listings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Listings are publicly readable" ON listings FOR SELECT USING (true);
+CREATE POLICY "Authenticated users can create listings" ON listings FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Users can update own listings" ON listings FOR UPDATE USING (auth.uid() IS NOT NULL);
+
+-- Listing Reviews: public read, auth write
+ALTER TABLE listing_reviews ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Listing reviews are publicly readable" ON listing_reviews FOR SELECT USING (true);
+CREATE POLICY "Authenticated users can create reviews" ON listing_reviews FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete own reviews" ON listing_reviews FOR DELETE USING (auth.uid() = user_id);
+
 -- =============================================
 -- ENABLE REALTIME
 -- =============================================
@@ -219,3 +309,5 @@ ALTER PUBLICATION supabase_realtime ADD TABLE forum_posts;
 ALTER PUBLICATION supabase_realtime ADD TABLE forum_replies;
 ALTER PUBLICATION supabase_realtime ADD TABLE nomad_profiles;
 ALTER PUBLICATION supabase_realtime ADD TABLE meetups;
+ALTER PUBLICATION supabase_realtime ADD TABLE listings;
+ALTER PUBLICATION supabase_realtime ADD TABLE listing_reviews;
