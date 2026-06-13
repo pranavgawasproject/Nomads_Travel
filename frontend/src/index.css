@@ -114,6 +114,52 @@
   src: url("../src/assets/El_Messiri/amsterdam.ttf");
 }
 
+/* Range slider dark theme styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #06b6d4;
+  border: 2px solid #0f1117;
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+  margin-top: -6px;
+  transition: box-shadow 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.7);
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #06b6d4;
+  border: 2px solid #0f1117;
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
 /* MUI dark overrides */
 .css-1808mag-MuiPaper-root-MuiAccordion-root {
   box-shadow: none !important;

@@ -46,6 +46,12 @@ import AiContentAndCopyright from "./pages/AiContentAndCopyright";
 import AiContentUseRemoval from "./pages/AiContentUseRemoval";
 // import AiJobDetail from "./pages/AiJobDetail";
 import AiDestinationDetail from "./pages/AiDestinationDetail";
+import AiTripTracker from "./pages/AiTripTracker";
+import AiCompare from "./pages/AiCompare";
+import AiCostOfLiving from "./pages/AiCostOfLiving";
+import AiVisaTracker from "./pages/AiVisaTracker";
+import AiNearbyNomads from "./pages/AiNearbyNomads";
+import AiForum from "./pages/AiForum";
 
 const routerConfig = [
   {
@@ -146,6 +152,12 @@ const routerConfig = [
             path: "ai-content-use-removal",
             element: <AiContentUseRemoval />,
           },
+          { path: "trip-tracker", element: <AiTripTracker /> },
+          { path: "compare", element: <AiCompare /> },
+          { path: "cost-of-living", element: <AiCostOfLiving /> },
+          { path: "visa-tracker", element: <AiVisaTracker /> },
+          { path: "nearby", element: <AiNearbyNomads /> },
+          { path: "forum", element: <AiForum /> },
         ],
       },
     ],

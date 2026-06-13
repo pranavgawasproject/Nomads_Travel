@@ -16,7 +16,16 @@ const NAV_ITEMS = [
   { label: "Home", path: "/home" },
   { label: "Explore", path: "/ai-verticals" },
   { label: "Rankings", path: "/world-rankings" },
+  { label: "Compare", path: "/compare" },
+  { label: "Community", path: "/forum" },
   { label: "About", path: "/ai-about" },
+];
+
+const MORE_ITEMS = [
+  { label: "Cost of Living", path: "/cost-of-living" },
+  { label: "Trip Tracker", path: "/trip-tracker" },
+  { label: "Visa Tracker", path: "/visa-tracker" },
+  { label: "Nearby Nomads", path: "/nearby" },
 ];
 
 const AiHeader = () => {
@@ -24,6 +33,7 @@ const AiHeader = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLogoutLoading, setIsLogoutLoading] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -54,6 +64,7 @@ const AiHeader = () => {
   // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
+    setMoreMenuOpen(false);
   }, [location.pathname, location.search]);
 
   const handleAvatarClick = (event) => setAnchorEl(event.currentTarget);
@@ -160,6 +171,44 @@ const AiHeader = () => {
                 </Link>
               );
             })}
+            {/* More dropdown */}
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  setAnchorEl(e.currentTarget);
+                  setMoreMenuOpen(!moreMenuOpen);
+                }}
+                className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  MORE_ITEMS.some((item) => isActivePath(item.path))
+                    ? "text-accent bg-accent/10"
+                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                More
+                <ChevronDown size={14} className={`transition-transform duration-200 ${moreMenuOpen ? "rotate-180" : ""}`} />
+              </button>
+              {moreMenuOpen && (
+                <div className="absolute top-full right-0 mt-2 w-52 glass-card p-2 z-50 animate-slide-down">
+                  {MORE_ITEMS.map((item) => {
+                    const isActive = isActivePath(item.path);
+                    return (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setMoreMenuOpen(false)}
+                        className={`flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${
+                          isActive
+                            ? "text-accent bg-accent/10"
+                            : "text-gray-400 hover:text-white hover:bg-white/5"
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Right: Auth buttons or Avatar */}
@@ -307,6 +356,31 @@ const AiHeader = () => {
         >
           <nav className="max-w-[1440px] mx-auto px-4 py-4 flex flex-col gap-1">
             {NAV_ITEMS.map((item) => {
+              const isActive = isActivePath(item.path);
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "text-accent bg-accent/10"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {item.label}
+                  {isActive && (
+                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-accent" />
+                  )}
+                </Link>
+              );
+            })}
+
+            {/* More section */}
+            <div className="pt-2 pb-1 px-4">
+              <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">More</span>
+            </div>
+            {MORE_ITEMS.map((item) => {
               const isActive = isActivePath(item.path);
               return (
                 <Link
