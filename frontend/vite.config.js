@@ -5,7 +5,20 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0', // Allow access from other devices
-    port: 5173, // Optional: Specify a port (default is 5173)
+    host: '0.0.0.0',
+    port: 5173,
+  },
+  build: {
+    chunkSizeWarningLimit: 2500,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-redux': ['@reduxjs/toolkit', 'react-redux', 'redux-persist'],
+          'vendor-mui': ['@mui/material', '@mui/x-date-pickers', '@emotion/react', '@emotion/styled'],
+          'vendor-utils': ['axios', 'date-fns', 'dayjs', 'lucide-react'],
+        },
+      },
+    },
   },
 });

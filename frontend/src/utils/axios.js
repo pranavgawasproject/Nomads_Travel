@@ -1,17 +1,20 @@
-import axios from 'axios';
+// src/utils/axios.js
+import axios from "axios";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+const BASE_URL = import.meta.env.VITE_PROD_LINK || import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+export const api = axios.create({
+  baseURL: BASE_URL,
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Add a request interceptor
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -26,9 +29,14 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API Error:', error.response?.data || error.message);
+    console.error("API Error:", error.response?.data || error.message);
     return Promise.reject(error);
   }
 );
+
+export const axiosPrivate = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+});
 
 export default api;

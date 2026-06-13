@@ -112,8 +112,9 @@ export default function Map({
   disableTwoFingerScroll = false,
 }) {
   const navigate = useNavigate();
+  const apiKey = import.meta.env.VITE_GOOGLE_API_KEY || "";
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_API_KEY,
+    googleMapsApiKey: apiKey,
   });
   const [hoveredId, setHoveredId] = useState(null);
 
@@ -181,7 +182,8 @@ export default function Map({
     [locations]
   );
 
-  if (!isLoaded) return <div>Loading...</div>;
+  if (!apiKey) return <div className="flex items-center justify-center h-full text-gray-500 bg-[#1a1d2e] rounded-xl">Map requires Google API key</div>;
+  if (!isLoaded) return <div className="flex items-center justify-center h-full text-gray-400 bg-[#1a1d2e] rounded-xl">Loading map...</div>;
   const clusterOptions = {
     styles: [
       {
