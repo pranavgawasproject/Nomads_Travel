@@ -16,7 +16,6 @@ const NAV_ITEMS = [
   { label: "Home", path: "/home" },
   { label: "Explore", path: "/ai-verticals" },
   { label: "Rankings", path: "/world-rankings" },
-  { label: "Career", path: "/ai-career" },
   { label: "About", path: "/ai-about" },
 ];
 

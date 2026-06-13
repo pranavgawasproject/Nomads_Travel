@@ -12,7 +12,6 @@ const getTypingSeenKey = (isLoggedIn) =>
 const gatedRecommendationTitles = new Set([
   "Work From Anywhere",
   "Increase Your Savings",
-  "Advance Your Career",
   "Find Your Community",
 ]);
 
@@ -25,7 +24,6 @@ const goalSlugByTitle = {
   "World Ranking": "worldranking",
   "Work From Anywhere": "workfromanywhere",
   "Increase Your Savings": "increaseyoursavings",
-  "Advance Your Career": "advanceyourcareer",
   "Find Your Community": "findyourcommunity",
 };
 
@@ -48,13 +46,6 @@ const quickActionCards = [
     title: "Increase Savings",
     description: "Cities that maximize your savings potential",
     path: "/savings",
-    isGated: true,
-  },
-  {
-    emoji: "🚀",
-    title: "Advance Career",
-    description: "Top cities to grow your career globally",
-    path: "/career-search",
     isGated: true,
   },
   {
@@ -296,7 +287,7 @@ const AiHome = () => {
 
             <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
               Ask RoamIQ anything about travel, destinations, workation, or
-              career opportunities worldwide
+              living opportunities worldwide
             </p>
           </section>
 

@@ -14,8 +14,9 @@ import AiImageGallery from "./pages/AiImageGallery";
 import AiWorldRankings from "./pages/AiWorldRankingsSearchResults";
 import AiSavingsSearch from "./pages/AiSavingsSearch";
 import AiSavingsSearchResults from "./pages/AiSavingsSearchResults";
-import AiCareerSearch from "./pages/AiCareerSearch";
-import AiCareerSearchResults from "./pages/AiCareerSearchResults";
+// CAREER PAGES DISABLED
+// import AiCareerSearch from "./pages/AiCareerSearch";
+// import AiCareerSearchResults from "./pages/AiCareerSearchResults";
 import AiCompatibleSearch from "./pages/AiCompatibleSearch";
 import AiCompatibleSearchResults from "./pages/AiCompatibleSearchResults";
 import AiHomeLoggedIn from "./pages/AiHomeLoggedIn";
@@ -38,12 +39,12 @@ import AiResetPassword from "./pages/AiResetPassword";
 import AiAbout from "./pages/AiAbout";
 import AiPrivacy from "./pages/AiPrivacy";
 import AiContact from "./pages/AiContact";
-import AiCareer from "./pages/AiCareer";
+// import AiCareer from "./pages/AiCareer";
 import AiFAQ from "./pages/AiFAQ";
 import AiTermsAndConditions from "./pages/AiTermsAndConditions";
 import AiContentAndCopyright from "./pages/AiContentAndCopyright";
 import AiContentUseRemoval from "./pages/AiContentUseRemoval";
-import AiJobDetail from "./pages/AiJobDetail";
+// import AiJobDetail from "./pages/AiJobDetail";
 import AiDestinationDetail from "./pages/AiDestinationDetail";
 
 const routerConfig = [
@@ -65,16 +66,16 @@ const routerConfig = [
           { path: "world-rankings", element: <AiWorldRankings /> },
           { path: "savings", element: <AiSavingsSearch /> },
           { path: "savings/results", element: <AiSavingsSearchResults /> },
-          { path: "career-search", element: <AiCareerSearch /> },
+          // { path: "career-search", element: <AiCareerSearch /> },
           { path: "compatible", element: <AiCompatibleSearch /> },
           {
             path: "compatible/results",
             element: <AiCompatibleSearchResults />,
           },
-          {
-            path: "career-search/results",
-            element: <AiCareerSearchResults />,
-          },
+          // {
+          //   path: "career-search/results",
+          //   element: <AiCareerSearch />,
+          // },
           {
             path: "search/results/:loc?/:attr?",
             element: <AiSearchResults />,
@@ -130,8 +131,8 @@ const routerConfig = [
           { path: "ai-about", element: <AiAbout /> },
           { path: "ai-privacy", element: <AiPrivacy /> },
           { path: "ai-contact", element: <AiContact /> },
-          { path: "ai-career", element: <AiCareer /> },
-          { path: "ai-career/job/:title", element: <AiJobDetail /> },
+          // { path: "ai-career", element: <AiCareer /> },
+          // { path: "ai-career/job/:title", element: <AiJobDetail /> },
           { path: "ai-faq", element: <AiFAQ /> },
           {
             path: "ai-terms-and-conditions",
