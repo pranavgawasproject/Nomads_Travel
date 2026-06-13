@@ -1537,7 +1537,21 @@ export async function getListings(filters = {}) {
       query = query.ilike('country', `%${filters.country}%`);
     }
 
-    const { data, error } = await query;
+    let { data, error } = await query;
+
+    // If is_active/is_public columns don't exist, retry without them
+    if (error && (error.message?.includes('column') || error.code === '42703')) {
+      console.warn('[supabaseService] getListings: is_active/is_public columns missing, retrying without them');
+      let retryQuery = supabase.from('listings').select('*').order('ratings', { ascending: false });
+      if (filters.company_type) retryQuery = retryQuery.eq('company_type', filters.company_type);
+      if (filters.continent) retryQuery = retryQuery.eq('continent', filters.continent);
+      if (filters.city) retryQuery = retryQuery.ilike('city', `%${filters.city}%`);
+      if (filters.country) retryQuery = retryQuery.ilike('country', `%${filters.country}%`);
+      const retry = await retryQuery;
+      data = retry.data;
+      error = retry.error;
+    }
+
     if (error) throw error;
 
     if (data && data.length > 0) {
@@ -1628,11 +1642,19 @@ export async function getListingReviews(listingId) {
  */
 export async function getListingsContinents() {
   try {
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('listings')
       .select('continent')
       .eq('is_active', true)
       .eq('is_public', true);
+
+    // Retry without is_active/is_public if columns don't exist
+    if (error && (error.message?.includes('column') || error.code === '42703')) {
+      const retry = await supabase.from('listings').select('continent');
+      data = retry.data;
+      error = retry.error;
+    }
+
     if (error) throw error;
     if (data && data.length > 0) {
       const unique = [...new Set(data.map((d) => d.continent).filter(Boolean))].sort();

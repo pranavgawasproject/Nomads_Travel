@@ -167,7 +167,7 @@ const AiHome = () => {
             city: c.name,
             country: c.country,
             desc: descriptions[i % descriptions.length],
-            budget: c.cost_usd ? `$${c.cost_usd}/mo` : '',
+            budget: c.costUSD ? `$${c.costUSD}/mo` : '',
             gradient: gradients[i % gradients.length],
           }));
           if (mapped.length > 0) {
