@@ -34,9 +34,9 @@ import { HiCheck } from "react-icons/hi";
 import { aiDestinationCards } from "../constants/aiDestinationCards";
 
 const floatingLabelSx = {
-  color: "black",
-  "&.Mui-focused": { color: "#1976d2" },
-  "&.MuiInputLabel-shrink": { color: "#1976d2" },
+  color: "#94a3b8",
+  "&.Mui-focused": { color: "#06b6d4" },
+  "&.MuiInputLabel-shrink": { color: "#06b6d4" },
 };
 
 const supportOptions = [
@@ -74,7 +74,7 @@ const getFlagIconUrl = (isoCode) =>
 const normalizePrefillValue = (value) => value?.trim().toLowerCase() || "";
 
 const tickMenuItemSx = {
-  "& .tick-icon": { opacity: 0, color: "#1976d2" },
+  "& .tick-icon": { opacity: 0, color: "#06b6d4" },
   "&:hover .tick-icon": { opacity: 1 },
   "&.Mui-selected .tick-icon": { opacity: 1 },
   "&.Mui-selected:hover .tick-icon": { opacity: 1 },
@@ -155,7 +155,7 @@ const AiNewCompanySetup = () => {
         text: "Your form has been submitted. We will get back to you shortly.",
         icon: "success",
         confirmButtonText: "OK",
-        confirmButtonColor: "#0BA9EF",
+        confirmButtonColor: "#06b6d4",
         customClass: {
           confirmButton: "swal2-button--pill",
         },
@@ -328,29 +328,29 @@ const AiNewCompanySetup = () => {
   const messagePortion = typedMessage.slice(messagePrefix.length);
 
   return (
-    <div className="bg-white text-black font-sans">
+    <div className="bg-surface text-gray-200 font-sans animate-fade-in">
       <Container padding={false}>
         <section className="min-h-[85vh] flex items-center justify-center py-2">
           <div className="w-full max-w-5xl md:px-20 lg:px-20">
             <div className="mx-auto mb-0 flex w-full max-w-4xl flex-col items-center gap-2 px-0">
-              <p className="min-h-[3rem] w-full text-left font-play text-[0.95rem] leading-relaxed text-gray-800 sm:min-h-[3.5rem] sm:text-[1rem]">
+              <p className="min-h-[3rem] w-full text-left font-heading text-[0.95rem] leading-relaxed text-gray-200 sm:min-h-[3.5rem] sm:text-[1rem]">
                 {messagePrefix ? (
                   <>
-                    <span className="text-blue-600">{namePortion}</span>
+                    <span className="text-accent">{namePortion}</span>
                     {messagePortion}
                   </>
                 ) : (
                   typedMessage
                 )}
               </p>
-              <h1 className="text-hero min-h-[3rem] text-center font-play">
+              <h1 className="text-hero min-h-[3rem] text-center font-heading">
                 {typedPageHeading}
               </h1>
             </div>
             <Box
               component="form"
               onSubmit={handleSubmit(handleFormSubmit)}
-              className={`bg-white p-0 md:p-0 rounded-2xl ${
+              className={`glass-card p-0 md:p-0 rounded-2xl ${
                 isFormVisible ? "visible" : "invisible"
               }`}
             >
@@ -697,14 +697,14 @@ const AiNewCompanySetup = () => {
                     variant="contained"
                     disabled={isSubmitting}
                     sx={{
-                      bgcolor: "black",
+                      bgcolor: "#94a3b8",
                       borderRadius: 20,
                       px: { xs: 6, md: 14 },
                       py: 1.5,
                       fontSize: "1rem",
                       fontWeight: "600",
                       textTransform: "none",
-                      "&:hover": { bgcolor: "#333" },
+                      "&:hover": { bgcolor: "#0891b2" },
                       width: { xs: "100%", md: "auto" },
                     }}
                   >

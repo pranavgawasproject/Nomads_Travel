@@ -62,12 +62,12 @@ const AiBlogDetails = () => {
   };
 
   return (
-    <div className="min-w-[70%] max-w-[80rem] lg:max-w-[75rem] mx-0 md:mx-auto p-4 lg:p-0">
+    <div className="animate-fade-in min-w-[70%] max-w-[80rem] lg:max-w-[75rem] mx-0 md:mx-auto p-4 lg:p-0">
       {/* <button
         type="button"
         onClick={handleBackButtonClick}
         aria-label="Go back"
-        className="inline-flex items-center justify-center rounded-full border border-primary-blue p-1 text-primary-blue"
+        className="inline-flex items-center justify-center rounded-full border border-accent p-1 text-accent"
       >
         <ArrowLeft size={16} />
       </button> */}
@@ -146,7 +146,7 @@ const AiBlogDetails = () => {
           >
             <button
               type="button"
-              className="absolute -right-3 -top-3 rounded-full bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow"
+              className="absolute -right-3 -top-3 rounded-full bg-surface-200 px-2 py-1 text-sm font-semibold text-gray-300 shadow-card"
               onClick={handleImageClose}
               aria-label="Close image preview"
             >
@@ -198,7 +198,7 @@ const AiBlogDetails = () => {
         <p className="mt-2">
           Read the entire{" "}
           <span
-            className="underline text-primary-blue cursor-pointer"
+            className="underline text-accent cursor-pointer"
             onClick={goToHostsContentCopyright}
           >
             Content and Copyright

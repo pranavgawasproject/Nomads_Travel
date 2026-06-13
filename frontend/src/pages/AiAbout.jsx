@@ -55,16 +55,16 @@ const AiAbout = () => {
     //   });
 
     const floatingLabelSx = {
-        color: "black",
-        "&.Mui-focused": { color: "#1976d2" },
-        "&.MuiInputLabel-shrink": { color: "#1976d2" },
+        color: "#94a3b8",
+        "&.Mui-focused": { color: "#06b6d4" },
+        "&.MuiInputLabel-shrink": { color: "#06b6d4" },
     };
 
     return (
-        <div>
+		<div className="animate-fade-in">
             <section className="px-6 md:px-12 lg:px-28 py-8 md:py-2 flex flex-col gap-10">
                 {/* Header */}
-                <div className="flex flex-col items-center relative font-comic uppercase font-bold text-secondary-dark text-2xl md:text-4xl lg:text-5xl leading-tight mb-4">
+                <div className="flex flex-col items-center relative font-heading uppercase font-bold text-gray-200 text-2xl md:text-4xl lg:text-5xl leading-tight mb-4">
                     <div className="relative inline-block text-center">
                         <h3>About RoamIQ</h3>
                         <img
@@ -170,11 +170,11 @@ const AiAbout = () => {
 
             {/* Success Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-                    <div className="bg-white rounded shadow-lg w-full max-w-md p-6 relative">
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
+                    <div className="glass-card w-full max-w-md p-6 relative">
                         <button
                             onClick={handleCloseModal}
-                            className="absolute top-2 right-2 text-gray-600 hover:text-black"
+                            className="absolute top-2 right-2 text-gray-400 hover:text-white"
                         >
                             <AiOutlineClose size={20} />
                         </button>
@@ -185,7 +185,7 @@ const AiAbout = () => {
                         <div className="text-right">
                             <button
                                 onClick={handleCloseModal}
-                                className="bg-black text-white px-4 py-2 rounded hover:opacity-90"
+                                className="bg-accent text-surface px-4 py-2 rounded hover:opacity-90"
                             >
                                 Close
                             </button>
@@ -196,7 +196,7 @@ const AiAbout = () => {
 
             {/* Loading Spinner */}
             {loading && (
-                <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-50 z-50">
+                <div className="fixed inset-0 flex items-center justify-center bg-surface/50 z-50">
                     <Spinners animation="border" variant="dark" />
                 </div>
             )}

@@ -18,13 +18,13 @@ const AiPrivacy = () => {
                         your personal information when you use our SaaS platform (the
                         "Service"), located at{" "}
                         {/* <span
-              className="text-primary-blue underline cursor-pointer"
+              className="text-accent underline cursor-pointer"
               onClick={() => navigate("/hosts")}
             >
               www.yourdomain.com
             </span> */}
                         <span
-                            className="text-primary-blue underline cursor-pointer"
+                            className="text-accent underline cursor-pointer"
                             onClick={() => (window.location.href = "https://yourdomain.com")}
                         >
                             www.yourdomain.com
@@ -49,7 +49,7 @@ const AiPrivacy = () => {
                     </p>
 
                     <div className="flex flex-col gap-2 mt-2">
-                        <p className="text-primary-blue italic">1.1 Personal Information</p>
+                        <p className="text-accent italic">1.1 Personal Information</p>
                         <p>
                             This refers to any information that identifies you personally,
                             including but not limited to:
@@ -65,7 +65,7 @@ const AiPrivacy = () => {
                     </div>
 
                     <div className="flex flex-col gap-2 mt-2">
-                        <p className="text-primary-blue italic">1.2 Usage Data</p>
+                        <p className="text-accent italic">1.2 Usage Data</p>
                         <p>
                             We may automatically collect information about how you use our
                             Service, including:
@@ -81,7 +81,7 @@ const AiPrivacy = () => {
                     </div>
 
                     <div className="flex flex-col gap-2 mt-2">
-                        <p className="text-primary-blue italic">
+                        <p className="text-accent italic">
                             1.3 Cookies and Tracking Technologies
                         </p>
                         <p>
@@ -136,7 +136,7 @@ const AiPrivacy = () => {
                     </p>
 
                     <div className="flex flex-col gap-2 mt-2">
-                        <p className="text-primary-blue italic">3.1 Service Providers</p>
+                        <p className="text-accent italic">3.1 Service Providers</p>
                         <p>
                             We may share your information with trusted third-party service
                             providers that assist us in delivering the Service, such as
@@ -148,7 +148,7 @@ const AiPrivacy = () => {
                     </div>
 
                     <div className="flex flex-col gap-2 mt-2">
-                        <p className="text-primary-blue italic">3.2 Legal Obligations</p>
+                        <p className="text-accent italic">3.2 Legal Obligations</p>
                         <p>
                             We may disclose your information if required by law, court order,
                             or other legal processes, or if we believe it is necessary to
@@ -158,7 +158,7 @@ const AiPrivacy = () => {
                     </div>
 
                     <div className="flex flex-col gap-2 mt-2">
-                        <p className="text-primary-blue italic">3.3 Business Transfers</p>
+                        <p className="text-accent italic">3.3 Business Transfers</p>
                         <p>
                             In the event of a merger, acquisition, sale of assets, or
                             bankruptcy, your personal information may be transferred to a new
@@ -216,7 +216,7 @@ const AiPrivacy = () => {
                     </ul>
                     <p className="mt-3">
                         To exercise any of these rights, please contact us at{" "}
-                        <a className="text-primary-blue" href="mailto:hello@roamiq.com">
+                        <a className="text-accent" href="mailto:hello@roamiq.com">
                             hello@roamiq.com
                         </a>
                         . We may request information to verify your identity before
@@ -239,7 +239,7 @@ const AiPrivacy = () => {
                         do not knowingly collect personal information from children. If you
                         believe we have collected personal data from a child, please contact
                         us at{" "}
-                        <a className="text-primary-blue" href="mailto:hello@roamiq.com">
+                        <a className="text-accent" href="mailto:hello@roamiq.com">
                             hello@roamiq.com
                         </a>
                         , and we will take appropriate steps to delete that information.
@@ -264,13 +264,13 @@ const AiPrivacy = () => {
                         <span>RoamIQ Technologies</span>
                         <span>contact@roamiq.com</span>
                         <a
-                            className="text-primary-blue mt-1"
+                            className="text-accent mt-1"
                             href="mailto:hello@roamiq.com"
                         >
                             hello@roamiq.com
                         </a>
                         <span
-                            className="text-primary-blue cursor-pointer max-w-fit"
+                            className="text-accent cursor-pointer max-w-fit"
                             onClick={() => navigate("/ai-contact")}
                         >
                             Contact us
@@ -282,8 +282,8 @@ const AiPrivacy = () => {
     ];
 
     return (
-        <div className="flex flex-col gap-10 px-6 md:px-12 lg:px-28 pb-8 md:pb-12 pt-0 text-[#364D59]">
-            <div className="flex flex-col items-center relative font-comic uppercase font-bold text-secondary-dark text-2xl md:text-4xl lg:text-5xl leading-tight">
+        <div className="animate-fade-in flex flex-col gap-10 px-6 md:px-12 lg:px-28 pb-8 md:pb-12 pt-0 text-gray-300">
+            <div className="flex flex-col items-center relative font-heading uppercase font-bold text-gray-200 text-2xl md:text-4xl lg:text-5xl leading-tight">
                 <div className="relative inline-block text-center">
                     <h3>Privacy Policy</h3>
                     <img
@@ -305,7 +305,7 @@ const AiPrivacy = () => {
                             )}
                             <p className="text-content">{section.content}</p>
                         </div>
-                        {i < sections.length - 1 && <hr className="border-gray-300" />}
+                        {i < sections.length - 1 && <hr className="border-glass-border" />}
                     </div>
                 ))}
             </div>

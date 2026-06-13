@@ -164,36 +164,36 @@ const AiCompatibleSearchResults = () => {
   }, [headingText]);
 
   return (
-    <div className="min-h-full bg-white">
+    <div className="animate-fade-in min-h-full bg-surface">
       <main className="py-8">
         <div className="min-w-[75%] max-w-[80rem] lg:max-w-[80rem] mx-0 px-6 sm:px-6 lg:mx-auto lg:px-0">
-          <div className=" rounded-[10px] bg-white py-6 px-4">
+          <div className=" glass-card py-6 px-4">
             <div className="flex items-center gap-5">
               <button
                 type="button"
                 onClick={() => navigate("/compatible")}
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-sky-500 text-sky-500"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-accent text-accent"
                 aria-label="Go back"
               >
                 <HiOutlineArrowLeft size={18} />
               </button>
 
-              <div className="flex flex-1 items-center rounded-full border border-black/15 bg-white px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.03)] ml-20 mr-36 ">
+              <div className="flex flex-1 items-center rounded-full border border-glass-border bg-surface-50 px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.03)] ml-20 mr-36 ">
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="rounded-full border border-black/30 px-4 py-2 text-xs font-medium text-black/85">
+                  <div className="rounded-full border border-glass-border px-4 py-2 text-xs font-medium text-gray-200">
                     Best For You
                   </div>
                   {selectedBadges.length ? (
                     selectedBadges.map((badge) => (
                       <div
                         key={badge}
-                        className="rounded-full border border-black/30 px-4 py-2 text-xs font-medium text-black/85"
+                        className="rounded-full border border-glass-border px-4 py-2 text-xs font-medium text-gray-200"
                       >
                         {badge}
                       </div>
                     ))
                   ) : (
-                    <p className="px-2 text-xs text-black/45">
+                    <p className="px-2 text-xs text-gray-500">
                       No badges selected
                     </p>
                   )}
@@ -203,12 +203,12 @@ const AiCompatibleSearchResults = () => {
                     type="button"
                     onClick={handleClearSelection}
                     disabled={!selectedBadges.length}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-black/70 transition-colors hover:bg-black/5 hover:text-black disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface-200 text-gray-400 transition-colors hover:bg-glass-hover hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                     aria-label="Clear selected badges"
                   >
                     <HiOutlineX size={24} />
                   </button>
-                  <HiOutlineSearch size={34} className="text-black/90" />
+                  <HiOutlineSearch size={34} className="text-accent" />
                 </div>
               </div>
             </div>
@@ -230,8 +230,8 @@ const AiCompatibleSearchResults = () => {
                           onClick={() => handleBadgeClick(badge)}
                           className={`shrink-0 rounded-full border px-6 py-2 text-xs font-medium transition-colors lg:text-md ${
                             isActive
-                              ? "border-sky-500 bg-sky-500 text-white"
-                              : "border-black/80 bg-white text-black/90 hover:border-sky-500"
+                              ? "border-accent bg-accent text-white"
+                              : "border-gray-600 bg-surface-50 text-gray-200 hover:border-accent"
                           }`}
                         >
                           {badge}
@@ -244,7 +244,7 @@ const AiCompatibleSearchResults = () => {
 
               <div className="relative mt-8">
                 <div className="relative z-10">
-                  <p className="text-3xl font-medium leading-snug text-black/85 lg:text-lg">
+                  <p className="text-3xl font-medium leading-snug text-gray-200 lg:text-lg">
                     {typedHeading}
                   </p>
 
@@ -270,16 +270,16 @@ const AiCompatibleSearchResults = () => {
                         />
                         <div className="mt-2 flex items-start justify-between gap-3">
                           <div>
-                            <h3 className="text-[1.2rem] font-semibold text-black/90">
+                            <h3 className="text-[1.2rem] font-semibold text-gray-200">
                               {destination.city}
                             </h3>
                           </div>
-                          <p className="mt-1 text-[1rem] font-semibold text-black/90">
+                          <p className="mt-1 text-[1rem] font-semibold text-gray-200">
                             {destination.country}
                           </p>
                         </div>
                         <div>
-                          <p className="text-[0.9rem] text-black/60">
+                          <p className="text-[0.9rem] text-gray-400">
                             {/* {destination.suggestions} Suggestions */}
                             Find activation options
                           </p>

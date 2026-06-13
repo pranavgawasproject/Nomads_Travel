@@ -1,6 +1,4 @@
 import { useLocation } from "react-router-dom";
-import GlobalListingsMap from "./GlobalListingsMap";
-import GlobalListingsList from "./GlobalListingsList"; // Assuming you split list logic
 import AiGlobalListingsMap from "./AiGlobalListingsMap";
 import AiGlobalListingsList from "./AiGlobalListingsList";
 

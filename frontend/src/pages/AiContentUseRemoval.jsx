@@ -52,9 +52,9 @@ const AiContentUseRemoval = () => {
     const onSubmit = (data) => submitRemovalForm(data);
 
     const floatingLabelSx = {
-        color: "black",
-        "&.Mui-focused": { color: "#1976d2" },
-        "&.MuiInputLabel-shrink": { color: "#1976d2" },
+        color: "#94a3b8",
+        "&.Mui-focused": { color: "#06b6d4" },
+        "&.MuiInputLabel-shrink": { color: "#06b6d4" },
     };
 
     // -------------------------
@@ -302,11 +302,11 @@ const AiContentUseRemoval = () => {
                                 type="submit"
                                 variant="contained"
                                 sx={{
-                                    bgcolor: "black",
+                                    bgcolor: "#94a3b8",
                                     borderRadius: 20,
                                     px: 10,
                                     py: 1,
-                                    "&:hover": { bgcolor: "#333" },
+                                    "&:hover": { bgcolor: "#0891b2" },
                                 }}
                             >
                                 {isPending && (
@@ -326,7 +326,7 @@ const AiContentUseRemoval = () => {
                         To follow up after form submission, please contact us via email at{" "}
                         <a
                             href="mailto:hello@roamiq.com"
-                            className="text-primary-blue underline"
+                            className="text-accent underline"
                         >
                             hello@roamiq.com
                         </a>
@@ -357,7 +357,7 @@ const AiContentUseRemoval = () => {
                         <span>
                             <a
                                 href="mailto:hello@roamiq.com"
-                                className="text-primary-blue underline"
+                                className="text-accent underline"
                             >
                                 hello@roamiq.com
                             </a>
@@ -367,7 +367,7 @@ const AiContentUseRemoval = () => {
                                 href="https://yourdomain.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-primary-blue underline mt-1"
+                                className="text-accent underline mt-1"
                             >
                                 https://yourdomain.com
                             </a>
@@ -379,9 +379,9 @@ const AiContentUseRemoval = () => {
     ];
 
     return (
-        <div className="flex flex-col gap-10 px-6 md:px-12 lg:px-28 pb-8 md:pb-12 pt-0 text-[#364D59]">
+        <div className="animate-fade-in flex flex-col gap-10 px-6 md:px-12 lg:px-28 pb-8 md:pb-12 pt-0 text-gray-300">
             {/* Header */}
-            <div className="flex flex-col items-center relative font-comic uppercase font-bold text-secondary-dark text-2xl md:text-4xl lg:text-5xl leading-tight">
+            <div className="flex flex-col items-center relative font-heading uppercase font-bold text-gray-200 text-2xl md:text-4xl lg:text-5xl leading-tight">
                 <div className="relative inline-block text-center">
                     <h3>Content Use & Removal Policy</h3>
                     <img
@@ -402,7 +402,7 @@ const AiContentUseRemoval = () => {
                             </h4>
                             <div className="text-content">{section.content}</div>
                         </div>
-                        {i < sections.length - 1 && <hr className="border-gray-300" />}
+                        {i < sections.length - 1 && <hr className="border-glass-border" />}
                     </div>
                 ))}
             </div>

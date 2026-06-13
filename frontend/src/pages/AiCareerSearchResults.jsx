@@ -179,29 +179,29 @@ const AiCareerSearchResults = () => {
   }, [headingText, headingAnimationKey]);
 
   return (
-    <div className="min-h-full bg-white">
+    <div className="animate-fade-in min-h-full bg-surface">
       <main className="py-8">
         <div className="min-w-[75%] max-w-[80rem] lg:max-w-[80rem] mx-0 px-6 sm:px-6 lg:mx-auto lg:px-0">
-          <div className=" rounded-[10px] bg-white py-6 px-4">
+          <div className=" glass-card py-6 px-4">
             <div className="flex items-center gap-5">
               <button
                 type="button"
                 onClick={() => navigate("/career-search")}
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-sky-500 text-sky-500"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-accent text-accent"
                 aria-label="Go back"
               >
                 <HiOutlineArrowLeft size={18} />
               </button>
 
-              <div className="flex flex-1 items-center rounded-full border border-black/15 bg-white px-4 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.03)] ml-20 mr-36 ">
+              <div className="flex flex-1 items-center rounded-full border border-glass-border bg-surface-50 px-4 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.03)] ml-20 mr-36 ">
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="rounded-full border border-black/30 px-4 py-2 text-xs font-medium text-black/85">
+                  <div className="rounded-full border border-glass-border px-4 py-2 text-xs font-medium text-gray-200">
                     Under 2100$
                   </div>
-                  {/* <div className="rounded-full border border-black/30 px-4 py-2 text-xs font-medium text-black/85">
+                  {/* <div className="rounded-full border border-glass-border px-4 py-2 text-xs font-medium text-gray-200">
                     {selectedHeadingFilter}
                   </div>
-                  <div className="rounded-full border border-black/30 px-4 py-2 text-xs font-medium text-black/85">
+                  <div className="rounded-full border border-glass-border px-4 py-2 text-xs font-medium text-gray-200">
                     {currentSelectedOption}
                   </div> */}
                 </div>
@@ -209,12 +209,12 @@ const AiCareerSearchResults = () => {
                   <button
                     type="button"
                     onClick={() => navigate("/career-search")}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-black/70 transition-colors hover:bg-black/5 hover:text-black"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface-200 text-gray-400 transition-colors hover:bg-glass-hover hover:text-white"
                     aria-label="Clear search and go back"
                   >
                     <HiOutlineX size={24} />
                   </button>
-                  <HiOutlineSearch size={34} className="text-black/90" />
+                  <HiOutlineSearch size={34} className="text-accent" />
                 </div>
               </div>
             </div>
@@ -233,8 +233,8 @@ const AiCareerSearchResults = () => {
                         onClick={() => handleFilterClick(filter)}
                         className={`rounded-full border px-6 py-2 text-xs font-medium transition-colors lg:text-md ${
                           isActive
-                            ? "border-sky-500 bg-sky-500 text-white"
-                            : "border-black/80 bg-white text-black/90 hover:border-sky-500"
+                            ? "border-accent bg-accent text-white"
+                            : "border-gray-600 bg-surface-50 text-gray-200 hover:border-accent"
                         }`}
                       >
                         {filter}
@@ -245,13 +245,13 @@ const AiCareerSearchResults = () => {
 
                 {activeFilter && isFilterOptionsOpen && (
                   <div className="absolute left-0 top-full z-40 mt-4 w-full max-w-[220px]">
-                    <ul className="space-y-2 rounded-lg border border-sky-400 bg-white px-2 py-2 shadow-sm">
+                    <ul className="space-y-2 rounded-lg border border-accent/50 bg-surface-50 px-2 py-2 shadow-card">
                       {filterOptions[activeFilter].map((option) => (
                         <li key={option}>
                           <button
                             type="button"
                             onClick={() => handleOptionClick(option)}
-                            className="w-full rounded-md px-2 py-2 text-left text-sm text-black/90 hover:bg-sky-50"
+                            className="w-full rounded-md px-2 py-2 text-left text-sm text-gray-200 hover:bg-accent/10"
                           >
                             {option}
                           </button>
@@ -268,12 +268,12 @@ const AiCareerSearchResults = () => {
                     type="button"
                     aria-label="Close filter options"
                     onClick={() => setIsFilterOptionsOpen(false)}
-                    className="absolute inset-0 z-20 rounded-2xl bg-white/55 backdrop-blur-[1px]"
+                    className="absolute inset-0 z-20 rounded-2xl bg-surface/55 backdrop-blur-[1px]"
                   />
                 )}
 
                 <div className="relative z-10">
-                  <p className="text-3xl font-medium leading-snug text-black/85 lg:text-lg">
+                  <p className="text-3xl font-medium leading-snug text-gray-200 lg:text-lg">
                     {typedHeading}
                   </p>
 
@@ -299,16 +299,16 @@ const AiCareerSearchResults = () => {
                         />
                         <div className="mt-2 flex items-start justify-between gap-3">
                           <div>
-                            <h3 className="text-[1.2rem] font-semibold text-black/90">
+                            <h3 className="text-[1.2rem] font-semibold text-gray-200">
                               {destination.city}
                             </h3>
                           </div>
-                          <p className="mt-1 text-[1rem] font-semibold text-black/90">
+                          <p className="mt-1 text-[1rem] font-semibold text-gray-200">
                             {destination.country}
                           </p>
                         </div>
                         <div>
-                          <p className="text-[0.9rem] text-black/60">
+                          <p className="text-[0.9rem] text-gray-400">
                             {/* {destination.suggestions} Suggestions */}
                             Find activation options
                           </p>

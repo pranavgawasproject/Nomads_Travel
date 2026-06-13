@@ -85,7 +85,7 @@ const HorizontalScrollWrapper = ({ children, title }) => {
   return (
     <div className="relative group/scroll mb-6">
       <div className="flex items-center justify-between mb-4 gap-2">
-        <h2 className="text-sm sm:text-base md:text-subtitle text-secondary-dark font-semibold truncate leading-tight">
+        <h2 className="text-sm sm:text-base md:text-subtitle text-gray-200 font-semibold truncate leading-tight">
           {title}
         </h2>
       </div>
@@ -642,9 +642,8 @@ const AiGlobalListingsMap = () => {
         lng: item.longitude,
         name: item.companyName,
         location: item.city,
-        reviews: item.reviewCount,
-        rating: item.ratings || 0,
         reviews: item.totalReviews || 0,
+        rating: item.ratings || 0,
         image:
           item.images?.[0]?.url ||
           "https://biznest.co.in/assets/img/projects/subscription/Managed%20Workspace.webp",
@@ -684,7 +683,7 @@ const AiGlobalListingsMap = () => {
             onBack={() => navigate(-1)}
             onClear={() => navigate("/search/results")}
             heading={
-              <p className="mt-6 mb-6 flex items-center gap-2 text-sm font-medium leading-snug text-black/85 lg:text-[0.8rem] font-play">
+              <p className="mt-6 mb-6 flex items-center gap-2 text-sm font-medium leading-snug text-gray-200 lg:text-[0.8rem] font-heading">
                 {!isSecondHeadingPhase && (
                   <span
                     className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black border-b-transparent"
@@ -712,7 +711,7 @@ const AiGlobalListingsMap = () => {
                         key={cat.value}
                         type="button"
                         onClick={() => handleCategoryClick(cat.value)}
-                        className="text-black px-1 py-2 hover:text-black transition flex items-center justify-center w-full"
+                        className="text-gray-200 px-1 py-2 hover:text-gray-200 transition flex items-center justify-center w-full"
                       >
                         {iconSrc ? (
                           <div className="h-10 w-full flex flex-col gap-0">
@@ -734,7 +733,7 @@ const AiGlobalListingsMap = () => {
 
               {/* <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="flex justify-around md:w-full lg:w-full border-2 bg-gray-50 rounded-full p-0 items-center"
+                className="flex justify-around md:w-full lg:w-full border-2 bg-surface-50 rounded-full p-0 items-center"
               >
                 <Controller
                   name="continent"
@@ -750,7 +749,7 @@ const AiGlobalListingsMap = () => {
                     />
                   )}
                 />
-                <div className="w-px h-10 bg-gray-300 mx-2 my-auto" />
+                <div className="w-px h-10 bg-glass-border mx-2 my-auto" />
                 <Controller
                   name="country"
                   control={control}
@@ -766,7 +765,7 @@ const AiGlobalListingsMap = () => {
                     />
                   )}
                 />
-                <div className="w-px h-10 bg-gray-300 mx-2 my-auto" />
+                <div className="w-px h-10 bg-glass-border mx-2 my-auto" />
                 <Controller
                   name="location"
                   control={control}
@@ -782,7 +781,7 @@ const AiGlobalListingsMap = () => {
                     />
                   )}
                 />
-                <div className="w-px h-10 bg-gray-300 mx-2 my-auto" />
+                <div className="w-px h-10 bg-glass-border mx-2 my-auto" />
                 <Controller
                   name="count"
                   control={control}
@@ -800,7 +799,7 @@ const AiGlobalListingsMap = () => {
                 />
                 <button
                   type="submit"
-                  className="w-fit h-full bg-[#FF5757] text-white p-5 text-subtitle rounded-full"
+                  className="w-fit h-full bg-accent text-white p-5 text-subtitle rounded-full"
                 >
                   <IoSearch />
                 </button>
@@ -876,7 +875,7 @@ const AiGlobalListingsMap = () => {
                     ) : forMapsData?.length ? (
                       <Map locations={forMapsData} />
                     ) : (
-                      <div className="h-full flex items-center justify-center text-gray-500 text-sm border border-dotted rounded-lg">
+                      <div className="h-full flex items-center justify-center text-gray-400 text-sm border border-dotted rounded-lg">
                         Map data not available.
                       </div>
                     )}
@@ -896,11 +895,11 @@ const AiGlobalListingsMap = () => {
             {/* Floating Search Bar */}
             <button
               onClick={() => setShowMobileSearch(true)}
-              className="pointer-events-auto w-full max-w-[320px] bg-white shadow-2xl rounded-full py-2 px-4 flex items-center justify-between border border-gray-100 hover:scale-[1.02] transition-transform active:scale-95"
-              style={{ boxShadow: "0 8px 16px rgba(0,0,0,0.15)" }}
+              className="pointer-events-auto w-full max-w-[320px] bg-surface-50 shadow-glass rounded-full py-2 px-4 flex items-center justify-between border border-glass-border hover:scale-[1.02] transition-transform active:scale-95"
+              
             >
               <div className="flex flex-col items-start overflow-hidden flex-1">
-                <span className="text-[11px] font-bold text-gray-900 truncate w-full text-left">
+                <span className="text-[11px] font-bold text-gray-200 truncate w-full text-left">
                   {`${(formData?.country || "Country").charAt(0).toUpperCase() + (formData?.country || "Country").slice(1)} . ${
                     formData?.location
                       ? formData.location
@@ -923,7 +922,7 @@ const AiGlobalListingsMap = () => {
                   }`}
                 </span>
               </div>
-              <div className="bg-[#FF5757] p-1.5 rounded-full text-white ml-2 flex-shrink-0 shadow-sm">
+              <div className="bg-accent p-1.5 rounded-full text-surface ml-2 flex-shrink-0 shadow-glow-sm">
                 <IoSearch size={16} />
               </div>
             </button>
@@ -936,10 +935,10 @@ const AiGlobalListingsMap = () => {
                   <button
                     key={cat.value}
                     onClick={() => handleCategoryClick(cat.value)}
-                    className={`flex-shrink-0 snap-start px-4 py-1.5 rounded-full text-[11px] font-semibold shadow-md transition-colors ${
+                    className={`flex-shrink-0 snap-start px-4 py-1.5 rounded-full text-[11px] font-semibold shadow-card transition-colors ${
                       isActive
-                        ? "bg-blue-50 border border-primary-blue text-primary-blue"
-                        : "bg-white/95 backdrop-blur-md border border-gray-200 text-gray-800 hover:bg-gray-50"
+                        ? "bg-accent/15 border border-accent text-accent"
+                        : "bg-surface-50/95 backdrop-blur-md border border-glass-border text-gray-300 hover:bg-surface-50"
                     }`}
                   >
                     {cat.label}
@@ -958,9 +957,9 @@ const AiGlobalListingsMap = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[1002] flex items-start justify-center lg:hidden bg-white"
+              className="fixed inset-0 z-[1002] flex items-start justify-center lg:hidden bg-surface-50"
             >
-              <motion.div className="bg-white shadow-2xl overflow-auto p-4 rounded-b-3xl h-screen w-full">
+              <motion.div className="bg-surface-50 shadow-glass overflow-auto p-4 rounded-b-3xl h-screen w-full">
                 <div className="flex justify-between items-center mb-10">
                   <div>&nbsp;</div>
                   <h3 className="text-xl font-semibold">Search</h3>
@@ -968,7 +967,7 @@ const AiGlobalListingsMap = () => {
                     onClick={() => {
                       setShowMobileSearch(false);
                     }}
-                    className="text-gray-500 text-xl p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    className="text-gray-400 text-xl p-2 hover:bg-surface-100 rounded-full transition-colors"
                   >
                     &times;
                   </button>
@@ -1035,7 +1034,7 @@ const AiGlobalListingsMap = () => {
                   />
                   <button
                     type="submit"
-                    className="w-full bg-[#FF5757] text-white py-5 rounded-full"
+                    className="w-full bg-accent text-white py-5 rounded-full"
                   >
                     <IoSearch className="inline mr-2" />
                     Search
@@ -1059,7 +1058,7 @@ const AiGlobalListingsMap = () => {
                   ) : forMapsData?.length ? (
                     <Map locations={forMapsData} />
                   ) : (
-                    <div className="h-full flex items-center justify-center text-gray-500 text-sm border border-dotted rounded-lg">
+                    <div className="h-full flex items-center justify-center text-gray-400 text-sm border border-dotted rounded-lg">
                       Map data not available.
                     </div>
                   )}
@@ -1098,18 +1097,18 @@ const AiGlobalListingsMap = () => {
                 stiffness: 300,
                 velocity: 2,
               }}
-              className={`fixed bottom-0 left-0 right-0 bg-white shadow-[0_-8px_30px_rgb(0,0,0,0.12)] z-[1100] px-6 rounded-t-[24px] lg:hidden ${
+              className={`fixed bottom-0 left-0 right-0 bg-surface-50 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] z-[1100] px-6 rounded-t-[24px] lg:hidden ${
                 showListings ? "h-[calc(100vh-180px)]" : "h-[25vh]"
               }`}
             >
               <div
-                className="flex justify-center py-4 sticky top-0 z-10 bg-white cursor-pointer"
+                className="flex justify-center py-4 sticky top-0 z-10 bg-surface-50 cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowListings((prev) => !prev);
                 }}
               >
-                <div className="w-12 h-1.5 rounded-full bg-gray-300"></div>
+                <div className="w-12 h-1.5 rounded-full bg-gray-600"></div>
               </div>
 
               <div
@@ -1127,7 +1126,7 @@ const AiGlobalListingsMap = () => {
                 {formData?.category ? (
                   <div className="pb-20">
                     <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-sm sm:text-base md:text-subtitle text-secondary-dark font-semibold truncate leading-tight">
+                      <h2 className="text-sm sm:text-base md:text-subtitle text-gray-200 font-semibold truncate leading-tight">
                         {`Popular ${categoryOptions.find((c) => c.value === formData.category)?.label || "Listings"} in ${
                           selectedLocationLabel || "Unknown"
                         }`}
@@ -1161,7 +1160,7 @@ const AiGlobalListingsMap = () => {
                               />
                             </div>
                           ) : (
-                            <div className="text-center py-10 text-gray-500">
+                            <div className="text-center py-10 text-gray-400">
                               No listings found for this category.
                             </div>
                           );
@@ -1229,16 +1228,16 @@ const AiGlobalListingsMap = () => {
                               <div className="w-[calc(85%-0.5rem)] md:w-[calc(33.33%-1.25rem)] lg:w-[calc(20%-1.5rem)] flex-shrink-0 snap-start">
                                 <button
                                   onClick={() => handleShowMoreClick(type)}
-                                  className="w-full aspect-square border-2 border-gray-100 rounded-3xl flex flex-col items-center justify-start pt-12 gap-3 hover:border-primary-blue hover:shadow-md transition-all bg-gray-50/30 group"
+                                  className="w-full aspect-square border-2 border-glass-border rounded-3xl flex flex-col items-center justify-start pt-12 gap-3 hover:border-accent hover:shadow-card transition-all bg-surface-50/30 group"
                                 >
-                                  <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
+                                  <div className="w-16 h-16 rounded-full bg-surface-50 flex items-center justify-center group-hover:bg-surface-100 transition-colors">
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       fill="none"
                                       viewBox="0 0 24 24"
                                       strokeWidth={2}
                                       stroke="currentColor"
-                                      className="w-8 h-8 text-gray-400 group-hover:text-gray-600"
+                                      className="w-8 h-8 text-gray-400 group-hover:text-gray-400"
                                     >
                                       <path
                                         strokeLinecap="round"
@@ -1247,7 +1246,7 @@ const AiGlobalListingsMap = () => {
                                       />
                                     </svg>
                                   </div>
-                                  <span className="text-lg font-medium text-gray-600 group-hover:text-gray-900">
+                                  <span className="text-lg font-medium text-gray-400 group-hover:text-gray-200">
                                     View All
                                   </span>
                                 </button>
@@ -1257,7 +1256,7 @@ const AiGlobalListingsMap = () => {
                         );
                       })
                     ) : (
-                      <div className="col-span-full text-center text-sm text-gray-500 border border-dotted rounded-lg p-4">
+                      <div className="col-span-full text-center text-sm text-gray-400 border border-dotted rounded-lg p-4">
                         No listings found.
                       </div>
                     )}
@@ -1300,7 +1299,7 @@ const AiGlobalListingsMap = () => {
               },
             )
           }
-          className="bg-[#222222] text-white px-5 py-3 rounded-full flex items-center gap-2 shadow-xl hover:scale-105 transition-transform active:scale-95"
+          className="bg-surface-200 text-white px-5 py-3 rounded-full flex items-center gap-2 shadow-glass hover:scale-105 transition-transform active:scale-95"
         >
           <span className="text-sm font-semibold tracking-wide">Show list</span>
           <svg

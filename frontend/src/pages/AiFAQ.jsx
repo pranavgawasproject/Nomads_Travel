@@ -85,7 +85,7 @@ const faqs = [
             <>
                 Write to us at{" "}
                 <a
-                    className="RoamIQBLUE text-decoration-none"
+                    className="text-accent no-underline"
                     href="mailto:hello@roamiq.com"
                 >
                     hello@roamiq.com
@@ -107,7 +107,7 @@ const faqs = [
         a: (
             <>
                 Yes, we welcome contributors and applicants. Reach us at{" "}
-                <a className="RoamIQBLUE text-decoration-none" href="mailto:careers@roamiq.com">
+                <a className="text-accent no-underline" href="mailto:careers@roamiq.com">
                     careers@roamiq.com
                 </a>{" "}
                 or apply from our careers page.
@@ -122,8 +122,8 @@ const faqs = [
 
 const AiFAQ = () => {
     return (
-        <div className="flex flex-col gap-10 px-6 md:px-12 lg:px-28 pb-8 md:pb-12 pt-0 text-[#364D59]">
-            <div className="flex flex-col items-center relative font-comic uppercase font-bold text-secondary-dark text-2xl md:text-3xl lg:text-4xl leading-tight">
+        <div className="animate-fade-in flex flex-col gap-10 px-6 md:px-12 lg:px-28 pb-8 md:pb-12 pt-0 text-gray-300">
+            <div className="flex flex-col items-center relative font-heading uppercase font-bold text-gray-200 text-2xl md:text-3xl lg:text-4xl leading-tight">
                 <h3 className="text-center">Frequently Asked Questions (FAQ)</h3>
                 <img
                     src={blueUnderline}
@@ -135,20 +135,20 @@ const AiFAQ = () => {
             <div className="space-y-8">
                 {faqs.map((item, i) => (
                     <div key={i}>
-                        <div className="flex flex-col gap-4 font-sans focus-within:bg-gray-50 transition-colors p-2 rounded-lg">
+                        <div className="flex flex-col gap-4 font-sans focus-within:bg-surface-50 transition-colors p-2 rounded-lg">
                             <h4 className="font-sans text-lg md:text-xl font-semibold">
                                 {i + 1}. {item.q}
                             </h4>
                             <div className="text-content leading-relaxed">{item.a}</div>
                         </div>
-                        {i < faqs.length - 1 && <hr className="border-gray-200" />}
+                        {i < faqs.length - 1 && <hr className="border-glass-border" />}
                     </div>
                 ))}
 
                 <p className="mt-16 mb-8">
                     Can’t find the answer to your question? Connect with us via our{" "}
                     <Link
-                        className="text-primary-blue text-decoration-none"
+                        className="text-accent no-underline"
                         to="/ai-contact"
                     >
                         Contact us

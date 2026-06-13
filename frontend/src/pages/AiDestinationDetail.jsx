@@ -22,9 +22,9 @@ const AiDestinationDetail = ({ type }) => {
   const isEvent = type === "event";
 
   return (
-    <main className="mx-auto w-full max-w-[75rem] px-4 pb-8 lg:px-0">
+    <main className="animate-fade-in mx-auto w-full max-w-[75rem] px-4 pb-8 lg:px-0">
       <header className="mb-5">
-        <h1 className="text-2xl font-bold text-black md:text-title">
+        <h1 className="text-2xl font-bold text-gray-200 md:text-title">
           {item.title}
         </h1>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-sm md:text-base">
@@ -37,7 +37,7 @@ const AiDestinationDetail = ({ type }) => {
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.address || item.title)}`}
               target="_blank"
               rel="noreferrer"
-              className="font-medium text-blue-600 underline"
+              className="font-medium text-accent underline"
             >
               Get Direction
             </a>
@@ -53,7 +53,7 @@ const AiDestinationDetail = ({ type }) => {
         />
       </div>
 
-      <div className="my-5 grid gap-3 border-b border-gray-200 pb-5 text-base font-semibold md:grid-cols-3 md:text-lg">
+      <div className="my-5 grid gap-3 border-b border-glass-border pb-5 text-base font-semibold md:grid-cols-3 md:text-lg">
         <span>{item.category}</span>
         <span className="flex items-center gap-1 md:justify-center">
           {isEvent ? (
@@ -69,7 +69,7 @@ const AiDestinationDetail = ({ type }) => {
         </span>
       </div>
 
-      <section className="space-y-5 border-b border-gray-200 pb-8 text-sm leading-relaxed md:text-base">
+      <section className="space-y-5 border-b border-glass-border pb-8 text-sm leading-relaxed md:text-base">
         <p>{item.description}</p>
         <p>
           This placeholder details page follows the supplied product-page mock.
@@ -86,7 +86,7 @@ const AiDestinationDetail = ({ type }) => {
         <div className="mb-8 text-center">
           <button
             type="button"
-            className="rounded-full bg-primary-blue px-8 py-3 text-sm font-semibold text-white"
+            className="rounded-full bg-accent px-8 py-3 text-sm font-semibold text-white"
           >
             WRITE A REVIEW
           </button>
@@ -95,7 +95,7 @@ const AiDestinationDetail = ({ type }) => {
           {reviews.map((review) => (
             <article key={review.initials}>
               <div className="mb-2 flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-blue text-xs font-semibold text-white">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-xs font-semibold text-white">
                   {review.initials}
                 </span>
                 <strong className="text-sm">{review.name}</strong>

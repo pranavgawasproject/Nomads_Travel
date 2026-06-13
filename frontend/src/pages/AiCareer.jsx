@@ -51,14 +51,14 @@ const AiCareer = () => {
     return (
         <>
             <Container padding={false}>
-                <div className="py-8 md:py-12 lg:px-28 px-6">
-                    <h3 className="text-3xl md:text-5xl lg:text-6xl font-semibold text-host mb-2">
+                <div className="animate-fade-in py-8 md:py-12 lg:px-28 px-6">
+                    <h3 className="text-3xl md:text-5xl lg:text-6xl font-semibold text-accent mb-2">
                         JOIN OUR TEAM
                     </h3>
-                    <h2 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-4 text-host">
+                    <h2 className="text-lg md:text-2xl lg:text-3xl font-semibold mb-4 text-accent">
                         OPEN POSITION
                     </h2>
-                    <div className="border-b-2 border-gray-300 w-12 mb-8"></div>
+                    <div className="border-b-2 border-glass-border w-12 mb-8"></div>
                     {/* <Jobrole jobRoles={jobRoles}/> */}
                     <div className="flex flex-col gap-4">
                         {isLoading ? (
@@ -84,7 +84,7 @@ const AiCareer = () => {
                                                     {romans.romanize(idx + 1)}. {section.categoryTitle}
                                                 </span>
                                                 <FaChevronDown
-                                                    className={`text-gray-600 transition-transform duration-300 text-sm ${isOpen ? "rotate-180" : ""
+                                                    className={`text-gray-400 transition-transform duration-300 text-sm ${isOpen ? "rotate-180" : ""
                                                         }`}
                                                 />
                                             </button>
@@ -107,20 +107,20 @@ const AiCareer = () => {
                                                                             {jobIdx + 1}. {job.title}
                                                                         </p>
                                                                         {job.subtitle && (
-                                                                            <p className="text-sm text-black ">
+                                                                            <p className="text-sm text-gray-200 ">
                                                                                 {job?.subtitle}
                                                                             </p>
                                                                         )}
                                                                     </div>
                                                                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-10 w-full md:w-auto justify-end">
-                                                                        <p className="text-xs md:text-sm font-semibold text-gray-900">
+                                                                        <p className="text-xs md:text-sm font-semibold text-gray-200">
                                                                             {job?.jobType} | {job?.jobMode} |{" "}
                                                                             {job?.location}
                                                                         </p>
                                                                         <div className="flex justify-end mt-1">
                                                                             {/* <Link
                             to={`/ai-career`}
-                            className="border-2 border-gray-600 p-2 rounded-md hover:bg-black hover:text-white transition-colors">
+                            className="border-2 border-accent/50 p-2 rounded-md hover:bg-accent hover:text-surface transition-colors">
                             <FaChevronRight />
                           </Link> */}
                                                                             <Link
@@ -136,7 +136,7 @@ const AiCareer = () => {
                                                                                     qualifications: job.qualifications,
                                                                                     jobName: job.title,
                                                                                 }}
-                                                                                className="border-2 border-gray-600 p-2 rounded-md hover:bg-black hover:text-white transition-colors"
+                                                                                className="border-2 border-accent/50 p-2 rounded-md hover:bg-accent hover:text-surface transition-colors"
                                                                             >
                                                                                 <FaChevronRight />
                                                                             </Link>

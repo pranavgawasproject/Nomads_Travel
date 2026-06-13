@@ -37,13 +37,13 @@ const BackToTopButton = ({ scrollContainerRef, threshold = 240 }) => {
       type="button"
       aria-label="Back to top"
       onClick={handleBackToTop}
-      className={`fixed bottom-14 right-6 z-[65] flex h-12 w-12 items-center justify-center rounded-full bg-primary-blue text-white shadow-lg transition-all duration-300 hover:bg-primary-blue focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 ${
+      className={`fixed bottom-6 right-6 z-[65] flex h-10 w-10 items-center justify-center rounded-full bg-glass border border-glass-border text-accent backdrop-blur-xl shadow-glass transition-all duration-300 hover:bg-accent/10 hover:border-accent/30 hover:shadow-glow-sm active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent/30 ${
         isVisible
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-3 opacity-0"
       }`}
     >
-      <HiArrowSmUp className="text-2xl" />
+      <HiArrowSmUp className="text-xl" />
     </button>
   );
 };

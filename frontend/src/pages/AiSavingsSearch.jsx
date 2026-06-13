@@ -130,12 +130,12 @@ const AiSavingsSearch = () => {
   };
 
   return (
-    <div className="min-h-full bg-white">
+    <div className="animate-fade-in min-h-full bg-surface">
       <main className="px-6 py-12 lg:px-14">
         <div className="mx-auto max-w-5xl">
           <div className="flex justify-between">
             <div></div>
-            <h1 className="text-left text-[1.43rem] font-medium text-black/90 w-full px-28">
+            <h1 className="text-left text-[1.43rem] font-medium text-gray-200 w-full px-28">
               {typedHeading}
             </h1>
             <div></div>
@@ -170,19 +170,19 @@ const AiSavingsSearch = () => {
             />
           </div> */}
 
-          <div className="mt-6 ml-28 flex max-w-3xl items-center rounded-full border border-black/15 px-4 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.03)]">
+          <div className="mt-6 ml-28 flex max-w-3xl items-center rounded-full border border-glass-border px-4 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.03)]">
             <div className="flex w-full flex-wrap items-center gap-2">
               {selectedBadges.length ? (
                 selectedBadges.map(({ filter, value }) => (
                   <div
                     key={filter}
-                    className="rounded-full border border-black/30 px-4 py-2 text-xs font-medium text-black/85"
+                    className="rounded-full border border-glass-border px-4 py-2 text-xs font-medium text-gray-200"
                   >
                     {`${filter}: ${value}`}
                   </div>
                 ))
               ) : (
-                <span className="text-base text-black/30">
+                <span className="text-base text-gray-500">
                   {/* Select one option from each badge below */}
                 </span>
               )}
@@ -190,7 +190,7 @@ const AiSavingsSearch = () => {
             <button
               type="button"
               aria-label="Search"
-              className="ml-4 rounded-full  p-2 text-black/90"
+              className="ml-4 rounded-full p-2 text-accent"
               onClick={handleSearch}
             >
               <HiOutlineSearch size={36} />
@@ -208,8 +208,8 @@ const AiSavingsSearch = () => {
                   type="button"
                   onClick={() => handleFilterClick(filter)}
                   className={`rounded-full border px-6 py-2 text-xs font-medium transition-colors ${isActive
-                    ? "border-sky-500 bg-sky-500 text-white"
-                    : "border-black text-black/90 hover:border-sky-500"
+                    ? "border-accent bg-accent text-white"
+                    : "border-glass-border text-gray-200 hover:border-accent"
                     }`}
                 >
                   {filter}
@@ -226,7 +226,7 @@ const AiSavingsSearch = () => {
                     <button
                       type="button"
                       onClick={() => handleOptionClick(option)}
-                      className="w-full rounded-md px-3 py-2 text-left text-[0.9rem] text-black/90"
+                      className="w-full rounded-md px-3 py-2 text-left text-[0.9rem] text-gray-200"
                     >
                       {option}
                     </button>

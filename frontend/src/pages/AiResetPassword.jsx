@@ -2,9 +2,7 @@ import { TextField, IconButton, InputAdornment } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "../utils/axios"; // ✅ use same axios config
-// import toast from "react-hot-toast";
-import PrimaryButton from "../components/PrimaryButton";
+import axios from "../utils/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import useAuth from "../hooks/useAuth";
@@ -21,7 +19,6 @@ export default function AiResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // inside your component
   useEffect(() => {
     if (auth?.user) navigate("/profile", { replace: true });
   }, [auth, navigate]);
@@ -82,93 +79,140 @@ export default function AiResetPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center flex-col gap-14 h-[55vh] md:h-[60vh] lg:h-[75vh] border-gray-300 rounded-lg p-8">
-      <div className="flex flex-col items-center gap-6 w-full max-w-4xl">
-        <h1 className="text-hero text-center">Reset Password</h1>
+    <div className="animate-fade-in relative flex min-h-[75vh] items-center justify-center px-4 py-8 md:min-h-[80vh]">
+      {/* Subtle background gradient glow */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-glow opacity-60 blur-3xl" />
+      </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="w-full grid grid-cols-1 md:grid-cols-2 gap-6"
-        >
-          {/* New Password */}
-          <Controller
-            name="password"
-            control={control}
-            rules={{ required: "New password is required" }}
-            render={({ field, fieldState }) => (
-              <TextField
-                {...field}
-                label="New Password"
-                type={showPassword ? "text" : "password"}
-                fullWidth
-                required
-                variant="standard"
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={togglePasswordVisibility}
-                        edge="end"
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <FiEyeOff /> : <FiEye />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
-          />
+      <div className="relative z-10 w-full max-w-md">
+        {/* Glass Card */}
+        <div className="glass-card p-8 sm:p-10">
+          {/* Icon */}
+          <div className="mb-6 flex flex-col items-center gap-3">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-accent/15 shadow-glow-sm">
+              <svg
+                className="h-7 w-7 text-accent"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"
+                />
+              </svg>
+            </div>
+          </div>
 
-          {/* Confirm Password */}
-          <Controller
-            name="confirmPassword"
-            control={control}
-            rules={{
-              required: "Please confirm your password",
-              validate: (value) =>
-                value === password || "Passwords do not match",
-            }}
-            render={({ field, fieldState }) => (
-              <TextField
-                {...field}
-                label="Confirm Password"
-                type={showConfirmPassword ? "text" : "password"}
-                fullWidth
-                required
-                variant="standard"
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={toggleConfirmPasswordVisibility}
-                        edge="end"
-                        tabIndex={-1}
-                      >
-                        {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
-          />
+          {/* Heading */}
+          <h1 className="gradient-text mb-2 text-center text-hero font-bold">
+            Set New Password
+          </h1>
 
-          {/* Submit Button */}
-          <div className="col-span-1 md:col-span-2 flex justify-center items-center mt-2 py-2">
+          <p className="mb-8 text-center text-small text-gray-400">
+            Enter your new password below. Make sure it&apos;s strong and
+            unique.
+          </p>
+
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-5"
+          >
+            {/* New Password */}
+            <Controller
+              name="password"
+              control={control}
+              rules={{ required: "New password is required" }}
+              render={({ field, fieldState }) => (
+                <TextField
+                  {...field}
+                  label="New Password"
+                  type={showPassword ? "text" : "password"}
+                  fullWidth
+                  required
+                  variant="standard"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={togglePasswordVisibility}
+                          edge="end"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <FiEyeOff /> : <FiEye />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+
+            {/* Confirm Password */}
+            <Controller
+              name="confirmPassword"
+              control={control}
+              rules={{
+                required: "Please confirm your password",
+                validate: (value) =>
+                  value === password || "Passwords do not match",
+              }}
+              render={({ field, fieldState }) => (
+                <TextField
+                  {...field}
+                  label="Confirm Password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  fullWidth
+                  required
+                  variant="standard"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={toggleConfirmPasswordVisibility}
+                          edge="end"
+                          tabIndex={-1}
+                        >
+                          {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+
+            {/* Password requirements */}
+            <div className="rounded-xl border border-glass-border bg-surface-50 p-4">
+              <p className="mb-2 text-tiny font-semibold text-gray-300">
+                Password Requirements
+              </p>
+              <ul className="ml-4 list-disc space-y-1 text-tiny text-gray-500">
+                <li>Must be at least 8 characters long.</li>
+                <li>Should include both uppercase and lowercase letters.</li>
+                <li>
+                  Must contain at least one number or special character.
+                </li>
+              </ul>
+            </div>
+
+            {/* Submit Button */}
             <AiPrimaryButton
-              title={"Reset"}
+              title={"Reset Password"}
               type="submit"
               isLoading={isResetPending}
               disabled={isResetPending}
-              className="bg-primary-blue flex text-white font-[500] capitalize hover:bg-primary-light w-[7rem] px-6"
+              className="btn-primary w-full rounded-full font-semibold"
             />
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

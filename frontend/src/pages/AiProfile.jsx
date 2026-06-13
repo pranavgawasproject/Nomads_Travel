@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
-  Button,
   InputAdornment,
   MenuItem,
   TextField,
@@ -11,49 +10,29 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Favorites from "./Favorites";
 import Reviews from "./Reviews";
-import { CircularProgress } from "@mui/material";
 import { showErrorAlert, showSuccessAlert } from "../utils/alerts";
 import { Country } from "country-state-city";
 import { HiCheck } from "react-icons/hi";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
-
-const floatingLabelSx = {
-  color: "black",
-  "&.Mui-focused": { color: "#1976d2" },
-  "&.MuiInputLabel-shrink": {
-    color: "#1976d2",
-  },
-};
-
-const primaryPillButtonSx = {
-  bgcolor: "black",
-  borderRadius: 20,
-  px: { xs: 6, md: 14 },
-  py: 1.5,
-  fontSize: "1rem",
-  fontWeight: "600",
-  textTransform: "none",
-  "&:hover": { bgcolor: "#333" },
-  width: { xs: "100%", md: "auto" },
-};
+import { FiUser, FiLock, FiHeart, FiStar } from "react-icons/fi";
 
 const PROFILE_PROMPT =
   "The more details you fill in, the more customized support we can provide.";
 const PROFILE_TYPING_SEEN_KEY = "roamiq-ai-profile-typing-seen";
 const getFlagIconUrl = (isoCode) =>
   `https://flagcdn.com/24x18/${isoCode.toLowerCase()}.png`;
-const tickMenuItemSx = {
-  "& .tick-icon": { opacity: 0, color: "#1976d2" },
-  "&:hover .tick-icon": { opacity: 1 },
-  "&.Mui-selected .tick-icon": { opacity: 1 },
-  "&.Mui-selected:hover .tick-icon": { opacity: 1 },
-};
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const contactCodeRegex = /^\+\d{1,4}$/;
 const fullNameRegex = /^[A-Za-z][A-Za-z .'-]*$/;
+
+const TABS = [
+  { key: "profile", label: "Profile", icon: FiUser },
+  { key: "password", label: "Password", icon: FiLock },
+  { key: "favorites", label: "Favorites", icon: FiHeart },
+  { key: "reviews", label: "Reviews", icon: FiStar },
+];
 
 const validateProfileForm = (values) => {
   const errors = {};
@@ -229,7 +208,8 @@ const AiProfile = () => {
   };
 
   const selectedCountryData = useMemo(
-    () => countries.find((country) => country.name === profileForm.country) || null,
+    () =>
+      countries.find((country) => country.name === profileForm.country) || null,
     [countries, profileForm.country],
   );
 
@@ -325,372 +305,331 @@ const AiProfile = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen p-4 sm:p-6 font-sans text-[#364D59]">
-      {/* Tabs - Desktop style preserved, stacks on very small screens */}
-      {/* <div className="flex flex-col sm:flex-row mb-6 border rounded-lg overflow-hidden max-w-3xl mx-auto">
-                <button
-                    className={`flex-1 py-3 font-semibold text-sm sm:text-base ${activeTab === "profile"
-                        ? "bg-[#ff5757] text-white"
-                        : "bg-white text-[#ff5757]"
-                        }`}
-                    onClick={() => handleTabChange("profile")}
-                >
-                    Profile
-                </button>
-                <button
-                    className={`flex-1 py-3 font-semibold text-sm sm:text-base border-t sm:border-t-0 sm:border-l ${activeTab === "password"
-                        ? "bg-[#ff5757] text-white"
-                        : "bg-white text-[#ff5757]"
-                        }`}
-                    onClick={() => handleTabChange("password")}
-                >
-                    Change Password
-                </button>
-                <button
-                    className={`flex-1 py-3 font-semibold text-sm sm:text-base border-t sm:border-t-0 sm:border-l ${activeTab === "favorites"
-                        ? "bg-[#ff5757] text-white"
-                        : "bg-white text-[#ff5757]"
-                        }`}
-                    onClick={() => handleTabChange("favorites")}
-                >
-                    Favorites
-                </button>
-                <button
-                    className={`flex-1 py-3 font-semibold ${activeTab === "reviews"
-                        ? "bg-[#ff5757] text-white"
-                        : "bg-white text-[#ff5757]"
-                        }`}
-                    onClick={() => handleTabChange("reviews")}
-                >
-                    Reviews
-                </button>
-            </div> */}
+    <div className="animate-fade-in min-h-screen bg-surface p-4 sm:p-6 lg:p-8">
+      {/* Subtle background gradient glow */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute right-1/4 top-0 h-[400px] w-[400px] rounded-full bg-gradient-glow opacity-30 blur-3xl" />
+      </div>
 
-      {/* PROFILE TAB - Desktop layout preserved, responsive adjustments */}
-      {activeTab === "profile" && (
-        <div className="bg-white py-8 px-4 sm:px-8 md:px-16 lg:px-24 max-w-4xl mx-auto">
-          <p className="min-h-[3rem] w-full text-center font-play text-[0.95rem] leading-relaxed text-gray-800 sm:text-[1rem] ">
-            {typedProfilePrompt}
-          </p>
-          <h2 className="text-hero min-h-[3rem] text-center font-play text-black mb-6">
-            My Profile
-          </h2>
-
-          {/* Profile Header - Stacks on mobile, side-by-side on desktop */}
-          {/* <div className="flex flex-col md:flex-row items-center justify-between border p-4 rounded-lg gap-4 md:gap-0">
-            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left">
-              <Avatar
-                sx={{
-                  bgcolor: "#00AEEF",
-                  width: 80,
-                  height: 80,
-                  fontSize: "2rem",
-                }}
-              >
-                {user?.fullName ? user.fullName.charAt(0).toUpperCase() : "U"}
-              </Avatar>
+      <div className="relative z-10 mx-auto max-w-4xl">
+        {/* Profile Header */}
+        <div className="glass-card mb-6 p-6">
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              {/* Avatar with accent bg and initial */}
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-accent text-2xl font-bold text-surface shadow-glow-sm">
+                {user?.fullName
+                  ? user.fullName.charAt(0).toUpperCase()
+                  : "U"}
+              </div>
               <div>
-                <h3 className="text-base sm:text-lg font-semibold">
+                <h2 className="text-content font-semibold text-gray-200">
                   {user?.fullName || "User Name"}
-                </h3>
+                </h2>
+                <p className="text-small text-gray-500">{user?.email || ""}</p>
               </div>
             </div>
 
-            <div className="text-sm mt-2 md:mt-0 text-center md:text-left">
-              <p>
-                <b>Email:</b> {user?.email || "N/A"}
-              </p>
-              <p>
-                <b>Mobile:</b> {user?.contactNumber || "N/A"}
-              </p>
-              <div className="mt-3">
-                <Button
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#00AEEF",
-                    textTransform: "none",
-                    px: 6,
-                    "&:hover": { bgcolor: "#00AEEF" },
-                  }}
-                  onClick={handleLogout}
-                  disabled={isLogoutLoading}
-                >
-                  {isLogoutLoading ? (
-                    <CircularProgress size={22} sx={{ color: "white" }} />
-                  ) : (
-                    "Logout"
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div> */}
+            <p className="max-w-sm text-center text-tiny leading-relaxed text-gray-500 sm:text-right sm:text-small">
+              {typedProfilePrompt}
+            </p>
+          </div>
+        </div>
 
-          {/* Personal Info - Desktop: 3 columns, Tablet: 2 columns, Mobile: 1 column */}
-          <div className="mt-6 py-4">
-            <h3 className="font-semibold mb-4">Personal Information</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-              <TextField
-                label="Full Name"
-                variant="standard"
-                fullWidth
-                name="fullName"
-                value={profileForm.fullName}
-                onChange={handleProfileChange}
-                error={!!profileErrors.fullName}
-                helperText={profileErrors.fullName}
-                InputProps={{ readOnly: !editMode }}
-                InputLabelProps={{ sx: floatingLabelSx }}
-              />
-              <TextField
-                label="Email"
-                variant="standard"
-                fullWidth
-                name="email"
-                value={profileForm.email}
-                onChange={handleProfileChange}
-                error={!!profileErrors.email}
-                helperText={profileErrors.email}
-                InputProps={{ readOnly: true }}
-                InputLabelProps={{ sx: floatingLabelSx }}
-              />
-              <TextField
-                label="Current Country Of Residence"
-                variant="standard"
-                fullWidth
-                select
-                name="country"
-                value={profileForm.country}
-                onChange={(event) => handleCountryChange(event.target.value)}
-                error={!!profileErrors.country}
-                helperText={profileErrors.country}
-                disabled={!editMode}
-                InputLabelProps={{ sx: floatingLabelSx }}
-                SelectProps={{
-                  renderValue: (value) => {
-                    const selectedOption = countries.find(
-                      (country) => country.name === value,
-                    );
-
-                    if (!selectedOption) {
-                      return value;
-                    }
-
-                    return (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                        }}
-                      >
-                        <img
-                          src={getFlagIconUrl(selectedOption.isoCode)}
-                          alt={`${selectedOption.name} flag`}
-                          width={20}
-                          height={15}
-                          loading="lazy"
-                        />
-                        <span>{selectedOption.name}</span>
-                      </Box>
-                    );
-                  },
-                }}
+        {/* Tab Pills */}
+        <div className="mb-6 flex flex-wrap gap-2">
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-small font-medium transition-all duration-300 ${
+                  isActive
+                    ? "bg-accent/15 text-accent shadow-glow-sm border border-accent/30"
+                    : "border border-glass-border text-gray-400 hover:text-gray-200 hover:bg-glass hover:border-accent/20"
+                }`}
               >
-                <MenuItem value="" sx={{ fontWeight: 700 }}>
-                  SELECT COUNTRY
-                </MenuItem>
-                {countries.map((country) => (
-                  <MenuItem
-                    key={country.isoCode}
-                    value={country.name}
-                    sx={tickMenuItemSx}
-                  >
-                    <Box className="flex w-full items-center gap-2">
-                      <HiCheck className="tick-icon" size={16} />
-                      <Box className="flex items-center gap-1">
-                        <Box
-                          component="img"
-                          src={getFlagIconUrl(country.isoCode)}
-                          alt={`${country.name} flag`}
-                          sx={{ width: 20, height: 15, flexShrink: 0 }}
-                          loading="lazy"
-                        />
-                        <span>{country.name}</span>
-                      </Box>
-                    </Box>
-                  </MenuItem>
-                ))}
-              </TextField>
-              <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* PROFILE TAB */}
+        {activeTab === "profile" && (
+          <div className="glass-card animate-fade-in p-6 sm:p-8">
+            <h2 className="gradient-text mb-6 text-center text-hero font-bold sm:text-left">
+              My Profile
+            </h2>
+
+            {/* Personal Info */}
+            <div className="py-4">
+              <h3 className="mb-4 text-small font-semibold uppercase tracking-wider text-gray-400">
+                Personal Information
+              </h3>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
                 <TextField
-                  label="Code"
-                  variant="standard"
-                  name="contactCode"
-                  value={profileForm.contactCode}
-                  error={!!profileErrors.contactCode}
-                  helperText={profileErrors.contactCode}
-                  InputLabelProps={{ sx: floatingLabelSx }}
-                  InputProps={{
-                    readOnly: true,
-                    startAdornment: selectedCountryData?.isoCode ? (
-                      <InputAdornment position="start">
-                        <Box
-                          component="img"
-                          src={getFlagIconUrl(selectedCountryData.isoCode)}
-                          alt={`${selectedCountryData.name} flag`}
-                          sx={{ width: 20, height: 15, flexShrink: 0 }}
-                          loading="lazy"
-                        />
-                      </InputAdornment>
-                    ) : null,
-                  }}
-                  sx={{ width: "28%" }}
-                />
-                <TextField
-                  label="Mobile"
+                  label="Full Name"
                   variant="standard"
                   fullWidth
-                  name="contactNumber"
-                  value={profileForm.contactNumber}
+                  name="fullName"
+                  value={profileForm.fullName}
                   onChange={handleProfileChange}
-                  error={!!profileErrors.contactNumber}
-                  helperText={profileErrors.contactNumber}
+                  error={!!profileErrors.fullName}
+                  helperText={profileErrors.fullName}
                   InputProps={{ readOnly: !editMode }}
-                  InputLabelProps={{ sx: floatingLabelSx }}
-                  sx={{ flex: 1 }}
                 />
-              </Box>
-              <TextField
-                label="Salary"
-                variant="standard"
-                fullWidth
-                name="salary"
-                value={profileForm.salary}
-                onChange={handleProfileChange}
-                InputProps={{ readOnly: !editMode }}
-                InputLabelProps={{ sx: floatingLabelSx }}
-              />
-              <TextField
-                label="Designation"
-                variant="standard"
-                fullWidth
-                name="designation"
-                value={profileForm.designation}
-                onChange={handleProfileChange}
-                InputProps={{ readOnly: !editMode }}
-                InputLabelProps={{ sx: floatingLabelSx }}
-              />
-            </div>
+                <TextField
+                  label="Email"
+                  variant="standard"
+                  fullWidth
+                  name="email"
+                  value={profileForm.email}
+                  onChange={handleProfileChange}
+                  error={!!profileErrors.email}
+                  helperText={profileErrors.email}
+                  InputProps={{ readOnly: true }}
+                />
+                <TextField
+                  label="Current Country Of Residence"
+                  variant="standard"
+                  fullWidth
+                  select
+                  name="country"
+                  value={profileForm.country}
+                  onChange={(event) => handleCountryChange(event.target.value)}
+                  error={!!profileErrors.country}
+                  helperText={profileErrors.country}
+                  disabled={!editMode}
+                  SelectProps={{
+                    renderValue: (value) => {
+                      const selectedOption = countries.find(
+                        (country) => country.name === value,
+                      );
 
-            <div className="text-center mt-6">
-              {editMode ? (
-                <>
-                  <Button
-                    variant="contained"
-                    sx={{ ...primaryPillButtonSx, mr: { xs: 0, md: 2 } }}
-                    onClick={handleProfileSubmit}
-                    disabled={isUpdatePending}
-                  >
-                    {isUpdatePending ? "Submitting..." : "Submit"}
-                  </Button>
+                      if (!selectedOption) {
+                        return value;
+                      }
 
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      textTransform: "none",
-                      px: { xs: 6, md: 14 },
-                      py: 1.5,
-                      color: "black",
-                      borderColor: "black",
-                      borderRadius: 20,
-                      mt: { xs: 2, md: 0 },
-                      width: { xs: "100%", md: "auto" },
-                    }}
-                    onClick={() => {
-                      setProfileForm(initialProfileForm);
-                      setProfileErrors({});
-                      setEditMode(false);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  variant="contained"
-                  sx={primaryPillButtonSx}
-                  onClick={() => setEditMode(true)}
+                      return (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                          }}
+                        >
+                          <img
+                            src={getFlagIconUrl(selectedOption.isoCode)}
+                            alt={`${selectedOption.name} flag`}
+                            width={20}
+                            height={15}
+                            loading="lazy"
+                          />
+                          <span>{selectedOption.name}</span>
+                        </Box>
+                      );
+                    },
+                  }}
                 >
-                  Edit
-                </Button>
-              )}
+                  <MenuItem value="" sx={{ fontWeight: 700 }}>
+                    SELECT COUNTRY
+                  </MenuItem>
+                  {countries.map((country) => (
+                    <MenuItem key={country.isoCode} value={country.name}>
+                      <Box className="flex w-full items-center gap-2">
+                        <HiCheck className="text-accent opacity-0 group-hover:opacity-100" size={16} />
+                        <Box className="flex items-center gap-1">
+                          <Box
+                            component="img"
+                            src={getFlagIconUrl(country.isoCode)}
+                            alt={`${country.name} flag`}
+                            sx={{ width: 20, height: 15, flexShrink: 0 }}
+                            loading="lazy"
+                          />
+                          <span>{country.name}</span>
+                        </Box>
+                      </Box>
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
+                  <TextField
+                    label="Code"
+                    variant="standard"
+                    name="contactCode"
+                    value={profileForm.contactCode}
+                    error={!!profileErrors.contactCode}
+                    helperText={profileErrors.contactCode}
+                    InputProps={{
+                      readOnly: true,
+                      startAdornment: selectedCountryData?.isoCode ? (
+                        <InputAdornment position="start">
+                          <Box
+                            component="img"
+                            src={getFlagIconUrl(selectedCountryData.isoCode)}
+                            alt={`${selectedCountryData.name} flag`}
+                            sx={{ width: 20, height: 15, flexShrink: 0 }}
+                            loading="lazy"
+                          />
+                        </InputAdornment>
+                      ) : null,
+                    }}
+                    sx={{ width: "28%" }}
+                  />
+                  <TextField
+                    label="Mobile"
+                    variant="standard"
+                    fullWidth
+                    name="contactNumber"
+                    value={profileForm.contactNumber}
+                    onChange={handleProfileChange}
+                    error={!!profileErrors.contactNumber}
+                    helperText={profileErrors.contactNumber}
+                    InputProps={{ readOnly: !editMode }}
+                    sx={{ flex: 1 }}
+                  />
+                </Box>
+                <TextField
+                  label="Salary"
+                  variant="standard"
+                  fullWidth
+                  name="salary"
+                  value={profileForm.salary}
+                  onChange={handleProfileChange}
+                  InputProps={{ readOnly: !editMode }}
+                />
+                <TextField
+                  label="Designation"
+                  variant="standard"
+                  fullWidth
+                  name="designation"
+                  value={profileForm.designation}
+                  onChange={handleProfileChange}
+                  InputProps={{ readOnly: !editMode }}
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                {editMode ? (
+                  <>
+                    <button
+                      className="btn-primary w-full rounded-full font-semibold sm:w-auto sm:px-10"
+                      onClick={handleProfileSubmit}
+                      disabled={isUpdatePending}
+                    >
+                      {isUpdatePending ? "Submitting..." : "Submit"}
+                    </button>
+                    <button
+                      className="btn-ghost w-full rounded-full sm:w-auto sm:px-10"
+                      onClick={() => {
+                        setProfileForm(initialProfileForm);
+                        setProfileErrors({});
+                        setEditMode(false);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="btn-primary w-full rounded-full font-semibold sm:w-auto sm:px-10"
+                    onClick={() => setEditMode(true)}
+                  >
+                    Edit Profile
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* CHANGE PASSWORD TAB - Desktop style preserved, responsive padding */}
-      {activeTab === "password" && (
-        <div className="bg-white py-8 px-4 sm:px-8 md:px-16 lg:px-24 max-w-4xl mx-auto">
-          <h2 className="text-hero min-h-[3rem] text-center font-play text-black mb-6">
-            Change Password
-          </h2>
-          <div className="grid gap-4 mb-3">
-            <TextField
-              label="Current Password"
-              type="password"
-              fullWidth
-              variant="standard"
-              name="oldPassword"
-              value={passwordForm.oldPassword}
-              onChange={handlePasswordChange}
-            />
-            <TextField
-              label="New Password"
-              type="password"
-              fullWidth
-              variant="standard"
-              name="newPassword"
-              value={passwordForm.newPassword}
-              onChange={handlePasswordChange}
-            />
-            <TextField
-              label="Confirm Password"
-              type="password"
-              fullWidth
-              variant="standard"
-              name="confirmPassword"
-              value={passwordForm.confirmPassword}
-              onChange={handlePasswordChange}
-            />
-          </div>
+        {/* CHANGE PASSWORD TAB */}
+        {activeTab === "password" && (
+          <div className="glass-card animate-fade-in p-6 sm:p-8">
+            <h2 className="gradient-text mb-6 text-center text-hero font-bold sm:text-left">
+              Change Password
+            </h2>
 
-          <div className="text-sm text-gray-700 mb-4">
-            <p className="font-semibold">Password Requirements</p>
-            <ul className="list-disc ml-5">
-              <li>Must be at least 8 characters long.</li>
-              <li>Should include both uppercase and lowercase letters.</li>
-              <li>Must contain at least one number or special character.</li>
-            </ul>
-          </div>
-          <div className="flex justify-center items-center">
-            <Button
-              variant="contained"
-              sx={primaryPillButtonSx}
-              onClick={handlePasswordSubmit}
-              disabled={isPasswordPending}
-            >
-              {isPasswordPending ? "Submitting..." : "Submit"}
-            </Button>
-          </div>
-        </div>
-      )}
+            <div className="mx-auto max-w-md space-y-5">
+              <TextField
+                label="Current Password"
+                type="password"
+                fullWidth
+                variant="standard"
+                name="oldPassword"
+                value={passwordForm.oldPassword}
+                onChange={handlePasswordChange}
+              />
+              <TextField
+                label="New Password"
+                type="password"
+                fullWidth
+                variant="standard"
+                name="newPassword"
+                value={passwordForm.newPassword}
+                onChange={handlePasswordChange}
+              />
+              <TextField
+                label="Confirm Password"
+                type="password"
+                fullWidth
+                variant="standard"
+                name="confirmPassword"
+                value={passwordForm.confirmPassword}
+                onChange={handlePasswordChange}
+              />
 
-      {/* FAVORITES TAB */}
-      {activeTab === "favorites" && (
-        <Favorites showDestinationFavorites useAiListingsRoute />
-      )}
-      {activeTab === "reviews" && <Reviews />}
+              {/* Password Requirements */}
+              <div className="rounded-xl border border-glass-border bg-surface-50 p-4">
+                <p className="mb-2 text-tiny font-semibold text-gray-300">
+                  Password Requirements
+                </p>
+                <ul className="ml-4 list-disc space-y-1 text-tiny text-gray-500">
+                  <li>Must be at least 8 characters long.</li>
+                  <li>Should include both uppercase and lowercase letters.</li>
+                  <li>
+                    Must contain at least one number or special character.
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex justify-center pt-2">
+                <button
+                  className="btn-primary w-full rounded-full font-semibold sm:w-auto sm:px-10"
+                  onClick={handlePasswordSubmit}
+                  disabled={isPasswordPending}
+                >
+                  {isPasswordPending ? "Submitting..." : "Change Password"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* FAVORITES TAB */}
+        {activeTab === "favorites" && (
+          <div className="glass-card animate-fade-in flex min-h-[200px] items-center justify-center p-8">
+            <div className="text-center">
+              <FiHeart className="mx-auto mb-3 h-8 w-8 text-gray-600" />
+              <p className="text-content text-gray-500">
+                Favorites coming soon
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* REVIEWS TAB */}
+        {activeTab === "reviews" && (
+          <div className="animate-fade-in">
+            <Reviews />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

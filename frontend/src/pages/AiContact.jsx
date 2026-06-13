@@ -64,13 +64,13 @@ const AiContact = () => {
         });
 
     const floatingLabelSx = {
-        color: "black",
-        "&.Mui-focused": { color: "#1976d2" },
-        "&.MuiInputLabel-shrink": { color: "#1976d2" },
+        color: "#94a3b8",
+        "&.Mui-focused": { color: "#06b6d4" },
+        "&.MuiInputLabel-shrink": { color: "#06b6d4" },
     };
 
     return (
-        <div className="bg-white text-black font-sans">
+        <div className="bg-surface text-gray-200 font-sans animate-fade-in">
             {/* About & Form */}
             {/* <section className="py-10 px-4 md:px-20"> */}
             <Container padding={false}>
@@ -174,7 +174,7 @@ const AiContact = () => {
                                 component="form"
                                 onSubmit={handleSubmit((data) => submitContactForm(data))}
                                 sx={{ mt: 0 }}
-                                className="bg-gray-50/50 p-6 md:p-10 rounded-2xl border border-gray-100 shadow-sm"
+                                className="bg-surface-50/80 p-6 md:p-10 rounded-2xl border border-gray-100 shadow-card"
                             >
                                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold uppercase mb-8 text-center">
                                     Connect With Us
@@ -322,13 +322,13 @@ const AiContact = () => {
                                             variant="contained"
                                             disabled={isContactPending}
                                             sx={{
-                                                bgcolor: "black",
+                                                bgcolor: "#94a3b8",
                                                 borderRadius: 20,
                                                 px: { xs: 6, md: 14 },
                                                 py: 1.5,
                                                 fontSize: "1rem",
                                                 fontWeight: "600",
-                                                "&:hover": { bgcolor: "#333" },
+                                                "&:hover": { bgcolor: "#0891b2" },
                                                 width: { xs: "100%", md: "auto" },
                                             }}
                                         >
@@ -352,28 +352,28 @@ const AiContact = () => {
             {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-4 md:px-20 pb-10"> */}
             {/* <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8  pb-10">
-          <div className="shadow-md">
+          <div className="shadow-card">
             <iframe
               title="Singapore Office"
               className="w-full h-[25rem]"
               loading="lazy"
               src="https://www.google.com/maps?q=77%20HIGH%20STREET%2C%20%2310-12B%20HIGH%20STREET%20PLAZA%2C%20SINGAPORE%20179433&output=embed"></iframe>
             <div className="p-4 flex gap-2 text-sm items-start">
-              <FaMapMarkerAlt className="mt-1 text-black" />
+              <FaMapMarkerAlt className="mt-1 text-gray-200" />
               <span>
                 SINGAPORE OFFICE - RoamIQ Technologies, 77 HIGH STREET,
                 #10-12B HIGH STREET PLAZA, SINGAPORE 179433
               </span>
             </div>
           </div>
-          <div className="shadow-md">
+          <div className="shadow-card">
             <iframe
               title="India Office"
               className="w-full h-[25rem]"
               loading="lazy"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3844.7765664747362!2d73.83261987495516!3d15.496445985103028!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bbfc1d2e05cbef3%3A0xa643703ebcc4db43!2sBIZ%20Nest%20-%20Co-Working%20Space%2C%20Workations%20%26%20Meeting%20Zone%20in%20Goa!5e0!3m2!1sen!2sin!4v1723627911486!5m2!1sen!2sin"></iframe>
             <div className="p-4 flex gap-2 text-sm items-start">
-              <FaMapMarkerAlt className="mt-1 text-black" />
+              <FaMapMarkerAlt className="mt-1 text-gray-200" />
               <span>
                 INDIA OFFICE - RoamIQ Technologies, BIZ NEST CO-WORKING,
                 SUNTECK KANAKA CORPORATE PARK, 701 - B, PATTO CENTRE, PANJIM,
@@ -386,11 +386,11 @@ const AiContact = () => {
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-                    <div className="bg-white rounded shadow-lg w-full max-w-md p-6 relative">
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
+                    <div className="glass-card w-full max-w-md p-6 relative">
                         <button
                             onClick={handleCloseModal}
-                            className="absolute top-2 right-2 text-gray-600 hover:text-black"
+                            className="absolute top-2 right-2 text-gray-400 hover:text-white"
                         >
                             <AiOutlineClose size={20} />
                         </button>
@@ -401,7 +401,7 @@ const AiContact = () => {
                         <div className="text-right">
                             <button
                                 onClick={handleCloseModal}
-                                className="bg-black text-white px-4 py-2 rounded hover:opacity-90"
+                                className="bg-accent text-surface px-4 py-2 rounded hover:opacity-90"
                             >
                                 Close
                             </button>
@@ -412,7 +412,7 @@ const AiContact = () => {
 
             {/* Loading Spinner */}
             {loading && (
-                <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-50 z-50">
+                <div className="fixed inset-0 flex items-center justify-center bg-surface/50 z-50">
                     <Spinners animation="border" variant="dark" />
                 </div>
             )}

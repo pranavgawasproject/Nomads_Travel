@@ -79,7 +79,6 @@ const filterOptions = {
 const AiSearch = () => {
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState(null);
-  // const [orderedFilters, setOrderedFilters] = useState(filters);
 
   const [typedHeading, setTypedHeading] = useState("");
 
@@ -115,19 +114,6 @@ const AiSearch = () => {
 
   const handleFilterClick = (selectedFilter) => {
     setActiveFilter(selectedFilter);
-
-    // setOrderedFilters((currentFilters) => {
-    //   const selectedIndex = currentFilters.indexOf(selectedFilter);
-
-    //   if (selectedIndex <= 0) {
-    //     return currentFilters;
-    //   }
-
-    //   return [
-    //     ...currentFilters.slice(selectedIndex),
-    //     ...currentFilters.slice(0, selectedIndex),
-    //   ];
-    // });
   };
 
   const handleOptionClick = (selectedOption) => {
@@ -137,40 +123,42 @@ const AiSearch = () => {
       state: {
         selectedFilter: activeFilter,
         selectedOption,
-        // orderedFilters,
         orderedFilters: filters,
       },
     });
   };
   return (
-    <div className="min-h-full bg-white">
+    <div className="min-h-full bg-surface animate-fade-in">
       <main className="px-6 py-12 lg:px-14">
         <div className="mx-auto max-w-5xl">
           <div className="flex justify-between">
             <div></div>
-            <h1 className="text-left text-[1.43rem] font-medium text-black/90 w-full px-28">
+            <h1 className="text-left text-[1.43rem] font-medium text-gray-200 w-full px-28 font-heading">
               {typedHeading}
+              {!typedHeading && (
+                <span className="inline-block w-0.5 h-5 bg-accent animate-typing ml-1 align-middle" />
+              )}
             </h1>
             <div></div>
           </div>
 
-          <div className=" mt-16 ml-28 flex max-w-3xl items-center rounded-full border border-black/15  px-4 py-0 shadow-[0_2px_6px_rgba(0,0,0,0.03)] ">
+          <div className="mt-16 ml-28 flex max-w-3xl items-center rounded-full border border-glass-border bg-surface-50 px-4 py-0 shadow-glass backdrop-blur-xl transition-all duration-300 focus-within:border-accent/50 focus-within:shadow-glow">
             <input
               type="text"
               aria-label="Search destinations"
-              className="w-full border-none bg-transparent text-xl text-black/80 outline-none placeholder:text-black/30 "
+              className="w-full border-none bg-transparent text-xl text-gray-200 outline-none placeholder:text-gray-500"
             />
             <button
               type="button"
               aria-label="Search"
-              className="ml-4 rounded-full  p-2 text-black/90"
+              className="btn-primary ml-4 flex items-center gap-2 !rounded-full !px-5 !py-2.5"
             >
-              <HiOutlineSearch size={36} />
+              <HiOutlineSearch size={20} />
+              <span className="hidden sm:inline text-sm">Search</span>
             </button>
           </div>
 
-          <div className="mt-6 ml-28 flex flex-wrap items-center justify-start gap-6">
-            {/* {orderedFilters.map((filter) => { */}
+          <div className="mt-6 ml-28 flex flex-wrap items-center justify-start gap-3">
             {filters.map((filter) => {
               const isActive = activeFilter === filter;
 
@@ -179,10 +167,11 @@ const AiSearch = () => {
                   key={filter}
                   type="button"
                   onClick={() => handleFilterClick(filter)}
-                  className={`rounded-full border px-6 py-2 text-xs font-medium transition-colors ${isActive
-                    ? "border-sky-500 bg-sky-500 text-white"
-                    : "border-black text-black/90 hover:border-sky-500"
-                    }`}
+                  className={`rounded-full border px-5 py-2 text-xs font-medium transition-all duration-300 ${
+                    isActive
+                      ? "border-accent bg-accent text-surface shadow-glow"
+                      : "border-glass-border bg-glass text-gray-300 hover:border-accent/50 hover:bg-glass-hover hover:text-white"
+                  }`}
                 >
                   {filter}
                 </button>
@@ -191,14 +180,14 @@ const AiSearch = () => {
           </div>
 
           {activeFilter && (
-            <div className="mx-auto mt-4 w-full max-w-3xl">
-              <ul className="w-full max-w-[220px] space-y-2">
+            <div className="mx-auto mt-4 w-full max-w-3xl animate-slide-down">
+              <ul className="w-full max-w-[280px] space-y-1 glass-card p-2">
                 {filterOptions[activeFilter].map((option) => (
                   <li key={option}>
                     <button
                       type="button"
                       onClick={() => handleOptionClick(option)}
-                      className="w-full rounded-md px-3 py-2 text-left text-[0.9rem] text-black/90"
+                      className="w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-300 transition-all duration-200 hover:bg-accent/10 hover:text-white"
                     >
                       {option}
                     </button>

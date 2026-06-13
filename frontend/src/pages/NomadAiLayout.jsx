@@ -1,11 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-
-import Footer from "../components/Footer";
-// import { Toaster } from "react-hot-toast";
-import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useRef } from "react";
 import AiHeader from "../components/AiHeader";
-import AiSidebar from "../components/AiSidebar";
 import AiFooter from "../components/AiFooter";
 import BackToTopButton from "../components/BackToTopButton";
 import AiStickyBackBreadcrumb from "../components/AiStickyBackBreadcrumb";
@@ -56,26 +51,19 @@ const NomadAiLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const contentRef = useRef(null);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  const formData = useSelector((state) => state.location.formValues);
-  console.log("formData from layout : ", formData);
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTo({ behavior: "smooth", top: "0" });
     }
   }, [location.pathname]);
 
-  useEffect(() => {
-    setIsMobileSidebarOpen(false);
-  }, [location.pathname, location.search]);
-
   const shouldShowStickyBar = (() => {
     if (EXCLUDED_STICKY_BAR_PATHS.has(location.pathname)) return false;
     if (HIDE_STICKY_BAR_EXACT_PATHS.has(location.pathname)) return false;
     if (
       HIDE_STICKY_BAR_PREFIXES.some((prefix) =>
-        location.pathname.startsWith(prefix),
+        location.pathname.startsWith(prefix)
       )
     ) {
       return false;
@@ -168,33 +156,20 @@ const NomadAiLayout = () => {
     isAiProductPage && Boolean(location.state?.breadcrumbLoading);
 
   return (
-    <div className="flex h-screen bg-white">
-      <div className="hidden sm:block">
-        <AiSidebar />
-      </div>
+    <div className="flex min-h-screen flex-col bg-surface text-gray-200">
+      {/* Fixed Top Header */}
+      <AiHeader />
 
-      {isMobileSidebarOpen && (
-        <div
-          className="fixed inset-0 z-[70] bg-black/35 sm:hidden"
-          onClick={() => setIsMobileSidebarOpen(false)}
-          aria-hidden="true"
-        >
-          <AiSidebar
-            isMobileOverlay
-            onClose={() => setIsMobileSidebarOpen(false)}
-          />
-        </div>
-      )}
-
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <div className="sticky top-0 z-50 w-full">
-          <AiHeader
-            onMobileSidebarToggle={() => setIsMobileSidebarOpen(true)}
-          />
-        </div>
+      {/* Main Content Area */}
+      <main
+        id="roamiq-ai-scroll-container"
+        ref={contentRef}
+        className="flex-1 overflow-auto custom-scrollbar-hide pt-16"
+      >
+        {/* Sticky Breadcrumb Bar */}
         {shouldShowStickyBar && (
-          <div className="w-full bg-white/95">
-            <div className="px-3 md:px-8 lg:px-10 xl:px-12 2xl:px-14">
+          <div className="w-full bg-surface/95 backdrop-blur-sm border-b border-glass-border">
+            <div className="section-container">
               <AiStickyBackBreadcrumb
                 onBack={() => navigate(-1)}
                 breadcrumbs={routeBreadcrumbs}
@@ -206,20 +181,17 @@ const NomadAiLayout = () => {
           </div>
         )}
 
-        <div
-          id="roamiq-ai-scroll-container"
-          ref={contentRef}
-          className="flex-1 overflow-auto custom-scrollbar-hide"
-        >
-          <div className="px-1 md:px-6 lg:px-6 xl:px-10 2xl:px-12 min-h-[calc(100vh-100px)]">
-            <Outlet />
-          </div>
-          {/* <Toaster /> */}
-          {(location.pathname !== "/verticals" ||
-            window.innerWidth >= 1024) && <AiFooter />}
+        {/* Page Content */}
+        <div className="min-h-[calc(100vh-64px)]">
+          <Outlet />
         </div>
-        <BackToTopButton scrollContainerRef={contentRef} />
-      </div>
+
+        {/* Footer */}
+        <AiFooter />
+      </main>
+
+      {/* Back to Top */}
+      <BackToTopButton scrollContainerRef={contentRef} />
     </div>
   );
 };

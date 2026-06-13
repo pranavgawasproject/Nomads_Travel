@@ -78,11 +78,11 @@ const AiVisaSupportThankYou = () => {
   }, [destinationPath, navigate]);
 
   return (
-    <div className="bg-white text-black font-sans">
+    <div className="bg-surface text-gray-200 font-sans animate-fade-in">
       <Container padding={false}>
         <section className="min-h-[85vh] flex items-center justify-center py-8">
-          <div className="w-full max-w-3xl px-6 md:px-10 text-center bg-white rounded-2xl border border-white  py-12 md:py-14">
-            <p className="text-xl leading-relaxed font-play min-h-[72px]">
+          <div className="w-full max-w-3xl px-6 md:px-10 text-center glass-card py-12 md:py-14">
+            <p className="text-xl leading-relaxed font-heading min-h-[72px]">
               {typedMessage}
             </p>
           </div>

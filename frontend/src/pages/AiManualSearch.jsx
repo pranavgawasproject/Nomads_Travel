@@ -14,7 +14,7 @@ import axios from "../utils/axios";
 import { persistSelectedDestination } from "../utils/selectedDestinationSession";
 
 const searchBarBadgeClassName =
-  "inline-flex min-h-[40px] min-w-[5rem] items-center rounded-full border border-black/30 px-4 py-2 text-xs font-medium text-black/85";
+  "inline-flex min-h-[40px] min-w-[5rem] items-center rounded-full border border-glass-border px-4 py-2 text-xs font-medium text-gray-200";
 const contentAlignClassName = "md:px-10";
 
 // const countOptions = [
@@ -54,10 +54,10 @@ const DropdownBadge = ({
         disabled={disabled}
         className={`flex min-h-[44px] w-full items-center justify-between gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors sm:px-5 ${
           disabled
-            ? "cursor-not-allowed border-black/10 bg-black/[0.03] text-black/35"
+            ? "cursor-not-allowed border-glass-border bg-glass text-gray-500"
             : isOpen
-              ? "border-sky-500 bg-sky-500 text-white"
-              : "border-black/20 bg-white text-black/85 hover:border-sky-500"
+              ? "border-accent bg-accent text-white"
+              : "border-glass-border bg-surface-50 text-gray-200 hover:border-accent"
         }`}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -70,7 +70,7 @@ const DropdownBadge = ({
       </button>
 
       {isOpen && !disabled && (
-        <div className="absolute top-full z-40 mt-3 w-full min-w-[11rem] max-w-[calc(100vw-4rem)] rounded-2xl border border-sky-100 bg-white p-2 shadow-[0_12px_30px_rgba(15,23,42,0.12)]">
+        <div className="absolute top-full z-40 mt-3 w-full min-w-[11rem] max-w-[calc(100vw-4rem)] rounded-2xl border border-accent/20 bg-surface-50 p-2 shadow-glass">
           <ul
             className="max-h-72 overflow-y-auto"
             role="listbox"
@@ -86,8 +86,8 @@ const DropdownBadge = ({
                     onClick={() => onSelect(option.value)}
                     className={`flex w-full items-center rounded-xl px-3 py-2 text-left text-sm transition-colors ${
                       isSelected
-                        ? "bg-sky-50 font-medium text-sky-600"
-                        : "text-black/80 hover:bg-slate-50"
+                        ? "bg-accent/10 font-medium text-accent"
+                        : "text-gray-300 hover:bg-accent/10"
                     }`}
                     role="option"
                     aria-selected={isSelected}
@@ -389,18 +389,18 @@ const AiManualSearch = () => {
   }, [hasAllSelections, initialTopHeadingText, selectedTopHeadingText]);
 
   return (
-    <div className="min-h-full bg-white">
+    <div className="animate-fade-in min-h-full bg-surface">
       <main className="pb-8">
         <div className="mx-0 w-full max-w-none px-3 sm:max-w-[20rem] sm:px-6 lg:mx-auto lg:max-w-[85rem] lg:px-0 lg:min-w-[75%]">
-          <div className="rounded-[10px] bg-white px-0 pb-6">
+          <div className="glass-card px-0 pb-6">
             <div className={`mt-6 mb-6 ${contentAlignClassName}`}>
-              <p className="text-sm font-medium leading-snug text-black/85 lg:text-[0.9rem] font-play">
+              <p className="text-sm font-medium leading-snug text-gray-200 lg:text-[0.9rem] font-heading">
                 {typedTopHeading}
               </p>
             </div>
 
             <div className={contentAlignClassName}>
-              <div className="mt-4 hidden max-w-full items-center rounded-[30px] border border-black/15 bg-white px-4 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.03)] sm:flex">
+              <div className="mt-4 hidden max-w-full items-center rounded-[30px] border border-glass-border bg-surface-50 px-4 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.03)] sm:flex">
                 <div className="flex flex-wrap items-center gap-2">
                   {searchBarBadges.map((badgeLabel, index) => (
                     <div
@@ -415,7 +415,7 @@ const AiManualSearch = () => {
                   <button
                     type="button"
                     onClick={() => navigate("/home")}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-black/70 transition-colors hover:bg-black/5 hover:text-black"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface-200 text-gray-400 transition-colors hover:bg-glass-hover hover:text-white"
                     aria-label="Clear search and go back"
                   >
                     <HiOutlineX size={24} />
@@ -425,8 +425,8 @@ const AiManualSearch = () => {
                     onClick={handleSearch}
                     className={`inline-flex items-center justify-center rounded-full p-1 transition-colors ${
                       hasAllSelections
-                        ? "text-black/90 hover:text-sky-600"
-                        : "cursor-not-allowed text-black/35"
+                        ? "text-gray-200 hover:text-accent-hover"
+                        : "cursor-not-allowed text-gray-500"
                     }`}
                     aria-label="Search listings"
                     disabled={!hasAllSelections}
@@ -501,7 +501,7 @@ const AiManualSearch = () => {
               </div>
 
               {/* <div className="relative mt-8">
-                <p className="text-3xl font-medium leading-snug text-black/85 lg:text-lg font-play">
+                <p className="text-3xl font-medium leading-snug text-gray-200 lg:text-lg font-heading">
                   Select one option from each badge above to view matching
                   destinations.
                 </p>
@@ -513,7 +513,7 @@ const AiManualSearch = () => {
               </div> */}
               {/* {typedBottomHeading && (
                 <div className="relative mt-8">
-                  <p className="text-sm font-medium leading-relaxed text-black/85 lg:text-[0.9rem] font-play">
+                  <p className="text-sm font-medium leading-relaxed text-gray-200 lg:text-[0.9rem] font-heading">
                     {typedBottomHeading}
                   </p>
                 </div>

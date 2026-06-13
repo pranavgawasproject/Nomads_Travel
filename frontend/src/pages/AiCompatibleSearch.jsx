@@ -118,30 +118,30 @@ const AiCompatibleSearch = () => {
   };
 
   return (
-    <div className="min-h-full bg-white">
+    <div className="animate-fade-in min-h-full bg-surface">
       <main className="px-6 py-12 lg:px-14">
         <div className="mx-auto max-w-5xl">
           <div className="flex justify-between">
             <div></div>
-            <h1 className="text-left text-[1.43rem] font-medium text-black/90 w-full px-28">
+            <h1 className="text-left text-[1.43rem] font-medium text-gray-200 w-full px-28">
               {typedHeading}
             </h1>
             <div></div>
           </div>
 
-          <div className=" mt-16 ml-28 flex max-w-3xl items-center rounded-full border border-black/15 px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.03)] ">
+          <div className=" mt-16 ml-28 flex max-w-3xl items-center rounded-full border border-glass-border px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.03)] ">
             <div className="flex min-h-10 flex-1 flex-wrap items-center gap-2">
               {selectedBadges.length ? (
                 selectedBadges.map((badge) => (
                   <div
                     key={badge}
-                    className="rounded-full border border-black/30 px-4 py-2 text-xs font-medium text-black/85"
+                    className="rounded-full border border-glass-border px-4 py-2 text-xs font-medium text-gray-200"
                   >
                     {badge}
                   </div>
                 ))
               ) : (
-                <p className="px-2 text-base text-black/30">
+                <p className="px-2 text-base text-gray-500">
                   Select badges below
                 </p>
               )}
@@ -151,7 +151,7 @@ const AiCompatibleSearch = () => {
               onClick={handleClearSelection}
               disabled={!selectedBadges.length}
               aria-label="Clear selected badges"
-              className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-black/70 transition-colors hover:bg-black/5 hover:text-black disabled:cursor-not-allowed disabled:opacity-50"
+              className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface-200 text-gray-400 transition-colors hover:bg-glass-hover hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               <HiOutlineX size={22} />
             </button>
@@ -159,7 +159,7 @@ const AiCompatibleSearch = () => {
               type="button"
               onClick={handleSearch}
               aria-label="Search"
-              className="rounded-full p-2 text-black/90"
+              className="rounded-full p-2 text-accent"
             >
               <HiOutlineSearch size={36} />
             </button>
@@ -180,8 +180,8 @@ const AiCompatibleSearch = () => {
                       type="button"
                       onClick={() => handleBadgeClick(badge)}
                       className={`shrink-0 rounded-full border px-6 py-2 text-xs font-medium transition-colors ${isActive
-                          ? "border-sky-500 bg-sky-500 text-white"
-                          : "border-black text-black/90 hover:border-sky-500"
+                          ? "border-accent bg-accent text-white"
+                          : "border-glass-border text-gray-200 hover:border-accent"
                         }`}
                     >
                       {badge}

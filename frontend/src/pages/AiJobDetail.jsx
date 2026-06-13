@@ -3,7 +3,6 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { HiOutlineArrowLeft } from "react-icons/hi";
 import Container from "../components/Container";
 import JobApplicationForm from "./JobApplicationForm";
-import HostJobApplicationForm from "./host/HostJobApplicationForm";
 
 const AiJobDetail = () => {
     const { title } = useParams();
@@ -15,11 +14,11 @@ const AiJobDetail = () => {
 
     return (
         <>
-            <div className="sticky top-0 z-40 bg-white/95 py-3 backdrop-blur-sm md:px-10">
+            <div className="animate-fade-in sticky top-0 z-40 bg-surface-50/95 py-3 backdrop-blur-sm md:px-10">
                 <button
                     type="button"
                     onClick={() => navigate("/home")}
-                    className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-sky-500 bg-white text-sky-500"
+                    className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-accent bg-surface-50 text-accent"
                     aria-label="Go back to AI career"
                 >
                     <HiOutlineArrowLeft size={18} />
@@ -34,11 +33,11 @@ const AiJobDetail = () => {
                     </h2>
 
                     {/* Tabs */}
-                    <div className="flex justify-center border-b border-gray-300 mb-8">
+                    <div className="flex justify-center border-b border-glass-border mb-8">
                         <button
                             className={` font-medium w-full ${activeTab === "description"
-                                ? "border-b-2 border-black"
-                                : "text-primary-blue"
+                                ? "border-b-2 border-accent"
+                                : "text-accent"
                                 }`}
                             onClick={() => setActiveTab("description")}
                         >
@@ -46,8 +45,8 @@ const AiJobDetail = () => {
                         </button>
                         <button
                             className={`px-6 py-2 font-medium w-full ${activeTab === "apply"
-                                ? "border-b-2 border-black "
-                                : "text-primary-blue"
+                                ? "border-b-2 border-accent "
+                                : "text-accent"
                                 }`}
                             onClick={() => setActiveTab("apply")}
                         >
@@ -57,7 +56,7 @@ const AiJobDetail = () => {
 
                     {/* Content */}
                     {activeTab === "description" ? (
-                        <div className="text-sm leading-relaxed text-gray-800 space-y-6">
+                        <div className="text-sm leading-relaxed text-gray-200 space-y-6">
                             {/* About the Job */}
                             <div>
                                 <h3 className="text-lg font-semibold mb-2">About the Job</h3>
@@ -71,7 +70,7 @@ const AiJobDetail = () => {
                                     {responsibilities && responsibilities.length > 0
                                         ? responsibilities.map((item, idx) => (
                                             <li key={idx} className="flex items-start gap-2">
-                                                <span className="text-blue-500">✔</span>
+                                                <span className="text-accent">✔</span>
                                                 <span>{item}</span>
                                             </li>
                                         ))
@@ -86,7 +85,7 @@ const AiJobDetail = () => {
                                     {qualifications && qualifications.length > 0
                                         ? qualifications.map((item, idx) => (
                                             <li key={idx} className="flex items-start gap-2">
-                                                <span className="text-blue-500">✔</span>
+                                                <span className="text-accent">✔</span>
                                                 <span>{item}</span>
                                             </li>
                                         ))
@@ -96,11 +95,11 @@ const AiJobDetail = () => {
 
                             {/* Footer */}
 
-                            <p className="text-sm pb-8 mt-0 border-t border-gray-300 ">
+                            <p className="text-sm pb-8 mt-0 border-t border-glass-border ">
                                 Please send in your Resume to{" "}
                                 <strong>
                                     Email :{" "}
-                                    <a className="text-primary-blue" href="mailto:careers@roamiq.com">
+                                    <a className="text-accent" href="mailto:careers@roamiq.com">
                                         careers@roamiq.com
                                     </a>
                                 </strong>{" "}
@@ -108,7 +107,7 @@ const AiJobDetail = () => {
                             </p>
                         </div>
                     ) : (
-                        <HostJobApplicationForm title={title} />
+                        <JobApplicationForm title={title} />
                     )}
                 </div>
             </Container>

@@ -20,7 +20,7 @@ import { showErrorAlert, showSuccessAlert } from "../utils/alerts";
 const SIGNUP_PROMPT =
   "Create your account to personalize your journey and unlock the full Explorer experience.";
 
-const SIGNUP_HEADING = "Signup";
+const SIGNUP_HEADING = "Create Account";
 const getFlagIconUrl = (isoCode) =>
   `https://flagcdn.com/24x18/${isoCode.toLowerCase()}.png`;
 
@@ -92,7 +92,7 @@ export default function AiSignup() {
 
     let messageIndex = 0;
     let signupHeadingIndex = 0;
-    let cleanupHeading = () => { };
+    let cleanupHeading = () => {};
 
     const typeSignupHeading = () => {
       const headingInterval = setInterval(() => {
@@ -110,7 +110,6 @@ export default function AiSignup() {
 
     const messageInterval = setInterval(() => {
       messageIndex += 1;
-      // setTypedMessage(SIGNUP_PROMPT.slice(0, messageIndex));
 
       if (messageIndex >= SIGNUP_PROMPT.length) {
         clearInterval(messageInterval);
@@ -136,217 +135,246 @@ export default function AiSignup() {
   };
 
   return (
-    <div className="flex items-center justify-center px-4 md:h-[60vh] lg:h-[80vh] border-gray-300 rounded-lg">
-      <div className="flex flex-col items-center gap-6 w-full max-w-4xl">
-        {/* <p className="mx-auto min-h-[3rem] w-full text-left font-play text-[0.95rem] leading-relaxed text-gray-800 sm:min-h-[3.5rem] sm:text-[1rem]">
-          {typedMessage}
-        </p> */}
+    <div className="animate-fade-in relative flex min-h-[75vh] items-center justify-center px-4 py-8 md:min-h-[80vh]">
+      {/* Subtle background gradient glow */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-1/3 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-glow opacity-60 blur-3xl" />
+        <div className="absolute left-1/4 bottom-1/4 h-[300px] w-[300px] rounded-full bg-gradient-radial from-neon-purple/10 to-transparent opacity-40 blur-3xl" />
+      </div>
 
-        <h1 className="text-hero min-h-[3rem] text-center font-play">
-          {typedSignupHeading}
-        </h1>
+      <div className="relative z-10 w-full max-w-lg">
+        {/* Glass Card */}
+        <div className="glass-card p-8 sm:p-10">
+          {/* Logo / Brand */}
+          <div className="mb-6 flex flex-col items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15 shadow-glow-sm">
+              <span className="text-xl font-bold text-accent">R</span>
+            </div>
+          </div>
 
-        <form
-          onSubmit={handleSubmit(handleSignup)}
-          className={`w-full grid grid-cols-1 md:grid-cols-2 gap-6 ${isFormVisible ? "visible" : "invisible"
+          {/* Heading */}
+          <h1 className="gradient-text mb-2 min-h-[3rem] text-center text-hero font-bold">
+            {typedSignupHeading}
+          </h1>
+
+          <p className="mb-8 text-center text-small text-gray-400">
+            {typedMessage}
+          </p>
+
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit(handleSignup)}
+            className={`grid grid-cols-1 gap-5 transition-all duration-500 md:grid-cols-2 ${
+              isFormVisible
+                ? "translate-y-0 opacity-100"
+                : "pointer-events-none translate-y-4 opacity-0"
             }`}
-        >
-          <Controller
-            name="fullName"
-            control={control}
-            rules={{ required: "Full name is required" }}
-            render={({ field, fieldState }) => (
-              <TextField
-                {...field}
-                label="Full Name"
-                fullWidth
-                required
-                variant="standard"
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-              />
-            )}
-          />
-
-          <Controller
-            name="email"
-            control={control}
-            rules={{ required: "Email is required" }}
-            render={({ field, fieldState }) => (
-              <TextField
-                {...field}
-                label="Email"
-                type="email"
-                fullWidth
-                required
-                variant="standard"
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-              />
-            )}
-          />
-
-
-          <Controller
-            name="countryOfResidence"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                select
-                label="Current Country Of Residence"
-                fullWidth
-                variant="standard"
-                SelectProps={{
-                  renderValue: (value) => {
-                    const selectedCountry = countries.find(
-                      (country) => country.name === value,
-                    );
-
-                    if (!selectedCountry) {
-                      return value;
-                    }
-
-                    return (
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <img
-                          src={getFlagIconUrl(selectedCountry.isoCode)}
-                          alt={`${selectedCountry.name} flag`}
-                          width={20}
-                          height={15}
-                          loading="lazy"
-                        />
-                        <span>{selectedCountry.name}</span>
-                      </Box>
-                    );
-                  },
-                }}
-                onChange={(event) =>
-                  handleCountryChange(event.target.value, field.onChange)
-                }
-              >
-                {countries.map((country) => (
-                  <MenuItem key={country.isoCode} value={country.name}>
-                    <Box
-                      component="img"
-                      src={getFlagIconUrl(country.isoCode)}
-                      alt={`${country.name} flag`}
-                      sx={{ width: 20, height: 15, mr: 1, flexShrink: 0 }}
-                      loading="lazy"
-                    />
-                    <span>{country.name}</span>
-                  </MenuItem>
-                ))}
-              </TextField>
-            )}
-          />
-
-          <Controller
-            name="mobile"
-            control={control}
-            rules={{
-              required: "Mobile number is required",
-              validate: isValidInternationalPhone,
-            }}
-            render={({ field, fieldState }) => (
-              <MuiTelInput
-                {...field}
-                label="Mobile"
-                fullWidth
-                defaultCountry={selectedCountry?.isoCode || "IN"}
-                forceCallingCode
-                required
-                variant="standard"
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-                onChange={(value) => field.onChange(value)}
-              />
-            )}
-          />
-
-          <Controller
-            name="password"
-            control={control}
-            rules={{ required: "Password is required" }}
-            render={({ field, fieldState }) => (
-              <TextField
-                {...field}
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                fullWidth
-                required
-                variant="standard"
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={togglePasswordVisibility}
-                        edge="end"
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <FiEyeOff /> : <FiEye />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
-          />
-
-          <Controller
-            name="confirmPassword"
-            control={control}
-            rules={{ required: "Confirm password is required" }}
-            render={({ field, fieldState }) => (
-              <TextField
-                {...field}
-                label="Confirm Password"
-                type={showConfirmPassword ? "text" : "password"}
-                fullWidth
-                required
-                variant="standard"
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={toggleConfirmPasswordVisibility}
-                        edge="end"
-                        tabIndex={-1}
-                      >
-                        {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
-          />
-
-          <div className="col-span-1 md:col-span-2 flex justify-center items-center mt-2 py-2 w-full">
-            <AiPrimaryButton
-              type="submit"
-              isLoading={isPending}
-              title="Signup"
-              disabled={isPending}
-              className="bg-primary-blue flex text-white font-[500] capitalize hover:bg-primary-light w-full sm:w-[7rem] px-6"
+          >
+            <Controller
+              name="fullName"
+              control={control}
+              rules={{ required: "Full name is required" }}
+              render={({ field, fieldState }) => (
+                <TextField
+                  {...field}
+                  label="Full Name"
+                  fullWidth
+                  required
+                  variant="standard"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
+              )}
             />
-          </div>
 
-          <div className="col-span-1 md:col-span-2">
-            <p className="text-center">
-              Already have an account?&nbsp;
-              <span className="underline">
-                <Link to="/ai-login">Login</Link>
-              </span>
-            </p>
-          </div>
-        </form>
+            <Controller
+              name="email"
+              control={control}
+              rules={{ required: "Email is required" }}
+              render={({ field, fieldState }) => (
+                <TextField
+                  {...field}
+                  label="Email"
+                  type="email"
+                  fullWidth
+                  required
+                  variant="standard"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
+              )}
+            />
+
+            <Controller
+              name="countryOfResidence"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  select
+                  label="Current Country Of Residence"
+                  fullWidth
+                  variant="standard"
+                  SelectProps={{
+                    renderValue: (value) => {
+                      const selectedCountry = countries.find(
+                        (country) => country.name === value,
+                      );
+
+                      if (!selectedCountry) {
+                        return value;
+                      }
+
+                      return (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                          }}
+                        >
+                          <img
+                            src={getFlagIconUrl(selectedCountry.isoCode)}
+                            alt={`${selectedCountry.name} flag`}
+                            width={20}
+                            height={15}
+                            loading="lazy"
+                          />
+                          <span>{selectedCountry.name}</span>
+                        </Box>
+                      );
+                    },
+                  }}
+                  onChange={(event) =>
+                    handleCountryChange(event.target.value, field.onChange)
+                  }
+                >
+                  {countries.map((country) => (
+                    <MenuItem key={country.isoCode} value={country.name}>
+                      <Box
+                        component="img"
+                        src={getFlagIconUrl(country.isoCode)}
+                        alt={`${country.name} flag`}
+                        sx={{ width: 20, height: 15, mr: 1, flexShrink: 0 }}
+                        loading="lazy"
+                      />
+                      <span>{country.name}</span>
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
+
+            <Controller
+              name="mobile"
+              control={control}
+              rules={{
+                required: "Mobile number is required",
+                validate: isValidInternationalPhone,
+              }}
+              render={({ field, fieldState }) => (
+                <MuiTelInput
+                  {...field}
+                  label="Mobile"
+                  fullWidth
+                  defaultCountry={selectedCountry?.isoCode || "IN"}
+                  forceCallingCode
+                  required
+                  variant="standard"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                  onChange={(value) => field.onChange(value)}
+                />
+              )}
+            />
+
+            <Controller
+              name="password"
+              control={control}
+              rules={{ required: "Password is required" }}
+              render={({ field, fieldState }) => (
+                <TextField
+                  {...field}
+                  label="Password"
+                  type={showPassword ? "text" : "password"}
+                  fullWidth
+                  required
+                  variant="standard"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={togglePasswordVisibility}
+                          edge="end"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <FiEyeOff /> : <FiEye />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+
+            <Controller
+              name="confirmPassword"
+              control={control}
+              rules={{ required: "Confirm password is required" }}
+              render={({ field, fieldState }) => (
+                <TextField
+                  {...field}
+                  label="Confirm Password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  fullWidth
+                  required
+                  variant="standard"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={toggleConfirmPasswordVisibility}
+                          edge="end"
+                          tabIndex={-1}
+                        >
+                          {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+
+            {/* Submit Button */}
+            <div className="col-span-1 flex justify-center md:col-span-2">
+              <AiPrimaryButton
+                type="submit"
+                isLoading={isPending}
+                title="Create Account"
+                disabled={isPending}
+                className="btn-primary w-full rounded-full font-semibold sm:w-auto sm:px-10"
+              />
+            </div>
+
+            {/* Login link */}
+            <div className="col-span-1 md:col-span-2">
+              <p className="text-center text-small text-gray-400">
+                Already have an account?{" "}
+                <Link
+                  to="/ai-login"
+                  className="text-accent transition-colors hover:text-accent-hover"
+                >
+                  Login
+                </Link>
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

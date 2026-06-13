@@ -113,7 +113,7 @@ const HorizontalScrollWrapper = ({ children, title }) => {
   return (
     <div className="relative group/scroll mb-6">
       <div className="flex items-center justify-between mb-4 gap-2">
-        <h2 className="text-sm sm:text-base md:text-subtitle text-secondary-dark font-semibold truncate leading-tight">
+        <h2 className="text-sm sm:text-base md:text-subtitle text-gray-200 font-semibold truncate leading-tight">
           {title}
         </h2>
       </div>
@@ -1082,7 +1082,7 @@ const AiGlobalListingsList = () => {
             onBack={() => navigate(-1)}
             onClear={() => navigate(-1)}
             heading={
-              <p className=" mt-6 mb-6 flex items-center gap-2 text-sm font-medium leading-snug text-black/85 lg:text-[0.8rem] font-play">
+              <p className=" mt-6 mb-6 flex items-center gap-2 text-sm font-medium leading-snug text-gray-200 lg:text-[0.8rem] font-heading">
                 {!isSecondHeadingPhase && (
                   <span
                     className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black border-b-transparent"
@@ -1110,7 +1110,7 @@ const AiGlobalListingsList = () => {
                         key={cat.value}
                         type="button"
                         onClick={() => handleCategoryClick(cat.value)}
-                        className="text-black px-1 py-2 hover:text-black transition flex items-center justify-center w-full"
+                        className="text-gray-200 px-1 py-2 hover:text-gray-200 transition flex items-center justify-center w-full"
                       >
                         {iconSrc ? (
                           <div className="h-10 w-full flex flex-col gap-0">
@@ -1132,7 +1132,7 @@ const AiGlobalListingsList = () => {
 
               {/* <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="flex justify-around md:w-full lg:w-full border-2 bg-gray-50 rounded-full p-0 items-center"
+                className="flex justify-around md:w-full lg:w-full border-2 bg-surface-50 rounded-full p-0 items-center"
               >
                 <Controller
                   name="continent"
@@ -1148,7 +1148,7 @@ const AiGlobalListingsList = () => {
                     />
                   )}
                 />
-                <div className="w-px h-10 bg-gray-300 mx-2 my-auto" />
+                <div className="w-px h-10 bg-glass-border mx-2 my-auto" />
                 <Controller
                   name="country"
                   control={control}
@@ -1164,7 +1164,7 @@ const AiGlobalListingsList = () => {
                     />
                   )}
                 />
-                <div className="w-px h-10 bg-gray-300 mx-2 my-auto" />
+                <div className="w-px h-10 bg-glass-border mx-2 my-auto" />
                 <Controller
                   name="location"
                   control={control}
@@ -1180,7 +1180,7 @@ const AiGlobalListingsList = () => {
                     />
                   )}
                 />
-                <div className="w-px h-10 bg-gray-300 mx-2 my-auto" />
+                <div className="w-px h-10 bg-glass-border mx-2 my-auto" />
                 <Controller
                   name="count"
                   control={control}
@@ -1198,7 +1198,7 @@ const AiGlobalListingsList = () => {
                 />
                 <button
                   type="submit"
-                  className="w-fit h-full bg-[#FF5757] text-white p-5 text-subtitle rounded-full"
+                  className="w-fit h-full bg-accent text-white p-5 text-subtitle rounded-full"
                 >
                   <IoSearch />
                 </button>
@@ -1219,7 +1219,7 @@ const AiGlobalListingsList = () => {
                   ) : groupedListings &&
                     Object.keys(groupedListings).length > 0 ? (
                     <>
-                      <div className="border-t border-gray-300 mt-0 mb-6" />
+                      <div className="border-t border-glass-border mt-0 mb-6" />
                       {Object.entries(groupedListings)
                         .sort(([typeA], [typeB]) => {
                           const typeOrder = [
@@ -1279,11 +1279,11 @@ const AiGlobalListingsList = () => {
                               }}
                               className={`col-span-full ${
                                 index > 0
-                                  ? "border-t border-gray-300 mt-6 pt-6"
+                                  ? "border-t border-glass-border mt-6 pt-6"
                                   : ""
                               } mb-6`}
                             >
-                              <h2 className="text-subtitle font-semibold mb-5 text-secondary-dark">
+                              <h2 className="text-subtitle font-semibold mb-5 text-gray-200">
                                 {sectionTitle}
                               </h2>
                               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-x-5 gap-y-0">
@@ -1302,7 +1302,7 @@ const AiGlobalListingsList = () => {
                                 <div className="mt-0 text-right">
                                   <button
                                     onClick={() => handleShowMoreClick(type)}
-                                    className="text-primary-blue text-sm font-semibold hover:underline"
+                                    className="text-accent text-sm font-semibold hover:underline"
                                   >
                                     {expandedCategories.includes(type)
                                       ? "View less ←"
@@ -1364,9 +1364,9 @@ const AiGlobalListingsList = () => {
                           sectionRefs.current["valueaddedservices-desktop"] =
                             element;
                         }}
-                        className="col-span-full border-t border-gray-300 mt-6 pt-6 mb-6 scroll-mt-24"
+                        className="col-span-full border-t border-glass-border mt-6 pt-6 mb-6 scroll-mt-24"
                       >
-                        <h2 className="text-subtitle font-semibold mb-5 text-secondary-dark">
+                        <h2 className="text-subtitle font-semibold mb-5 text-gray-200">
                           Value Added Services in {selectedLocationLabel}
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -1408,7 +1408,7 @@ const AiGlobalListingsList = () => {
                                     </span>
                                   ))}
                                   {service.badge && (
-                                    <span className="mt-0 rounded-full border border-red-400 bg-red-200 px-1.5 py-0.5 text-[9px] font-semibold normal-case text-black shadow-sm">
+                                    <span className="mt-0 rounded-full border border-red-400 bg-red-200 px-1.5 py-0.5 text-[9px] font-semibold normal-case text-gray-200 shadow-sm">
                                       {service.badge}
                                     </span>
                                   )}
@@ -1425,7 +1425,7 @@ const AiGlobalListingsList = () => {
                                   (prevState) => !prevState,
                                 )
                               }
-                              className="text-primary-blue text-sm font-semibold hover:underline"
+                              className="text-accent text-sm font-semibold hover:underline"
                             >
                               {isValueAddedServicesExpanded
                                 ? "View less ←"
@@ -1436,7 +1436,7 @@ const AiGlobalListingsList = () => {
                       </div>
                     </>
                   ) : (
-                    <div className="col-span-full text-center text-sm text-gray-500 border border-dotted rounded-lg p-4">
+                    <div className="col-span-full text-center text-sm text-gray-400 border border-dotted rounded-lg p-4">
                       No listings found.
                     </div>
                   )}
@@ -1452,11 +1452,11 @@ const AiGlobalListingsList = () => {
         <div className="flex flex-col gap-4 justify-center items-center w-full lg:mt-0">
           <div className="w-full lg:min-w-[82%] max-w-[80rem] lg:max-w-[80rem] mx-0 md:mx-auto px-4 sm:px-6 lg:px-0">
             <div className="lg:hidden w-full flex flex-col gap-4 mb-4">
-              <div className="w-[92%] mx-auto bg-white shadow-md border-2 rounded-full pl-16 pr-4 py-2 flex items-center gap-2">
-                <div className="flex items-center flex-1 text-center justify-center font-medium text-secondary-dark flex-col gap-1 min-w-0">
+              <div className="w-[92%] mx-auto glass-card rounded-full pl-16 pr-4 py-2 flex items-center gap-2">
+                <div className="flex items-center flex-1 text-center justify-center font-medium text-gray-200 flex-col gap-1 min-w-0">
                   <div className="flex items-center gap-2 w-full">
                     <IoSearch className="text-primary-red" />
-                    <span className="text-[11px] font-bold text-gray-900 truncate w-full text-left">
+                    <span className="text-[11px] font-bold text-gray-200 truncate w-full text-left">
                       {`${(formData?.country || "Country").charAt(0).toUpperCase() + (formData?.country || "Country").slice(1)} . ${
                         selectedLocationLabel || "Unknown"
                       } . ${
@@ -1470,7 +1470,7 @@ const AiGlobalListingsList = () => {
                       }`}
                     </span>
                   </div>
-                  <span className="text-[10px] text-gray-500">
+                  <span className="text-[10px] text-gray-400">
                     {formData?.count || "1-5"} Explorers
                   </span>
                 </div>
@@ -1478,7 +1478,7 @@ const AiGlobalListingsList = () => {
                   type="button"
                   onClick={() => navigate(-1)}
                   aria-label="Go back to previous page"
-                  className="h-8 w-8 shrink-0 rounded-full bg-gray-200 text-black/60 flex items-center justify-center"
+                  className="h-8 w-8 shrink-0 rounded-full bg-surface-100 text-gray-400 flex items-center justify-center"
                 >
                   <HiOutlineX size={18} />
                 </button>
@@ -1493,7 +1493,7 @@ const AiGlobalListingsList = () => {
                     key={cat.value}
                     type="button"
                     onClick={() => handleCategoryClick(cat.value)}
-                    className="flex-shrink-0 snap-start text-black px-2 py-2 hover:text-black transition flex items-center justify-center w-[28%] sm:w-[20%] md:w-[15%] lg:w-[10%]"
+                    className="flex-shrink-0 snap-start text-gray-200 px-2 py-2 hover:text-gray-200 transition flex items-center justify-center w-[28%] sm:w-[20%] md:w-[15%] lg:w-[10%]"
                   >
                     <div className="h-10 w-full flex flex-col items-center gap-1">
                       <img
@@ -1516,14 +1516,14 @@ const AiGlobalListingsList = () => {
               <motion.div
                 exit={{ y: "-100%" }}
                 transition={{ duration: 0.3 }}
-                className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl overflow-auto z-50 p-4 rounded-t-3xl lg:hidden h-[100dvh]"
+                className="fixed bottom-0 left-0 right-0 bg-surface-50 shadow-glass overflow-auto z-50 p-4 rounded-t-3xl lg:hidden h-[100dvh]"
               >
                 <div className="flex justify-between items-center mb-10">
                   <div>&nbsp;</div>
                   <h3 className="text-xl font-semibold">Search</h3>
                   <button
                     onClick={() => setShowMobileSearch(false)}
-                    className="text-gray-500 text-xl"
+                    className="text-gray-400 text-xl"
                   >
                     &times;
                   </button>
@@ -1591,7 +1591,7 @@ const AiGlobalListingsList = () => {
                   />
                   <button
                     type="submit"
-                    className="w-full bg-[#FF5757] text-white py-5 rounded-full"
+                    className="w-full bg-accent text-white py-5 rounded-full"
                   >
                     <IoSearch className="inline mr-2" />
                     Search
@@ -1681,16 +1681,16 @@ const AiGlobalListingsList = () => {
                               <div className="w-[calc(85%-0.5rem)] md:w-[calc(33.33%-1rem)] lg:w-[calc(20%-1.5rem)] flex-shrink-0 snap-start">
                                 <button
                                   onClick={() => handleCategoryClick(type)}
-                                  className="w-full aspect-square border-2 border-gray-100 rounded-3xl flex flex-col items-center justify-center gap-3 hover:border-primary-blue hover:shadow-md transition-all bg-gray-50/30 group md:justify-start md:pt-12"
+                                  className="w-full aspect-square border-2 border-glass-border rounded-3xl flex flex-col items-center justify-center gap-3 hover:border-accent hover:shadow-card transition-all bg-surface-50/30 group md:justify-start md:pt-12"
                                 >
-                                  <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
+                                  <div className="w-16 h-16 rounded-full bg-surface-50 flex items-center justify-center group-hover:bg-surface-100 transition-colors">
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       fill="none"
                                       viewBox="0 0 24 24"
                                       strokeWidth={2}
                                       stroke="currentColor"
-                                      className="w-8 h-8 text-gray-400 group-hover:text-gray-600"
+                                      className="w-8 h-8 text-gray-400 group-hover:text-gray-400"
                                     >
                                       <path
                                         strokeLinecap="round"
@@ -1699,7 +1699,7 @@ const AiGlobalListingsList = () => {
                                       />
                                     </svg>
                                   </div>
-                                  <span className="text-lg font-medium text-gray-600 group-hover:text-gray-900">
+                                  <span className="text-lg font-medium text-gray-400 group-hover:text-gray-200">
                                     View All
                                   </span>
                                 </button>
@@ -1765,7 +1765,7 @@ const AiGlobalListingsList = () => {
                       }}
                       className="mb-6 scroll-mt-24"
                     >
-                      <h2 className="text-sm sm:text-base md:text-subtitle text-secondary-dark font-semibold leading-tight mb-4">
+                      <h2 className="text-sm sm:text-base md:text-subtitle text-gray-200 font-semibold leading-tight mb-4">
                         Value Added Services in {selectedLocationLabel}
                       </h2>
                       <div className="flex md:hidden flex-nowrap overflow-x-auto snap-x snap-mandatory gap-4 pb-2 custom-scrollbar-hide">
@@ -1807,7 +1807,7 @@ const AiGlobalListingsList = () => {
                                   </span>
                                 ))}
                                 {service.badge && (
-                                  <span className="mt-1.5 rounded-full border border-red-400 bg-red-200 px-1.5 py-0.5 text-[8px] font-semibold normal-case text-black shadow-sm">
+                                  <span className="mt-1.5 rounded-full border border-red-400 bg-red-200 px-1.5 py-0.5 text-[8px] font-semibold normal-case text-gray-200 shadow-sm">
                                     {service.badge}
                                   </span>
                                 )}
@@ -1854,7 +1854,7 @@ const AiGlobalListingsList = () => {
                                   </span>
                                 ))}
                                 {service.badge && (
-                                  <span className="mt-1.5 rounded-full border border-red-400 bg-red-200 px-1.5 py-0.5 text-[8px] font-semibold normal-case text-black shadow-sm">
+                                  <span className="mt-1.5 rounded-full border border-red-400 bg-red-200 px-1.5 py-0.5 text-[8px] font-semibold normal-case text-gray-200 shadow-sm">
                                     {service.badge}
                                   </span>
                                 )}
@@ -1871,7 +1871,7 @@ const AiGlobalListingsList = () => {
                                 (prevState) => !prevState,
                               )
                             }
-                            className="text-primary-blue text-sm font-semibold hover:underline"
+                            className="text-accent text-sm font-semibold hover:underline"
                           >
                             {isValueAddedServicesExpanded
                               ? "View less ←"
@@ -1882,7 +1882,7 @@ const AiGlobalListingsList = () => {
                     </div>
                   </>
                 ) : (
-                  <div className="col-span-full text-center text-sm text-gray-500 border border-dotted rounded-lg p-4">
+                  <div className="col-span-full text-center text-sm text-gray-400 border border-dotted rounded-lg p-4">
                     No listings found.
                   </div>
                 )}
@@ -1897,7 +1897,7 @@ const AiGlobalListingsList = () => {
         <button
           type="button"
           onClick={handleShowMap}
-          className="bg-[#222222] text-white px-5 py-3 rounded-full flex items-center gap-2 shadow-xl hover:scale-105 transition-transform active:scale-95"
+          className="bg-surface-200 text-white px-5 py-3 rounded-full flex items-center gap-2 shadow-glass hover:scale-105 transition-transform active:scale-95"
         >
           <span className="text-sm font-semibold tracking-wide">Show map</span>
           <svg

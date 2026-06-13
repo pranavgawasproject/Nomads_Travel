@@ -53,9 +53,9 @@ const AiBudgetSearch = () => {
     "Please share the below details to find the best destinations for you";
 
   const floatingLabelSx = {
-    color: "black",
-    "&.Mui-focused": { color: "#1976d2" },
-    "&.MuiInputLabel-shrink": { color: "#1976d2" },
+    color: "#94a3b8",
+    "&.Mui-focused": { color: "#06b6d4" },
+    "&.MuiInputLabel-shrink": { color: "#06b6d4" },
   };
 
   useEffect(() => {
@@ -120,12 +120,12 @@ const AiBudgetSearch = () => {
   };
 
   return (
-    <div className="min-h-full bg-white">
+    <div className="animate-fade-in min-h-full bg-surface">
       <main className="px-6 py-12 lg:px-14">
         <div className="mx-auto max-w-5xl">
           <div className="flex justify-between">
             <div></div>
-            <h1 className="text-left text-[1.43rem] font-medium text-black/90 w-full px-28">
+            <h1 className="text-left text-[1.43rem] font-medium text-gray-200 w-full px-28">
               {typedHeading}
             </h1>
             <div></div>
@@ -160,16 +160,16 @@ const AiBudgetSearch = () => {
             /> */}
           </div>
 
-          <div className="mt-6 ml-28 flex max-w-3xl items-center rounded-full border border-black/15 px-4 py-0 shadow-[0_2px_6px_rgba(0,0,0,0.03)]">
+          <div className="mt-6 ml-28 flex max-w-3xl items-center rounded-full border border-glass-border px-4 py-0 shadow-[0_2px_6px_rgba(0,0,0,0.03)]">
             <input
               type="text"
               aria-label="Search destinations"
-              className="w-full border-none bg-transparent text-xl text-black/80 outline-none placeholder:text-black/30 "
+              className="w-full border-none bg-transparent text-xl text-gray-300 outline-none placeholder:text-gray-500 "
             />
             <button
               type="button"
               aria-label="Search"
-              className="ml-4 rounded-full  p-2 text-black/90"
+              className="ml-4 rounded-full p-2 text-accent"
               onClick={() => navigate("/career-search/results")}
             >
               <HiOutlineSearch size={36} />
@@ -187,8 +187,8 @@ const AiBudgetSearch = () => {
                   type="button"
                   onClick={() => handleFilterClick(filter)}
                   className={`rounded-full border px-6 py-2 text-xs font-medium transition-colors ${isActive
-                    ? "border-sky-500 bg-sky-500 text-white"
-                    : "border-black text-black/90 hover:border-sky-500"
+                    ? "border-accent bg-accent text-white"
+                    : "border-glass-border text-gray-200 hover:border-accent"
                     }`}
                 >
                   {filter}
@@ -205,7 +205,7 @@ const AiBudgetSearch = () => {
                     <button
                       type="button"
                       onClick={() => handleOptionClick(option)}
-                      className="w-full rounded-md px-3 py-2 text-left text-[0.9rem] text-black/90"
+                      className="w-full rounded-md px-3 py-2 text-left text-[0.9rem] text-gray-200"
                     >
                       {option}
                     </button>

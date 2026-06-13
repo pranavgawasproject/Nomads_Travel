@@ -234,17 +234,17 @@ const AiImageGallery = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 pb-6 flex flex-col gap-4">
+    <div className="animate-fade-in max-w-6xl mx-auto px-4 pb-6 flex flex-col gap-4">
       <div>
         <nav
           aria-label="Breadcrumb"
-          className="hidden my-4 items-center text-primary-blue text-[10px] md:text-sm lg:text-base"
+          className="hidden my-4 items-center text-accent text-[10px] md:text-sm lg:text-base"
         >
           <button
             type="button"
             onClick={handleBackButtonClick}
             aria-label="Go back"
-            className="inline-flex items-center justify-center rounded-full border border-primary-blue p-1 text-primary-blue"
+            className="inline-flex items-center justify-center rounded-full border border-accent p-1 text-accent"
           >
             <ArrowLeft size={14} />
           </button>
@@ -257,7 +257,7 @@ const AiImageGallery = () => {
                   onClick={
                     item.onClick || (() => handleBreadcrumbNavigate(item.key))
                   }
-                  className="text-primary-blue hover:text-primary-dark transition-colors"
+                  className="text-accent hover:text-gray-300 transition-colors"
                 >
                   {item.label}
                 </button>
@@ -272,7 +272,7 @@ const AiImageGallery = () => {
             </span>
           ))}
         </nav>
-        <h1 className="text-title font-semibold text-secondary-dark">
+        <h1 className="text-title font-semibold text-gray-200">
           {resolvedCompanyName} Gallery
         </h1>
       </div>
@@ -297,7 +297,7 @@ const AiImageGallery = () => {
               className="relative"
             >
               {!isLoaded && (
-                <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-md" />
+                <div className="absolute inset-0 bg-surface-200 animate-pulse rounded-md" />
               )}
               <img
                 {...imageProps}
@@ -324,7 +324,7 @@ const AiImageGallery = () => {
         <div className="flex items-center justify-between w-full">
           <button
             onClick={goToPrev}
-            className="text-white hidden  border-white border-2 bg-black hover:bg-gray-600 w-12 h-12 p-0 lg:flex items-center justify-center rounded-full"
+            className="text-white hidden  border-white border-2 bg-black hover:bg-surface-300 w-12 h-12 p-0 lg:flex items-center justify-center rounded-full"
           >
             <IoIosArrowBack />
           </button>
@@ -344,7 +344,7 @@ const AiImageGallery = () => {
           </div>
           <button
             onClick={goToNext}
-            className="text-white hidden  border-white border-2 bg-black hover:bg-gray-600 w-12 h-12 p-2 lg:flex items-center justify-center rounded-full"
+            className="text-white hidden  border-white border-2 bg-black hover:bg-surface-300 w-12 h-12 p-2 lg:flex items-center justify-center rounded-full"
           >
             <IoIosArrowForward />
           </button>

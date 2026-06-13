@@ -77,7 +77,7 @@ const AiContentAndCopyright = () => {
                         the respective websites or platforms. If any content owner believes
                         that their material has been used inappropriately or without proper
                         attribution, they may contact us at{" "}
-                        <a href="mailto:hello@roamiq.com" className="text-primary-blue ">
+                        <a href="mailto:hello@roamiq.com" className="text-accent ">
                             hello@roamiq.com
                         </a>
                         , and we will promptly review and remove or modify the content.
@@ -110,7 +110,7 @@ const AiContentAndCopyright = () => {
                     <p className="mt-3">
                         Please click here to read the{" "}
                         <span
-                            className="text-primary-blue font-bold cursor-pointer"
+                            className="text-accent font-bold cursor-pointer"
                             onClick={() => navigate("/ai-content-use-removal")}
                         >
                             Content Use & Removal Policy.
@@ -122,9 +122,9 @@ const AiContentAndCopyright = () => {
     ];
 
     return (
-        <div className="flex flex-col gap-10 px-6 md:px-12 lg:px-28 pb-8 md:pb-12 pt-0 text-[#364D59]">
+        <div className="animate-fade-in flex flex-col gap-10 px-6 md:px-12 lg:px-28 pb-8 md:pb-12 pt-0 text-gray-300">
             {/* Header */}
-            <div className="flex flex-col items-center relative font-comic uppercase font-bold text-secondary-dark text-2xl md:text-4xl lg:text-5xl leading-tight">
+            <div className="flex flex-col items-center relative font-heading uppercase font-bold text-gray-200 text-2xl md:text-4xl lg:text-5xl leading-tight">
                 <div className="relative inline-block text-center">
                     <h3>Content and Copyright Policy</h3>
                     <img
@@ -145,7 +145,7 @@ const AiContentAndCopyright = () => {
                             </h4>
                             <div className="text-content">{section.content}</div>
                         </div>
-                        {i < sections.length - 1 && <hr className="border-gray-300" />}
+                        {i < sections.length - 1 && <hr className="border-glass-border" />}
                     </div>
                 ))}
             </div>

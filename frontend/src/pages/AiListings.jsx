@@ -735,7 +735,7 @@ const AiListings = ({ forceListView = false }) => {
   });
 
   return (
-    <div className="flex flex-col gap:2 lg:gap-6 ">
+    <div className="flex flex-col gap:2 lg:gap-6 bg-surface animate-fade-in">
       <div
         className={`${forceListView ? "flex" : "hidden lg:flex"} flex-col gap-6 md:px-10`}
       >
@@ -749,19 +749,19 @@ const AiListings = ({ forceListView = false }) => {
               <button
                 type="button"
                 onClick={() => navigate("/search/results")}
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-sky-500 text-sky-500"
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-accent text-accent"
                 aria-label="Go back to search results"
               >
                 <HiOutlineArrowLeft size={18} />
               </button>
               {/* {selectedStateLabel && (
-              <span className="text-lg font-medium text-primary-blue">
+              <span className="text-lg font-medium text-accent">
                 {selectedStateLabel}
               </span>
             )} */}
             </div>
           )}
-          <p className="mb-4 mt-6 flex items-center gap-2 text-sm font-medium leading-snug text-black/85 lg:hidden font-play">
+          <p className="mb-4 mt-6 flex items-center gap-2 text-sm font-medium leading-snug text-gray-200 lg:hidden font-heading">
             {!isSecondHeadingPhase && (
               <span
                 className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black border-b-transparent"
@@ -776,7 +776,7 @@ const AiListings = ({ forceListView = false }) => {
             onBack={() => navigate(-1)}
             onClear={() => navigate("/search/results")}
             heading={
-              <p className="mt-6 mb-6 hidden items-center gap-2 text-sm font-medium leading-snug text-black/85 lg:flex lg:text-[0.9rem] font-play">
+              <p className="mt-6 mb-6 hidden items-center gap-2 text-sm font-medium leading-snug text-gray-200 lg:flex lg:text-[0.9rem] font-heading">
                 {!isSecondHeadingPhase && (
                   <span
                     className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black border-b-transparent"
@@ -791,10 +791,10 @@ const AiListings = ({ forceListView = false }) => {
           />
           <div className={isHeadingSequenceComplete ? "block" : "hidden"}>
             <div className="lg:hidden w-full flex flex-col gap-4 mb-4">
-              <div className="bg-white shadow-md flex items-center w-[92%] mx-auto text-center justify-center font-medium text-secondary-dark border-2 px-6 py-2 rounded-full flex-col gap-1">
+              <div className="glass-card flex items-center w-[92%] mx-auto text-center justify-center font-medium text-gray-200 px-6 py-2 rounded-full flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <IoSearch className="text-primary-red" />
-                  <span className="text-[11px] font-bold text-gray-900 truncate w-full text-left">
+                  <IoSearch className="text-accent" />
+                  <span className="text-[11px] font-bold text-gray-200 truncate w-full text-left">
                     {`${(formData?.country || "Country").charAt(0).toUpperCase() + (formData?.country || "Country").slice(1)} . ${
                       formData?.location
                         ? formData.location
@@ -817,7 +817,7 @@ const AiListings = ({ forceListView = false }) => {
                     }`}
                   </span>
                 </div>
-                <span className="text-[10px] text-gray-500">
+                <span className="text-[10px] text-gray-400">
                   {formData?.count || "1-5"} Explorers
                 </span>
               </div>
@@ -832,7 +832,7 @@ const AiListings = ({ forceListView = false }) => {
                     key={cat.value}
                     type="button"
                     onClick={() => handleCategoryClick(cat.value)}
-                    className="flex-shrink-0 snap-start text-black px-2 py-2 hover:text-black transition flex items-center justify-center w-[28%] sm:w-[20%] md:w-[15%] lg:w-[10%]"
+                    className="flex-shrink-0 snap-start text-gray-200 px-2 py-2 hover:text-gray-200 transition flex items-center justify-center w-[28%] sm:w-[20%] md:w-[15%] lg:w-[10%]"
                   >
                     <div className="h-10 w-full flex flex-col items-center gap-1">
                       <img
@@ -841,7 +841,7 @@ const AiListings = ({ forceListView = false }) => {
                         className="h-full w-[90%] object-contain"
                       />
                       <span
-                        className={`text-[10px] font-medium whitespace-nowrap border-b-2 ${isActive ? "border-primary-blue text-primary-blue" : "border-transparent text-black"}`}
+                        className={`text-[10px] font-medium whitespace-nowrap border-b-2 ${isActive ? "border-accent text-accent" : "border-transparent text-gray-200"}`}
                       >
                         {cat.label}
                       </span>
@@ -857,14 +857,14 @@ const AiListings = ({ forceListView = false }) => {
               <motion.div
                 exit={{ y: "-100%" }}
                 transition={{ duration: 0.3 }}
-                className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl overflow-auto z-50 p-4 rounded-t-3xl lg:hidden h-[100dvh]"
+                className="fixed bottom-0 left-0 right-0 bg-surface-50 shadow-glass overflow-auto z-50 p-4 rounded-t-3xl lg:hidden h-[100dvh]"
               >
                 <div className="flex justify-between items-center mb-10">
                   <div>&nbsp;</div>
                   <h3 className="text-xl font-semibold">Search</h3>
                   <button
                     onClick={() => setShowMobileSearch(false)}
-                    className="text-gray-500 text-xl"
+                    className="text-gray-400 text-xl"
                   >
                     &times;
                   </button>
@@ -932,7 +932,7 @@ const AiListings = ({ forceListView = false }) => {
               />
               <button
                 type="submit"
-                className="w-full bg-[#FF5757] text-white py-5 rounded-full"
+                className="w-full bg-accent text-white py-5 rounded-full"
               >
                 <IoSearch className="inline mr-2" />
                 Search
@@ -958,7 +958,7 @@ const AiListings = ({ forceListView = false }) => {
                             key={cat.value}
                             type="button"
                             onClick={() => handleCategoryClick(cat.value)}
-                            className="text-black px-1 py-2 hover:text-black transition flex items-center justify-center w-full"
+                            className="text-gray-200 px-1 py-2 hover:text-gray-200 transition flex items-center justify-center w-full"
                           >
                             {iconSrc ? (
                               <div className="h-10 w-full flex flex-col gap-0 items-center">
@@ -970,7 +970,7 @@ const AiListings = ({ forceListView = false }) => {
                                 <span
                                   className={`text-tiny border-b-2 pb-1 ${
                                     isActive
-                                      ? "border-primary-blue"
+                                      ? "border-accent"
                                       : "border-transparent"
                                   }`}
                                 >
@@ -988,7 +988,7 @@ const AiListings = ({ forceListView = false }) => {
 
                   {/* <form
                 onSubmit={handleSubmit(onSubmit)}
-                className=" flex justify-around md:w-full lg:w-full border-2 bg-gray-50 rounded-full p-0 items-center"
+                className=" flex justify-around md:w-full lg:w-full border-2 bg-surface-50 rounded-full p-0 items-center"
                 
               >
                 <Controller
@@ -1005,7 +1005,7 @@ const AiListings = ({ forceListView = false }) => {
                     />
                   )}
                 />
-                <div className="w-px h-10 bg-gray-300 mx-2 my-auto" />
+                <div className="w-px h-10 bg-glass-border mx-2 my-auto" />
                 <Controller
                   name="country"
                   control={control}
@@ -1021,7 +1021,7 @@ const AiListings = ({ forceListView = false }) => {
                     />
                   )}
                 />
-                <div className="w-px h-10 bg-gray-300 mx-2 my-auto" />
+                <div className="w-px h-10 bg-glass-border mx-2 my-auto" />
                 <Controller
                   name="location"
                   control={control}
@@ -1037,7 +1037,7 @@ const AiListings = ({ forceListView = false }) => {
                     />
                   )}
                 />
-                <div className="w-px h-10 bg-gray-300 mx-2 my-auto" />
+                <div className="w-px h-10 bg-glass-border mx-2 my-auto" />
                 <Controller
                   name="count"
                   control={control}
@@ -1055,7 +1055,7 @@ const AiListings = ({ forceListView = false }) => {
                 />
                 <button
                   type="submit"
-                  className="w-fit h-full  bg-[#FF5757] text-white p-5 text-subtitle rounded-full"
+                  className="w-fit h-full  bg-accent text-white p-5 text-subtitle rounded-full"
                 >
                   <IoSearch />
                 </button>
@@ -1068,11 +1068,11 @@ const AiListings = ({ forceListView = false }) => {
 
           <button
             onClick={() => setShowMobileSearch((prev) => !prev)}
-            className="bg-white shadow-md flex items-center w-full text-center item-center justify-center font-medium text-secondary-dark border-2 px-6 py-2 rounded-full flex-col gap-2"
+            className="glass-card flex items-center w-full text-center item-center justify-center font-medium text-gray-200 px-6 py-2 rounded-full flex-col gap-2"
           >
-            <span className="text-[11px] font-bold text-gray-900 truncate w-full text-center">
+            <span className="text-[11px] font-bold text-gray-200 truncate w-full text-center">
               <div className="flex items-center gap-2">
-                <IoSearch className="text-primary-red" />
+                <IoSearch className="text-accent" />
                 {`${(formData?.country || "Country").charAt(0).toUpperCase() + (formData?.country || "Country").slice(1)} . ${formData?.location
                   ? formData.location
                     .split(' ')
@@ -1084,7 +1084,7 @@ const AiListings = ({ forceListView = false }) => {
                   }`}
               </div>
             </span>
-            <span className="text-tiny text-gray-500">
+            <span className="text-tiny text-gray-400">
               {formData?.count || "1-5"} Explorers
             </span>
           </button>
@@ -1098,7 +1098,7 @@ const AiListings = ({ forceListView = false }) => {
                   key={cat.value}
                   type="button"
                   onClick={() => handleCategoryClick(cat.value)}
-                  className="flex-shrink-0 snap-start text-black px-2 py-2 hover:text-black transition flex items-center justify-center w-[28%] sm:w-[20%] md:w-[15%] lg:w-[10%]"
+                  className="flex-shrink-0 snap-start text-gray-200 px-2 py-2 hover:text-gray-200 transition flex items-center justify-center w-[28%] sm:w-[20%] md:w-[15%] lg:w-[10%]"
                 >
                   <div className="h-10 w-full flex flex-col items-center gap-1">
                     <img
@@ -1107,7 +1107,7 @@ const AiListings = ({ forceListView = false }) => {
                       className="h-full w-[90%] object-contain"
                     />
                     <span
-                      className={`text-[10px] font-medium whitespace-nowrap border-b-2 ${isActive ? "border-primary-blue text-primary-blue" : "border-transparent text-black"
+                      className={`text-[10px] font-medium whitespace-nowrap border-b-2 ${isActive ? "border-accent text-accent" : "border-transparent text-gray-200"
                         }`}
                     >
                       {cat.label}
@@ -1127,15 +1127,15 @@ const AiListings = ({ forceListView = false }) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl overflow-auto z-50 p-0 rounded-t-3xl lg:hidden"
+                className="fixed bottom-0 left-0 right-0 bg-surface-50 shadow-glass overflow-auto z-50 p-0 rounded-t-3xl lg:hidden"
               >
-                <motion.div className="bg-white shadow-2xl overflow-auto p-4 rounded-b-3xl  h-screen  w-full">
+                <motion.div className="bg-surface-50 shadow-glass overflow-auto p-4 rounded-b-3xl  h-screen  w-full">
                   <div className="flex justify-between items-center mb-10">
                     <div>&nbsp;</div>
                     <h3 className="text-xl font-semibold">Search</h3>
                     <button
                       onClick={() => setShowMobileSearch(false)}
-                      className="text-gray-500 text-xl"
+                      className="text-gray-400 text-xl"
                     >
                       &times;
                     </button>
@@ -1204,7 +1204,7 @@ const AiListings = ({ forceListView = false }) => {
                 />
                 <button
                   type="submit"
-                  className="w-full bg-[#FF5757] text-white py-5 rounded-full"
+                  className="w-full bg-accent text-white py-5 rounded-full"
                 >
                   <IoSearch className="inline mr-2" />
                   Search
@@ -1220,8 +1220,8 @@ const AiListings = ({ forceListView = false }) => {
           >
             {/* Dynamic Header */}
             {formData?.category && formData?.location && (
-              <div className="mt-6 mb-2 px-1 border-t border-gray-300">
-                <h1 className="text-sm sm:text-base md:text-subtitle text-secondary-dark font-semibold truncate leading-tight mt-6">
+              <div className="mt-6 mb-2 px-1 border-t border-glass-border">
+                <h1 className="text-sm sm:text-base md:text-subtitle text-gray-200 font-semibold truncate leading-tight mt-6">
                   Popular{" "}
                   {{
                     coworking: "Co-Working Spaces",
@@ -1287,7 +1287,7 @@ const AiListings = ({ forceListView = false }) => {
                               </span>
                             ))}
                             {service.badge && (
-                              <span className="mt-2 rounded-full border border-red-400 bg-red-200 px-1.5 py-0.5 text-[9px] font-semibold leading-none normal-case text-black shadow-sm">
+                              <span className="mt-2 rounded-full border border-red-400 bg-red-200 px-1.5 py-0.5 text-[9px] font-semibold leading-none normal-case text-gray-200 shadow-sm">
                                 {service.badge}
                               </span>
                             )}
@@ -1372,7 +1372,7 @@ const AiListings = ({ forceListView = false }) => {
                     ) : forMapsData?.length ? (
                       <Map locations={forMapsData} />
                     ) : (
-                      <div className="h-full flex items-center justify-center text-gray-500 text-sm border border-dotted rounded-lg">
+                      <div className="h-full flex items-center justify-center text-gray-400 text-sm border border-dotted rounded-lg">
                         Map data not available.
                       </div>
                     )}
@@ -1393,7 +1393,7 @@ const AiListings = ({ forceListView = false }) => {
                     },
                   )
                 }
-                className="bg-[#222222] text-white px-5 py-3 rounded-full flex items-center gap-2 shadow-xl hover:scale-105 transition-transform active:scale-95"
+                className="bg-surface-200 text-white px-5 py-3 rounded-full flex items-center gap-2 shadow-glass hover:scale-105 transition-transform active:scale-95"
               >
                 <span className="text-sm font-semibold tracking-wide">
                   Show map

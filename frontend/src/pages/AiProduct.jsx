@@ -665,7 +665,7 @@ const AiProduct = () => {
         shareTitle,
       )}&url=${encodeURIComponent(shareUrl)}`,
       icon: FaTwitter,
-      iconClassName: "text-black",
+      iconClassName: "text-gray-200",
     },
     {
       id: "linkedin",
@@ -736,39 +736,39 @@ const AiProduct = () => {
   };
 
   return (
-    <div className="pb-4 pt-4 px-4 sm:px-0 sm:pt-0 ">
+    <div className="pb-4 pt-4 px-4 sm:px-0 sm:pt-0 bg-surface animate-fade-in">
       {/* Share Modal - Shared between both views */}
       <TransparentModal
         open={shareMenuOpen}
         onClose={() => setShareMenuOpen(false)}
-        bgColor="bg-white"
+        bgColor="bg-surface-50"
         width="w-full max-w-md"
         height="h-auto max-h-[90vh]"
       >
         <div className="space-y-4">
           <div>
-            <p className="text-base font-semibold text-gray-800">
+            <p className="text-base font-semibold text-gray-300">
               Share this listing
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400">
               Choose a platform to share the listing link.
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+          <div className="rounded-lg border border-glass-border bg-surface-50 p-3">
             <p className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
               Listing URL
             </p>
-            <div className="mt-2 flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-2">
+            <div className="mt-2 flex items-center gap-2 rounded-full border border-glass-border bg-surface-100 px-3 py-2">
               <input
                 type="text"
                 readOnly
                 value={shareUrl}
-                className="w-full bg-transparent text-xs text-gray-700 outline-none"
+                className="w-full bg-transparent text-xs text-gray-300 outline-none"
               />
               <button
                 type="button"
                 onClick={handleCopyShareLink}
-                className="rounded-full bg-blue-500 px-4 py-1 text-xs font-semibold text-white transition hover:bg-blue-600"
+                className="rounded-full bg-accent px-4 py-1 text-xs font-semibold text-white transition hover:bg-accent-hover"
               >
                 {hasCopiedLink ? "Copied" : "Copy"}
               </button>
@@ -784,9 +784,9 @@ const AiProduct = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setShareMenuOpen(false)}
-                  className="flex flex-col items-center gap-2 rounded-lg border border-gray-200 px-3 py-3 text-xs font-medium text-gray-700 transition hover:border-gray-300 hover:bg-gray-50"
+                  className="flex flex-col items-center gap-2 rounded-lg border border-glass-border px-3 py-3 text-xs font-medium text-gray-300 transition hover:border-glass-border hover:bg-surface-100"
                 >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-100">
                     <Icon className={item.iconClassName} size={18} />
                   </span>
                   <span>{item.label}</span>
@@ -803,13 +803,13 @@ const AiProduct = () => {
           {/* Breadcrumb - Desktop Only */}
           <nav
             aria-label="Breadcrumb"
-            className="hidden mb-4 items-center text-primary-blue"
+            className="hidden mb-4 items-center text-accent"
           >
             <button
               type="button"
               onClick={handleBackButtonClick}
               aria-label="Go back"
-              className="inline-flex items-center justify-center rounded-full border border-primary-blue p-1 text-primary-blue"
+              className="inline-flex items-center justify-center rounded-full border border-accent p-1 text-accent"
             >
               <ArrowLeft size={16} />
             </button>
@@ -842,7 +842,7 @@ const AiProduct = () => {
                     <button
                       type="button"
                       onClick={() => handleBreadcrumbNavigate(item.key)}
-                      className="text-primary-blue hover:text-primary-dark transition-colors"
+                      className="text-accent hover:text-accent transition-colors"
                     >
                       {item.label}
                     </button>
@@ -855,7 +855,7 @@ const AiProduct = () => {
                 </span>
               ))}
           </nav>
-          <h1 className="text-title font-semibold text-secondary-dark">
+          <h1 className="text-title font-semibold text-gray-200">
             {companyDetails?.companyTitle || "Loading Title..."}
           </h1>
         </div>
@@ -864,24 +864,24 @@ const AiProduct = () => {
           {/* Desktop Image Section */}
           {isCompanyDetails ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 overflow-hidden animate-pulse">
-              <div className="w-full h-[28.5rem] bg-gray-200 rounded-md" />
+              <div className="w-full h-[28.5rem] bg-surface-100 rounded-md" />
               <div className="grid grid-cols-2 gap-1">
                 {[1, 2, 3, 4].map((_, idx) => (
                   <div
                     key={idx}
-                    className="w-full h-56 bg-gray-200 rounded-md"
+                    className="w-full h-56 bg-surface-100 rounded-md"
                   />
                 ))}
               </div>
             </div>
           ) : companyImages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-4 py-10 border border-dashed border-gray-300 rounded-md">
+            <div className="flex flex-col items-center justify-center gap-4 py-10 border border-dashed border-glass-border rounded-md">
               <img
                 src="https://via.placeholder.com/150x100?text=No+Images "
                 alt="No images"
                 className="w-40 h-auto"
               />
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-400 text-sm">
                 No images have been provided by the company.
               </p>
             </div>
@@ -914,7 +914,7 @@ const AiProduct = () => {
                     key={item._id}
                     className={`relative w-full h-56 overflow-hidden rounded-md cursor-pointer border-2 ${
                       selectedImage?._id === item._id
-                        ? "border-primary-dark"
+                        ? "border-accent"
                         : "border-transparent"
                     }`}
                     onClick={() =>
@@ -946,7 +946,7 @@ const AiProduct = () => {
                               },
                             });
                           }}
-                          className="bg-white text-sm px-3 py-1 rounded shadow font-medium"
+                          className="bg-surface-200 text-white text-sm px-3 py-1 rounded shadow-card font-medium"
                         >
                           +{companyDetails.images.length - 4} more
                         </button>
@@ -962,14 +962,14 @@ const AiProduct = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <div className="flex flex-col gap-8">
               {isCompanyDetails ? (
-                <div className="w-full h-36 bg-gray-200 animate-pulse rounded-md" />
+                <div className="w-full h-36 bg-surface-100 animate-pulse rounded-md" />
               ) : !(
                   (typeof companyDetails?.logo === "string" &&
                     companyDetails.logo) ||
                   companyDetails?.logo?.url
                 ) ? (
-                <div className="w-full h-36 flex items-center justify-center bg-gray-100 border border-dashed border-gray-300 rounded-md">
-                  <span className="text-gray-500 text-sm">
+                <div className="w-full h-36 flex items-center justify-center bg-surface-100 border border-dashed border-glass-border rounded-md">
+                  <span className="text-gray-400 text-sm">
                     No company logo available
                   </span>
                 </div>
@@ -989,7 +989,7 @@ const AiProduct = () => {
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <h1 className="text-title font-medium text-gray-700 uppercase">
+                  <h1 className="text-title font-medium text-gray-300 uppercase">
                     About
                   </h1>
                   <div className="items-center flex gap-2">
@@ -997,9 +997,9 @@ const AiProduct = () => {
                       <button
                         type="button"
                         onClick={() => setShareMenuOpen(true)}
-                        className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-3 py-1 mr-2 text-small text-gray-600 transition hover:border-gray-400 hover:text-gray-900"
+                        className="inline-flex items-center gap-2 rounded-full border border-glass-border px-3 py-1 mr-2 text-small text-gray-400 transition hover:border-accent/50 hover:text-white"
                       >
-                        <FiShare2 className="text-gray-600" size={14} />
+                        <FiShare2 className="text-gray-400" size={14} />
                         Share
                       </button>
                     </div>
@@ -1010,7 +1010,7 @@ const AiProduct = () => {
                           href={companyDetails?.websiteTemplateLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-small underline text-primary-blue"
+                          className="text-small underline text-accent"
                         >
                           View Website
                         </a>
@@ -1040,18 +1040,18 @@ const AiProduct = () => {
 
                 {isCompanyDetails ? (
                   <div className="space-y-1 animate-pulse">
-                    <div className="h-3 bg-gray-200 rounded w-3/4" />
-                    <div className="h-3 bg-gray-200 rounded w-2/3" />
-                    <div className="h-3 bg-gray-200 rounded w-1/2" />
+                    <div className="h-3 bg-surface-100 rounded w-3/4" />
+                    <div className="h-3 bg-surface-100 rounded w-2/3" />
+                    <div className="h-3 bg-surface-100 rounded w-1/2" />
                   </div>
                 ) : !companyDetails?.about ? (
                   <div className="place-content-center w-full h-full">
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-sm text-gray-400 italic">
                       Company information is not provided.
                     </p>
                   </div>
                 ) : (
-                  <p className="text-sm text-secondary-dark">
+                  <p className="text-sm text-gray-200">
                     {companyDetails.about.replace(/\\n/g, " ")}
                   </p>
                 )}
@@ -1059,10 +1059,10 @@ const AiProduct = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-              <div className="border-2 rounded-xl flex gap-1 items-center p-4">
+              <div className="glass-card flex gap-1 items-center p-4">
                 <div className="text-tiny w-full hidden lg:flex justify-center items-center">
                   <LeafWrapper height="3rem" width={"2rem"}>
-                    <div className="text-secondary-dark font-semibold flex lg:text-subtitle flex-col leading-5 items-center">
+                    <div className="text-gray-200 font-semibold flex lg:text-subtitle flex-col leading-5 items-center">
                       <span>Guest</span>
                       <span>Favorite</span>
                     </div>
@@ -1082,16 +1082,16 @@ const AiProduct = () => {
                       {renderStars(companyDetails?.ratings || 0)}
                     </span>
                   </div>
-                  <div className="w-px h-10 bg-gray-300 mx-2 my-auto lg:hidden" />
+                  <div className="w-px h-10 bg-glass-border mx-2 my-auto lg:hidden" />
                   <div className="text-tiny w-full flex justify-center items-center lg:hidden">
                     <LeafWrapper height="3rem" width={"2rem"}>
-                      <div className="text-secondary-dark font-semibold flex text-tiny lg:text-subtitle flex-col leading-5 items-center">
+                      <div className="text-gray-200 font-semibold flex text-tiny lg:text-subtitle flex-col leading-5 items-center">
                         <span>Guest</span>
                         <span>Favorite</span>
                       </div>
                     </LeafWrapper>
                   </div>
-                  <div className="w-px h-10 bg-gray-300 mx-2 my-auto" />
+                  <div className="w-px h-10 bg-glass-border mx-2 my-auto" />
                   <div className="flex flex-col gap-4 lg:gap-0 justify-center items-center">
                     <p className="text-tiny lg:text-subtitle mt-1">
                       {companyDetails?.reviewCount ||
@@ -1105,8 +1105,8 @@ const AiProduct = () => {
                 </div>
               </div>
 
-              <div className="shadow-md flex flex-col gap-4 p-6 rounded-xl border-2">
-                <h1 className="text-card-title text-secondary-dark font-semibold leading-normal">
+              <div className="glass-card flex flex-col gap-4 p-6 rounded-xl">
+                <h1 className="text-card-title text-gray-200 font-semibold leading-normal">
                   Enquire & Receive Quote
                 </h1>
                 <form
@@ -1154,10 +1154,10 @@ const AiProduct = () => {
                     }}
                     render={({ field }) => (
                       <div className="flex flex-col gap-1">
-                        <label className="text-sm text-gray-600 font-medium">
+                        <label className="text-sm text-gray-400 font-medium">
                           No. Of People
                         </label>
-                        <div className="flex items-center border-b border-gray-300 py-1 w-full max-w-xs">
+                        <div className="flex items-center border-b border-glass-border py-1 w-full max-w-xs">
                           <button
                             type="button"
                             onClick={() =>
@@ -1165,14 +1165,14 @@ const AiProduct = () => {
                                 Math.max(0, Number(field.value || 0) - 1),
                               )
                             }
-                            className="px-3 py-1 text-lg font-semibold text-gray-600 hover:text-primary-blue"
+                            className="px-3 py-1 text-lg font-semibold text-gray-400 hover:text-accent"
                           >
                             −
                           </button>
                           <input
                             {...field}
                             readOnly
-                            className="w-full text-center outline-none bg-transparent text-gray-800 text-sm font-medium"
+                            className="w-full text-center outline-none bg-transparent text-gray-300 text-sm font-medium"
                             value={field.value || 0}
                           />
                           <button
@@ -1180,7 +1180,7 @@ const AiProduct = () => {
                             onClick={() =>
                               field.onChange(Number(field.value || 0) + 1)
                             }
-                            className="px-3 py-1 text-lg font-semibold text-gray-600 hover:text-primary-blue"
+                            className="px-3 py-1 text-lg font-semibold text-gray-400 hover:text-accent"
                           >
                             +
                           </button>
@@ -1338,11 +1338,11 @@ const AiProduct = () => {
 
           {/* Desktop Inclusions */}
           <div className="flex flex-col gap-8 w-full">
-            <h1 className="text-title text-gray-700 font-medium uppercase">
+            <h1 className="text-title text-gray-300 font-medium uppercase">
               What Inclusions does it offer
             </h1>
             {inclusions.length === 0 ? (
-              <div className="w-full border-2 border-dotted border-gray-400 rounded-lg p-6 text-center text-gray-500">
+              <div className="w-full glass-card border-dotted p-6 text-center text-gray-400">
                 Inclusions not available
               </div>
             ) : (
@@ -1397,14 +1397,14 @@ const AiProduct = () => {
                   ))}
                 </>
               ) : (
-                <div className="col-span-full border-2 border-dotted border-gray-300 rounded-xl p-6 text-center text-sm text-gray-500 h-40 flex justify-center items-center w-full">
+                <div className="col-span-full glass-card border-dotted p-6 text-center text-sm text-gray-400 h-40 flex justify-center items-center w-full">
                   No reviews yet.
                 </div>
               )}
             </div>
             <div className="text-right">
               <a
-                className="text-primary-blue text-sm font-semibold hover:underline"
+                className="text-accent text-sm font-semibold hover:underline"
                 href={companyDetails?.googleMap}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -1432,7 +1432,7 @@ const AiProduct = () => {
               <button
                 type="button"
                 className="flex rounded-full items-center cursor-pointer justify-center  gap-2
-        bg-primary-blue hover:bg-secondary-light text-primary
+        bg-accent hover:bg-secondary-light text-primary
         text-content leading-5
         w-3/2 px-6 py-3 undefined"
                 onClick={handleWriteReviewClick}
@@ -1454,14 +1454,14 @@ const AiProduct = () => {
                   />
                 ))
               ) : (
-                <div className="col-span-full border-2 border-dotted border-gray-300 rounded-xl p-6 text-center text-sm text-gray-500 h-40 flex justify-center items-center">
+                <div className="col-span-full glass-card border-dotted p-6 text-center text-sm text-gray-400 h-40 flex justify-center items-center">
                   No reviews yet.
                 </div>
               )}
             </div> */}
             {/* <div className="text-right">
               <a
-                className="text-primary-blue text-sm font-semibold hover:underline"
+                className="text-accent text-sm font-semibold hover:underline"
                 href={companyDetails?.googleMap}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -1474,7 +1474,7 @@ const AiProduct = () => {
 
             {/* Desktop Map */}
             <div className="w-full h-[500px] flex flex-col gap-8 rounded-xl overflow-hidden">
-              <h1 className="text-title font-medium text-gray-700 uppercase">
+              <h1 className="text-title font-medium text-gray-300 uppercase">
                 Where you'll be
               </h1>
               <Map
@@ -1488,9 +1488,9 @@ const AiProduct = () => {
             {["CMP0001", "CMP0052"].includes(companyDetails?.companyId) && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 pt-10">
-                  <div className="flex flex-col lg:flex-row justify-center items-center col-span-1 border-2 shadow-md gap-4 rounded-xl p-6 w-full">
+                  <div className="flex flex-col lg:flex-row justify-center items-center col-span-1 glass-card gap-4 rounded-xl p-6 w-full">
                     <div className="flex flex-col gap-4 justify-between items-center h-full w-56">
-                      <div className="w-32 aspect-square rounded-full bg-primary-blue flex items-center justify-center text-white text-6xl font-semibold uppercase">
+                      <div className="w-32 aspect-square rounded-full bg-accent flex items-center justify-center text-white text-6xl font-semibold uppercase">
                         {companyDetails?.poc?.name
                           ?.split(" ")
                           .map((n) => n[0])
@@ -1498,7 +1498,7 @@ const AiProduct = () => {
                           .slice(0, 2) || "AG"}
                       </div>
                       <div className="text-center space-y-3 h-1/2 flex flex-col justify-evenly items-center">
-                        <h1 className="text-title text-gray-700 font-medium leading-10">
+                        <h1 className="text-title text-gray-300 font-medium leading-10">
                           {companyDetails?.poc?.name || "Sales Team"}
                         </h1>
                         <p className="text-content">
@@ -1507,9 +1507,9 @@ const AiProduct = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="w-px h-full bg-gray-300 mx-2 my-auto" />
+                    <div className="w-px h-full bg-glass-border mx-2 my-auto" />
                     <div className="h-full w-56 flex flex-col justify-normal">
-                      <p className="text-title text-center text-gray-700 font-medium mb-8 underline uppercase">
+                      <p className="text-title text-center text-gray-300 font-medium mb-8 underline uppercase">
                         Host Details
                       </p>
                       <div className="flex flex-col gap-5 text-sm sm:text-base">
@@ -1520,7 +1520,7 @@ const AiProduct = () => {
                           "Lives in Velha, Goa",
                         ].map((detail, index) => (
                           <div key={index} className="flex items-start gap-2">
-                            <FaCheck className="text-blue-500 mt-1 flex-shrink-0" />
+                            <FaCheck className="text-accent mt-1 flex-shrink-0" />
                             <span className="leading-snug">{detail}</span>
                           </div>
                         ))}
@@ -1528,9 +1528,9 @@ const AiProduct = () => {
                     </div>
                   </div>
 
-                  <div className="flex w-full border-2 shadow-md rounded-xl">
+                  <div className="flex w-full glass-card rounded-xl">
                     <div className="flex flex-col h-full gap-4 rounded-xl p-6 w-full lg:w-full justify-between">
-                      <h1 className="text-title text-gray-700 font-medium uppercase">
+                      <h1 className="text-title text-gray-300 font-medium uppercase">
                         Connect With Host
                       </h1>
                       <form
@@ -1631,7 +1631,7 @@ const AiProduct = () => {
             )}
 
             {/* Desktop Disclaimer */}
-            <div className="text-[0.74rem] text-gray-500 leading-relaxed">
+            <div className="text-[0.74rem] text-gray-400 leading-relaxed">
               <p className="mb-2">
                 <b>Source:</b> All above content, images and details have been
                 sourced from publicly available information.
@@ -1669,7 +1669,7 @@ const AiProduct = () => {
               <p className="mt-2">
                 Read the entire{" "}
                 <span
-                  className="underline text-primary-blue cursor-pointer"
+                  className="underline text-accent cursor-pointer"
                   onClick={goToHostsContentCopyright}
                 >
                   Content and Copyright
@@ -1687,13 +1687,13 @@ const AiProduct = () => {
           {/* Breadcrumb - Mobile/Tablet */}
           <nav
             aria-label="Breadcrumb"
-            className="hidden mb-4 items-center text-primary-blue text-[10px] md:text-sm"
+            className="hidden mb-4 items-center text-accent text-[10px] md:text-sm"
           >
             <button
               type="button"
               onClick={handleBackButtonClick}
               aria-label="Go back"
-              className="inline-flex items-center justify-center rounded-full border border-primary-blue p-1 text-primary-blue"
+              className="inline-flex items-center justify-center rounded-full border border-accent p-1 text-accent"
             >
               <ArrowLeft size={14} />
             </button>
@@ -1726,7 +1726,7 @@ const AiProduct = () => {
                     <button
                       type="button"
                       onClick={() => handleBreadcrumbNavigate(item.key)}
-                      className="text-primary-blue hover:text-primary-dark transition-colors"
+                      className="text-accent hover:text-accent transition-colors"
                     >
                       {item.label}
                     </button>
@@ -1741,7 +1741,7 @@ const AiProduct = () => {
                 </span>
               ))}
           </nav>
-          <h1 className="text-title font-semibold text-secondary-dark">
+          <h1 className="text-title font-semibold text-gray-200">
             {companyDetails?.companyName || "Loading Title..."}
           </h1>
         </div>
@@ -1750,24 +1750,24 @@ const AiProduct = () => {
           {/* Mobile Image Section */}
           {isCompanyDetails ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 overflow-hidden animate-pulse">
-              <div className="w-full h-[28.5rem] bg-gray-200 rounded-md" />
+              <div className="w-full h-[28.5rem] bg-surface-100 rounded-md" />
               <div className="grid grid-cols-2 gap-1">
                 {[1, 2, 3, 4].map((_, idx) => (
                   <div
                     key={idx}
-                    className="w-full h-56 bg-gray-200 rounded-md"
+                    className="w-full h-56 bg-surface-100 rounded-md"
                   />
                 ))}
               </div>
             </div>
           ) : companyImages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-4 py-10 border border-dashed border-gray-300 rounded-md">
+            <div className="flex flex-col items-center justify-center gap-4 py-10 border border-dashed border-glass-border rounded-md">
               <img
                 src="https://via.placeholder.com/150x100?text=No+Images "
                 alt="No images"
                 className="w-40 h-auto"
               />
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-400 text-sm">
                 No images have been provided by the company.
               </p>
             </div>
@@ -1801,7 +1801,7 @@ const AiProduct = () => {
                       key={item._id}
                       className={`relative w-full h-56 overflow-hidden rounded-md cursor-pointer border-2 ${
                         selectedImage?._id === item._id
-                          ? "border-primary-dark"
+                          ? "border-accent"
                           : "border-transparent"
                       }`}
                       onClick={() =>
@@ -1831,7 +1831,7 @@ const AiProduct = () => {
                                 },
                               });
                             }}
-                            className="bg-white text-sm px-3 py-1 rounded shadow font-medium"
+                            className="bg-surface-200 text-white text-sm px-3 py-1 rounded shadow-card font-medium"
                           >
                             +{companyDetails.images.length - 4} more
                           </button>
@@ -1895,14 +1895,14 @@ const AiProduct = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
             <div className="flex flex-col gap-1">
               {isCompanyDetails ? (
-                <div className="w-full h-36 bg-gray-200 animate-pulse rounded-md" />
+                <div className="w-full h-36 bg-surface-100 animate-pulse rounded-md" />
               ) : !(
                   (typeof companyDetails?.logo === "string" &&
                     companyDetails.logo) ||
                   companyDetails?.logo?.url
                 ) ? (
-                <div className="w-full h-36 flex items-center justify-center bg-gray-100 border border-dashed border-gray-300 rounded-md">
-                  <span className="text-gray-500 text-sm">
+                <div className="w-full h-36 flex items-center justify-center bg-surface-100 border border-dashed border-glass-border rounded-md">
+                  <span className="text-gray-400 text-sm">
                     No company logo available
                   </span>
                 </div>
@@ -1922,7 +1922,7 @@ const AiProduct = () => {
 
               <div className="space-y-2">
                 <div className="flex flex-col-reverse md:flex-row md:justify-between md:items-center gap-4 mb-4 mt-2">
-                  <h1 className="text-center md:text-left text-title font-medium text-gray-700 uppercase">
+                  <h1 className="text-center md:text-left text-title font-medium text-gray-300 uppercase">
                     About
                   </h1>
 
@@ -1931,7 +1931,7 @@ const AiProduct = () => {
                       type="button"
                       onClick={() => setShareMenuOpen(true)}
                     >
-                      <FiShare2 className="text-gray-600" size={17} />
+                      <FiShare2 className="text-gray-400" size={17} />
                     </button>
 
                     {companyDetails?.websiteTemplateLink && (
@@ -1939,10 +1939,10 @@ const AiProduct = () => {
                         href={companyDetails?.websiteTemplateLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-small font-semibold underline text-primary-blue hover:text-blue-700 transition-colors"
+                        className="text-small font-semibold underline text-accent hover:text-accent transition-colors"
                       >
                         <Globe
-                          className="text-primary-blue md:w-[24px] md:h-[24px] lg:w-[32px] lg:h-[32px]"
+                          className="text-accent md:w-[24px] md:h-[24px] lg:w-[32px] lg:h-[32px]"
                           size={20}
                         />
                       </a>
@@ -1971,20 +1971,20 @@ const AiProduct = () => {
 
                 {isCompanyDetails ? (
                   <div className="space-y-1 animate-pulse">
-                    <div className="h-3 bg-gray-200 rounded w-3/4" />
-                    <div className="h-3 bg-gray-200 rounded w-2/3" />
-                    <div className="h-3 bg-gray-200 rounded w-1/2" />
+                    <div className="h-3 bg-surface-100 rounded w-3/4" />
+                    <div className="h-3 bg-surface-100 rounded w-2/3" />
+                    <div className="h-3 bg-surface-100 rounded w-1/2" />
                   </div>
                 ) : !companyDetails?.about ? (
                   <div className="place-content-center w-full h-full">
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-sm text-gray-400 italic">
                       Company information is not provided.
                     </p>
                   </div>
                 ) : (
                   <div>
                     <p
-                      className={`text-sm text-secondary-dark leading-relaxed ${
+                      className={`text-sm text-gray-200 leading-relaxed ${
                         !isAboutExpanded
                           ? "line-clamp-4 md:line-clamp-none"
                           : ""
@@ -1995,7 +1995,7 @@ const AiProduct = () => {
                     {companyDetails.about.length > 250 && (
                       <button
                         onClick={() => setIsAboutExpanded(!isAboutExpanded)}
-                        className="md:hidden text-primary-blue text-xs font-semibold mt-2 hover:underline focus:outline-none"
+                        className="md:hidden text-accent text-xs font-semibold mt-2 hover:underline focus:outline-none"
                       >
                         {isAboutExpanded ? "Show less" : "Show more"}
                       </button>
@@ -2008,36 +2008,36 @@ const AiProduct = () => {
             <div className="relative w-full">
               <div className="w-full md:static lg:sticky lg:top-24 flex flex-col gap-6">
                 {/* Mobile/Tablet Guest Favorite Card */}
-                <div className="border border-gray-200 rounded-2xl md:rounded-3xl flex flex-col lg:flex-row items-center justify-between p-4 lg:p-8 bg-white shadow-sm hover:shadow-md transition-all gap-6 lg:gap-0">
+                <div className="border border-glass-border rounded-2xl md:rounded-3xl flex flex-col lg:flex-row items-center justify-between p-4 lg:p-8 glass-card transition-all gap-6 lg:gap-0">
                   <div className="flex flex-col lg:flex-row items-center justify-center gap-3 w-full lg:w-auto text-center sm:text-left">
                     <LeafWrapper height="4rem" width="3rem">
                       <div className="flex flex-col items-center leading-tight">
                         <span className="text-[20px] uppercase tracking-tighter text-gray-400">
                           Guest
                         </span>
-                        <span className="text-secondary-dark font-bold text-xl">
+                        <span className="text-gray-200 font-bold text-xl">
                           Favorite
                         </span>
                       </div>
                     </LeafWrapper>
-                    <div className="hidden lg:block w-px h-8 bg-gray-100 mx-2" />
-                    <p className="text-xs text-gray-500 max-w-[300px] sm:max-w-none">
+                    <div className="hidden lg:block w-px h-8 bg-surface-100 mx-2" />
+                    <p className="text-xs text-gray-400 max-w-[300px] sm:max-w-none">
                       One of the most loved places on RoamIQ
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-center lg:justify-end gap-6 w-full lg:w-auto border-t lg:border-t-0 lg:border-l border-gray-100 pt-4 lg:pt-0 lg:pl-6">
+                  <div className="flex items-center justify-center lg:justify-end gap-6 w-full lg:w-auto border-t lg:border-t-0 lg:border-l border-glass-border pt-4 lg:pt-0 lg:pl-6">
                     <div className="flex flex-col items-center">
-                      <span className="text-lg font-bold text-gray-900">
+                      <span className="text-lg font-bold text-gray-200">
                         {companyDetails?.ratings || "0"}
                       </span>
                       <div className="flex text-[10px] text-gray-400">
                         {renderStars(companyDetails?.ratings || 0)}
                       </div>
                     </div>
-                    <div className="w-px h-8 bg-gray-100" />
+                    <div className="w-px h-8 bg-surface-100" />
                     <div className="flex flex-col items-center">
-                      <span className="text-lg font-bold text-gray-900">
+                      <span className="text-lg font-bold text-gray-200">
                         {companyDetails?.reviewCount ||
                           companyDetails?.totalReviews ||
                           0}
@@ -2050,8 +2050,8 @@ const AiProduct = () => {
                 </div>
 
                 {/* Mobile/Tablet Enquiry Form */}
-                <div className="shadow-lg flex flex-col gap-2 md:gap-4 p-4 md:p-5 lg:p-8 rounded-2xl border border-gray-100 bg-white max-w-full">
-                  <h1 className="text-lg text-center md:text-base lg:text-xl xl:text-2xl text-secondary-dark font-bold">
+                <div className="glass-card flex flex-col gap-2 md:gap-4 p-4 md:p-5 lg:p-8 rounded-2xl max-w-full">
+                  <h1 className="text-lg text-center md:text-base lg:text-xl xl:text-2xl text-gray-200 font-bold">
                     Enquire & Receive Quote
                   </h1>
                   <hr />
@@ -2099,10 +2099,10 @@ const AiProduct = () => {
                       }}
                       render={({ field }) => (
                         <div className="flex flex-col gap-1">
-                          <label className="text-sm text-gray-600 font-medium">
+                          <label className="text-sm text-gray-400 font-medium">
                             No. Of People
                           </label>
-                          <div className="flex items-center border-b border-gray-300 py-1 w-full mt-auto">
+                          <div className="flex items-center border-b border-glass-border py-1 w-full mt-auto">
                             <button
                               type="button"
                               onClick={() =>
@@ -2110,14 +2110,14 @@ const AiProduct = () => {
                                   Math.max(0, Number(field.value || 0) - 1),
                                 )
                               }
-                              className="px-3 py-1 text-lg font-semibold text-gray-600 hover:text-primary-blue"
+                              className="px-3 py-1 text-lg font-semibold text-gray-400 hover:text-accent"
                             >
                               −
                             </button>
                             <input
                               {...field}
                               readOnly
-                              className="w-full text-center outline-none bg-transparent text-gray-800 text-sm font-medium"
+                              className="w-full text-center outline-none bg-transparent text-gray-300 text-sm font-medium"
                               value={field.value || 0}
                             />
                             <button
@@ -2125,7 +2125,7 @@ const AiProduct = () => {
                               onClick={() =>
                                 field.onChange(Number(field.value || 0) + 1)
                               }
-                              className="px-3 py-1 text-lg font-semibold text-gray-600 hover:text-primary-blue"
+                              className="px-3 py-1 text-lg font-semibold text-gray-400 hover:text-accent"
                             >
                               +
                             </button>
@@ -2272,7 +2272,7 @@ const AiProduct = () => {
                         title={"GET QUOTE"}
                         type={"submit"}
                         externalStyles={
-                          "w-full md:w-3/4 lg:w-1/2 rounded-full py-3 shadow-lg"
+                          "w-full md:w-3/4 lg:w-1/2 rounded-full py-3 shadow-glass"
                         }
                       />
                     </div>
@@ -2286,12 +2286,12 @@ const AiProduct = () => {
 
           {/* Mobile Inclusions */}
           <div className="flex flex-col gap-4 w-full">
-            <h1 className="text-lg text-center md:text-base lg:text-xl xl:text-2xl text-secondary-dark font-bold">
+            <h1 className="text-lg text-center md:text-base lg:text-xl xl:text-2xl text-gray-200 font-bold">
               What Inclusions does it offer
             </h1>
             <hr />
             {inclusions.length === 0 ? (
-              <div className="w-full border-2 border-dotted border-gray-400 rounded-lg p-6 text-center text-gray-500">
+              <div className="w-full glass-card border-dotted p-6 text-center text-gray-400">
                 Inclusions not available
               </div>
             ) : (
@@ -2345,7 +2345,7 @@ const AiProduct = () => {
                   ))}
                 </>
               ) : (
-                <div className="col-span-full border-2 border-dotted border-gray-300 rounded-xl p-6 text-center text-sm text-gray-500 h-40 flex justify-center items-center w-full">
+                <div className="col-span-full glass-card border-dotted p-6 text-center text-sm text-gray-400 h-40 flex justify-center items-center w-full">
                   No reviews yet.
                 </div>
               )}
@@ -2353,7 +2353,7 @@ const AiProduct = () => {
 
             <div className="text-right">
               <a
-                className="text-primary-blue text-sm font-semibold hover:underline"
+                className="text-accent text-sm font-semibold hover:underline"
                 href={companyDetails?.googleMap}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -2366,9 +2366,9 @@ const AiProduct = () => {
               <button
                 type="button"
                 className="flex rounded-full items-center cursor-pointer justify-center  gap-2
-        bg-primary-blue hover:bg-secondary-light text-primary
+        bg-accent hover:bg-secondary-light text-primary
         text-content leading-5
-        w-full md:w-3/4 lg:w-1/2  shadow-lg px-6 py-3 undefined"
+        w-full md:w-3/4 lg:w-1/2  shadow-glass px-6 py-3 undefined"
                 onClick={handleWriteReviewClick}
                 disabled={!companyDetails?.companyId}
               >
@@ -2380,7 +2380,7 @@ const AiProduct = () => {
 
             {/* Mobile Map */}
             <div className="w-full h-[350px] md:h-[500px] flex flex-col gap-8 rounded-xl overflow-hidden mt-6">
-              <h1 className="text-title font-medium text-gray-700 uppercase">
+              <h1 className="text-title font-medium text-gray-300 uppercase">
                 Where you'll be
               </h1>
               <Map
@@ -2394,10 +2394,10 @@ const AiProduct = () => {
             {["CMP0001", "CMP0052"].includes(companyDetails?.companyId) && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 pt-10">
-                  <div className="flex flex-col lg:flex-row justify-center items-center col-span-1 border-2 shadow-md gap-4 rounded-xl p-6 w-full">
+                  <div className="flex flex-col lg:flex-row justify-center items-center col-span-1 glass-card gap-4 rounded-xl p-6 w-full">
                     <div className="flex flex-col gap-4 justify-between items-center h-full w-56">
                       {/* Avatar with Initials */}
-                      <div className="w-32 aspect-square rounded-full bg-primary-blue flex items-center justify-center text-white text-6xl font-semibold uppercase">
+                      <div className="w-32 aspect-square rounded-full bg-accent flex items-center justify-center text-white text-6xl font-semibold uppercase">
                         {companyDetails?.poc?.name
                           ?.split(" ")
                           .map((n) => n[0])
@@ -2407,7 +2407,7 @@ const AiProduct = () => {
 
                       {/* Name & Designation */}
                       <div className="text-center space-y-3 h-1/2 flex flex-col justify-evenly items-center">
-                        <h1 className="text-title text-gray-700 font-medium leading-10">
+                        <h1 className="text-title text-gray-300 font-medium leading-10">
                           {companyDetails?.poc?.name || "Sales Team"}
                         </h1>
                         <p className="text-content">
@@ -2417,9 +2417,9 @@ const AiProduct = () => {
                       </div>
                     </div>
 
-                    <div className="w-px h-full bg-gray-300 mx-2 my-auto" />
+                    <div className="w-px h-full bg-glass-border mx-2 my-auto" />
                     <div className="h-full w-56 flex flex-col justify-normal">
-                      <p className="text-title text-center text-gray-700 font-medium mb-8 underline uppercase">
+                      <p className="text-title text-center text-gray-300 font-medium mb-8 underline uppercase">
                         Host Details
                       </p>
                       <div className="flex flex-col gap-5 text-sm sm:text-base">
@@ -2430,7 +2430,7 @@ const AiProduct = () => {
                           "Lives in Velha, Goa",
                         ].map((detail, index) => (
                           <div key={index} className="flex items-start gap-2">
-                            <FaCheck className="text-blue-500 mt-1 flex-shrink-0" />
+                            <FaCheck className="text-accent mt-1 flex-shrink-0" />
                             <span className="leading-snug">{detail}</span>
                           </div>
                         ))}
@@ -2438,9 +2438,9 @@ const AiProduct = () => {
                     </div>
                   </div>
 
-                  <div className="flex w-full border-2 shadow-md rounded-xl">
+                  <div className="flex w-full glass-card rounded-xl">
                     <div className="flex flex-col h-full gap-4 rounded-xl p-6 w-full lg:w-full justify-between">
-                      <h1 className="text-title text-gray-700 font-medium uppercase">
+                      <h1 className="text-title text-gray-300 font-medium uppercase">
                         Connect With Host
                       </h1>
                       <form
@@ -2541,7 +2541,7 @@ const AiProduct = () => {
             <hr className="mt-5 mb-0 lg:mt-10 lg:mb-0" />
 
             {/* Mobile Disclaimer */}
-            <div className="text-[0.74rem] text-gray-500 leading-relaxed">
+            <div className="text-[0.74rem] text-gray-400 leading-relaxed">
               <p className="mb-2">
                 <b>Source:</b> All above content, images and details have been
                 sourced from publicly available information.
@@ -2590,7 +2590,7 @@ const AiProduct = () => {
 
               <button
                 onClick={() => setIsDisclaimerExpanded(!isDisclaimerExpanded)}
-                className="md:hidden text-primary-blue text-xs font-semibold mt-1 mb-2 hover:underline focus:outline-none"
+                className="md:hidden text-accent text-xs font-semibold mt-1 mb-2 hover:underline focus:outline-none"
               >
                 {isDisclaimerExpanded ? "View less" : "View more"}
               </button>
@@ -2598,7 +2598,7 @@ const AiProduct = () => {
               <p className="mt-2">
                 Read the entire{" "}
                 <span
-                  className="underline text-primary-blue cursor-pointer"
+                  className="underline text-accent cursor-pointer"
                   onClick={goToHostsContentCopyright}
                 >
                   Content and Copyright
@@ -2614,7 +2614,7 @@ const AiProduct = () => {
       <MuiModal open={open} onClose={() => setOpen(false)} title={"Review"}>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-primary-blue flex items-center justify-center text-white font-semibold text-lg uppercase">
+            <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-white font-semibold text-lg uppercase">
               {(
                 selectedReview?.reviewerName ||
                 selectedReview?.name ||
@@ -2631,13 +2631,13 @@ const AiProduct = () => {
                   selectedReview?.name ||
                   "Unknown"}
               </p>
-              <p className="text-sm text-gray-500">{selectedReview?.date}</p>
+              <p className="text-sm text-gray-400">{selectedReview?.date}</p>
             </div>
           </div>
-          <div className="flex items-center gap-1 text-black text-sm">
+          <div className="flex items-center gap-1 text-gray-200 text-sm">
             {renderStars(selectedReview?.rating || selectedReview?.starCount)}
           </div>
-          <div className="text-gray-800 text-sm whitespace-pre-line leading-relaxed">
+          <div className="text-gray-300 text-sm whitespace-pre-line leading-relaxed">
             {selectedReview?.message ||
               selectedReview?.reviewText ||
               selectedReview?.description}
@@ -2657,7 +2657,7 @@ const AiProduct = () => {
         >
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-full bg-primary-blue flex items-center justify-center text-white font-semibold text-2xl uppercase">
+              <div className="w-20 h-20 rounded-full bg-accent flex items-center justify-center text-white font-semibold text-2xl uppercase">
                 {(reviewerName || auth?.user?.name || "U")
                   .split(" ")
                   .map((name) => name[0])
@@ -2665,7 +2665,7 @@ const AiProduct = () => {
                   .slice(0, 2)}
               </div>
               <div>
-                <p className="text-card-title font-semibold text-gray-900">
+                <p className="text-card-title font-semibold text-gray-200">
                   {reviewerName || auth?.user?.name || "Unknown User"}
                 </p>
               </div>
@@ -2753,7 +2753,7 @@ const AiProduct = () => {
           ).map((item) => (
             <span
               key={item}
-              className="bg-gray-800 text-white text-sm rounded-lg px-3 py-2 text-center"
+              className="bg-surface-200 text-white text-sm rounded-lg px-3 py-2 text-center"
             >
               {item
                 .replace(/([a-z])([A-Z])/g, "$1 $2")

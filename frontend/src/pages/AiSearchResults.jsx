@@ -773,7 +773,7 @@ const goalNarrativeByGoalAndAttribute = {
 };
 
 const searchBarBadgeClassName =
-  "inline-flex min-h-[40px] min-w-[5rem] items-center rounded-full border border-black/30 px-4 py-2 text-xs font-medium text-black/85";
+  "inline-flex min-h-[40px] min-w-[5rem] items-center rounded-full border border-glass-border bg-glass px-4 py-2 text-xs font-medium text-gray-300";
 
 const searchBarBroaderGoalLabelMap = {
   "World Ranking": "Worldwide Explorer Destinations Ranking",
@@ -869,7 +869,7 @@ const highlightSelectedTokens = (text, tokens) => {
     }
 
     return (
-      <span key={`${part}-${index}`} className="text-primary-blue">
+      <span key={`${part}-${index}`} className="text-accent">
         {part}
       </span>
     );
@@ -903,8 +903,8 @@ const DropdownBadge = ({
             : "min-h-[44px] px-4 py-2 text-xs sm:px-5"
         } ${
           isOpen
-            ? "border-sky-500 bg-sky-500 text-white"
-            : "border-black/20 bg-white text-black/85 hover:border-sky-500"
+            ? "border-accent bg-accent text-surface"
+            : "border-glass-border bg-glass text-gray-300 hover:border-accent"
         }`}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -918,7 +918,7 @@ const DropdownBadge = ({
 
       {isOpen && (
         <div
-          className={`absolute top-full z-40 mt-3 min-w-[11rem] w-full max-w-[calc(100vw-4rem)] rounded-2xl border border-sky-100 bg-white p-2 shadow-[0_12px_30px_rgba(15,23,42,0.12)] ${menuAlignment}`}
+          className={`absolute top-full z-40 mt-3 min-w-[11rem] w-full max-w-[calc(100vw-4rem)] rounded-2xl border border-glass-border bg-surface-50 p-2 shadow-glass backdrop-blur-xl ${menuAlignment}`}
         >
           <ul
             className="max-h-72 overflow-y-auto"
@@ -935,8 +935,8 @@ const DropdownBadge = ({
                     onClick={() => onSelect(option)}
                     className={`group flex w-full items-center rounded-xl px-4 py-2 text-left text-xs transition-colors ${
                       isSelected
-                        ? "bg-sky-50 font-medium text-sky-600"
-                        : "text-black/80 hover:bg-slate-50"
+                        ? "bg-accent/15 font-medium text-accent"
+                        : "text-gray-400 hover:bg-surface-100"
                     }`}
                     role="option"
                     aria-selected={isSelected}
@@ -944,7 +944,7 @@ const DropdownBadge = ({
                     <span className="mr-2 inline-flex w-4 shrink-0 items-center justify-center">
                       <FaCheck
                         size={13}
-                        className={`shrink-0 text-primary-blue transition-opacity ${
+                        className={`shrink-0 text-accent transition-opacity ${
                           isSelected
                             ? "opacity-100"
                             : "opacity-0 group-hover:opacity-100"
@@ -1974,15 +1974,15 @@ const AiSearchResults = () => {
   ]);
 
   return (
-    <div className="min-h-full bg-white">
+    <div className="min-h-full bg-surface animate-fade-in">
       <main className="pb-8">
         <div className="mx-0 w-full max-w-[80rem] px-3 sm:px-6 lg:mx-auto lg:max-w-[85rem] lg:px-0 lg:min-w-[75%]">
-          <div className="rounded-[10px] bg-white px-0 pb-6">
+          <div className="rounded-[10px] bg-surface-50 border border-glass-border px-0 pb-6">
             <div className="mt-6 mb-6 lg:ml-[2.5rem] lg:mr-10">
-              <p className="flex items-center gap-2 text-sm font-medium leading-snug text-black/85 lg:text-[0.9rem] font-play">
+              <p className="flex items-center gap-2 text-sm font-medium leading-snug text-gray-200 lg:text-[0.9rem] font-heading">
                 {isThinkingHeadingVisible && (
                   <span
-                    className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black border-b-transparent"
+                    className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-accent border-b-transparent"
                     aria-hidden="true"
                   />
                 )}
@@ -1990,7 +1990,7 @@ const AiSearchResults = () => {
               </p>
             </div>
 
-            <div className="mt-4 hidden max-w-full items-center rounded-[30px] border bg-white px-4 py-2 shadow-[0_5px_14px_rgba(0,0,0,0.12)] sm:flex lg:ml-[2.5rem] lg:mr-10">
+            <div className="mt-4 hidden max-w-full items-center rounded-[30px] border border-glass-border bg-surface-50 px-4 py-2 shadow-glass backdrop-blur-xl sm:flex lg:ml-[2.5rem] lg:mr-10">
               <div className="flex flex-wrap items-center gap-2">
                 {searchBarBadges.map((badgeLabel, index) => (
                   <div
@@ -2007,12 +2007,12 @@ const AiSearchResults = () => {
                 <button
                   type="button"
                   onClick={() => navigate("/home")}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-black/70 transition-colors hover:bg-black/5 hover:text-black"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface-200 text-gray-400 transition-colors hover:bg-surface-300 hover:text-white"
                   aria-label="Clear search and go back"
                 >
                   <HiOutlineX size={24} />
                 </button>
-                <HiOutlineSearch size={34} className="text-black/90" />
+                <HiOutlineSearch size={34} className="text-accent" />
               </div>
             </div>
 
@@ -2047,7 +2047,7 @@ const AiSearchResults = () => {
                       {/* <p className="text-sm font-medium leading-relaxed text-primary-blue lg:text-[0.9rem] font-play">
                         {typedBottomHeading}
                       </p> */}
-                      <div className="mt-6 text-sm leading-relaxed text-black/85 lg:text-[0.9rem] font-play">
+                      <div className="mt-6 text-sm leading-relaxed text-gray-300 lg:text-[0.9rem] font-heading">
                         <span className="block font-bold">
                           {formattedNarrative.introLine}
                         </span>
@@ -2091,7 +2091,7 @@ const AiSearchResults = () => {
                           )}
                           {shouldShowResultsContent && isLoggedIn && (
                             <div className="flex w-full items-center justify-center gap-3 sm:justify-end lg:w-auto">
-                              <span className="text-sm font-medium text-black/80 font-play">
+                              <span className="text-sm font-medium text-gray-400 font-heading">
                                 Visa Options
                               </span>
                               <div className="w-[11rem] shrink-0 sm:w-[13rem]">
@@ -2311,7 +2311,7 @@ const AiSearchResults = () => {
                     </div>
                   ) : (
                     <>
-                      {/* <div className="mt-10 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center text-sm text-slate-500">
+                      {/* <div className="mt-10 rounded-2xl border border-dashed border-glass-border bg-surface-50 px-6 py-10 text-center text-sm text-gray-400">
                       Results will appear here after you select both filters
                       above.
                     </div> */}
@@ -2321,12 +2321,12 @@ const AiSearchResults = () => {
                   {shouldShowResultsContent && !rankedDestinations.length && (
                     <>
                       {isDestinationsLoading ? (
-                        <div className="mt-10 flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center text-sm text-slate-500">
-                          <FaSyncAlt className="text-xl text-primary-blue animate-spin" />
+                        <div className="mt-10 flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-glass-border bg-surface-50 px-6 py-10 text-center text-sm text-gray-400">
+                          <FaSyncAlt className="text-xl text-accent animate-spin" />
                           <p>Loading destinations...</p>
                         </div>
                       ) : (
-                        <div className="mt-10 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center text-sm text-slate-500">
+                        <div className="mt-10 rounded-2xl border border-dashed border-glass-border bg-surface-50 px-6 py-10 text-center text-sm text-gray-400">
                           No destinations are available for{" "}
                           {selectedContinentDisplay} right now.
                         </div>

@@ -14,7 +14,7 @@ import { showErrorAlert, showSuccessAlert } from "../utils/alerts";
 const LOGIN_PROMPT =
   "Login to unlock all features and get the most out of your Explorer experience.";
 
-const LOGIN_HEADING = "Login";
+const LOGIN_HEADING = "Welcome Back";
 
 const toSentenceCase = (value = "") => {
   const trimmedValue = value.trim();
@@ -229,32 +229,50 @@ export default function AiLogin() {
   };
 
   return (
-    <>
-      <div className="flex min-h-[55vh] flex-col items-center justify-center gap-10 rounded-lg border-gray-300 px-6 py-8 md:min-h-[60vh] lg:min-h-[75vh]">
-        <div className="w-full max-w-4xl">
+    <div className="animate-fade-in relative flex min-h-[75vh] flex-col items-center justify-center px-4 py-8 md:min-h-[80vh]">
+      {/* Subtle background gradient glow */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-glow opacity-60 blur-3xl" />
+        <div className="absolute right-1/4 bottom-1/4 h-[300px] w-[300px] rounded-full bg-gradient-radial from-neon-purple/10 to-transparent opacity-40 blur-3xl" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md">
+        {/* Glass Card */}
+        <div className="glass-card p-8 sm:p-10">
+          {/* Logo / Brand */}
+          <div className="mb-8 flex flex-col items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15 shadow-glow-sm">
+              <span className="text-xl font-bold text-accent">R</span>
+            </div>
+            <p className="min-h-[2.5rem] text-center text-small leading-relaxed text-gray-400 sm:text-content">
+              {typedMessage}
+            </p>
+          </div>
+
+          {/* Context heading */}
           {loginContext ? (
-            <h1 className="mx-auto min-h-[2rem] w-full text-center font-play text-[1.1rem] font-medium leading-relaxed text-gray-900 sm:min-h-[3rem] sm:text-[2rem] pb-6">
+            <h1 className="mx-auto mb-4 min-h-[2rem] w-full text-center text-subtitle font-semibold leading-relaxed text-gray-200 sm:min-h-[3rem]">
               {typedHeading}
             </h1>
           ) : null}
           {loginContext ? (
-            <p className="min-h-[3rem] w-full text-left font-play text-[0.95rem] leading-relaxed text-gray-800 sm:min-h-[2.5rem] sm:text-[1rem]">
+            <p className="mb-4 min-h-[2rem] w-full text-left text-small leading-relaxed text-gray-400 sm:text-content">
               {typedDescription}
             </p>
           ) : null}
-          <p className="min-h-[3rem] w-full text-left font-play text-[0.95rem] leading-relaxed text-gray-800 sm:min-h-[2.5rem] sm:text-[1rem]">
-            {typedMessage}
-          </p>
-        </div>
-        <div className="flex w-full max-w-4xl flex-col items-center gap-6">
-          <h1 className="text-hero min-h-[3rem] text-center font-play">
+
+          {/* Welcome Back heading */}
+          <h1 className="gradient-text mb-8 min-h-[3rem] text-center text-hero font-bold">
             {typedLoginHeading}
           </h1>
 
+          {/* Form */}
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className={`w-full grid grid-cols-1 gap-6 md:grid-cols-2 ${
-              isFormVisible ? "visible" : "invisible"
+            className={`flex flex-col gap-5 transition-all duration-500 ${
+              isFormVisible
+                ? "translate-y-0 opacity-100"
+                : "pointer-events-none translate-y-4 opacity-0"
             }`}
           >
             <Controller
@@ -306,33 +324,38 @@ export default function AiLogin() {
               )}
             />
 
-            <div className="col-span-1 md:col-span-2 flex justify-center items-center mt-2 py-2 w-full">
-              <AiPrimaryButton
-                title="Login"
-                type="submit"
-                isLoading={isLoginPending}
-                disabled={isLoginPending}
-                className="bg-primary-blue flex text-white font-[500] capitalize hover:bg-black w-full sm:w-[7rem] px-6"
-              />
+            {/* Forgot password link */}
+            <div className="flex justify-end">
+              <Link
+                to="/ai-forgot-password"
+                className="text-tiny text-accent transition-colors hover:text-accent-hover"
+              >
+                Forgot password?
+              </Link>
             </div>
 
-            <div className="col-span-1 md:col-span-2 flex flex-col md:flex-row justify-center items-center md:gap-2 text-center">
-              <p className="text-gray-600 hover:text-black underline mb-1 md:mb-0">
-                <Link to="/ai-forgot-password">Forgot password?</Link>
-              </p>
+            {/* Login Button */}
+            <AiPrimaryButton
+              title="Login"
+              type="submit"
+              isLoading={isLoginPending}
+              disabled={isLoginPending}
+              className="btn-primary w-full rounded-full font-semibold"
+            />
 
-              <p className="hidden md:block">|</p>
-
-              <p className="text-gray-600 hover:text-black ">
-                <span>New to RoamIQ? </span>
-                <span className="underline">
-                  <Link to="/ai-signup">Sign Up</Link>
-                </span>
-              </p>
-            </div>
+            {/* Signup link */}
+            <p className="mt-2 text-center text-small text-gray-400">
+              Don&apos;t have an account?{" "}
+              <Link
+                to="/ai-signup"
+                className="text-accent transition-colors hover:text-accent-hover"
+              >
+                Sign Up
+              </Link>
+            </p>
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 }

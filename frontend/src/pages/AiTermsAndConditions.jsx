@@ -15,13 +15,13 @@ const AiTermsAndConditions = () => {
                     "we", "our", or "us"). These Terms and Conditions ("Terms") govern
                     your use of our SaaS platform, located at{" "}
                     {/* <span
-            className="text-primary-blue cursor-pointer"
+            className="text-accent cursor-pointer"
             onClick={() => navigate("/hosts")}
           >
             www.yourdomain.com
           </span>{" "} */}
                     <span
-                        className="text-primary-blue underline cursor-pointer"
+                        className="text-accent underline cursor-pointer"
                         onClick={() => (window.location.href = "https://yourdomain.com")}
                     >
                         www.yourdomain.com
@@ -126,7 +126,7 @@ const AiTermsAndConditions = () => {
                     We value your privacy. Our collection, use, and storage of your data
                     are governed by our{" "}
                     <span
-                        className="text-primary-blue underline cursor-pointer"
+                        className="text-accent underline cursor-pointer"
                         onClick={() => navigate("/ai-privacy")}
                     >
                         Privacy Policy
@@ -218,11 +218,11 @@ const AiTermsAndConditions = () => {
                         <span>RoamIQ Technologies</span>
                         <span>contact@roamiq.com</span>
                         <div className="flex flex-col mt-1">
-                            <a className="text-primary-blue" href="mailto:hello@roamiq.com">
+                            <a className="text-accent" href="mailto:hello@roamiq.com">
                                 hello@roamiq.com
                             </a>
                             <span
-                                className="text-primary-blue cursor-pointer"
+                                className="text-accent cursor-pointer"
                                 onClick={() => navigate("/ai-contact")}
                             >
                                 Contact us
@@ -235,8 +235,8 @@ const AiTermsAndConditions = () => {
     ];
 
     return (
-        <div className="flex flex-col gap-10 px-6 md:px-12 lg:px-28 pb-8 md:pb-12 pt-0 text-[#364D59]">
-            <div className="flex flex-col items-center relative font-comic uppercase font-bold text-secondary-dark text-2xl md:text-4xl lg:text-5xl leading-tight">
+        <div className="animate-fade-in flex flex-col gap-10 px-6 md:px-12 lg:px-28 pb-8 md:pb-12 pt-0 text-gray-300">
+            <div className="flex flex-col items-center relative font-heading uppercase font-bold text-gray-200 text-2xl md:text-4xl lg:text-5xl leading-tight">
                 <div className="relative inline-block text-center">
                     <h3>TERMS AND CONDITIONS</h3>
                     <img
@@ -256,7 +256,7 @@ const AiTermsAndConditions = () => {
                             </h4>
                             <p className="text-content">{section.content}</p>
                         </div>
-                        {i < sections.length - 1 && <hr className="border-gray-300" />}
+                        {i < sections.length - 1 && <hr className="border-glass-border" />}
                     </div>
                 ))}
             </div>

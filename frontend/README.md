@@ -1,12 +1,46 @@
-# React + Vite
+# RoamIQ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AI-Powered Travel Intelligence Platform — discover, explore, and navigate the world with smart insights.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend:** React 19 + Vite + Tailwind CSS + Redux Toolkit
+- **Backend:** Node.js + Express 5 + MongoDB + AWS S3
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+## Environment Variables
+
+### Frontend (.env)
+- `VITE_PROD_LINK` — API base URL
+- `VITE_GOOGLE_API_KEY` — Google Maps API key
+- `VITE_GOOGLE_MAPS_API_KEY` — Google Maps API key (alt)
+- `VITE_AI_SCORE_RANGE_MIN` — AI score range config
+
+### Backend (.env)
+- `MONGO_URL` — MongoDB connection string
+- `PORT` — Server port
+- `ACCESS_TOKEN_SECRET` — JWT access token secret
+- `REFRESH_TOKEN_SECRET` — JWT refresh token secret
+- `EMAIL_USER` — Email account for sending
+- `EMAIL_PASS` — Email app password
+- `FRONTEND_PROD_LINK` — Production frontend URL
+- `FRONTEND_DEV_LINK` — Dev frontend URL
+- `PROJECT_AWS_REGION` — AWS S3 region
+- `PROJECT_AWS_ACCESS_KEY` — AWS access key
+- `PROJECT_AWS_SECRET_KEY` — AWS secret key
+- `PROJECT_S3_BUCKET_NAME` — S3 bucket name
