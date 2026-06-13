@@ -15,6 +15,8 @@ import {
   ChevronDown,
   X,
 } from "lucide-react";
+import { getTrips, addTrip as addTripService, updateTrip as updateTripService, deleteTrip as deleteTripService } from '../services/supabaseService';
+import { useSupabaseAuth } from '../context/SupabaseAuthContext';
 
 /* ═══════════════════════════ CONSTANTS ═══════════════════════════ */
 
@@ -42,15 +44,6 @@ const CONTINENTS = [
   { name: "Africa", icon: "🌍", countries: [] },
   { name: "Oceania", icon: "🌏", countries: [] },
   { name: "Antarctica", icon: "🧊", countries: [] },
-];
-
-const sampleTrips = [
-  { id: 1, city: "Bangkok", country: "Thailand", flag: "🇹🇭", arrival: "2025-01-15", departure: "2025-03-20", purpose: "Workation", rating: 5, notes: "Amazing street food and affordable coworking spaces", image: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400" },
-  { id: 2, city: "Lisbon", country: "Portugal", flag: "🇵🇹", arrival: "2025-04-01", departure: "2025-06-15", purpose: "Workation", rating: 4, notes: "Great WiFi and beautiful sunsets", image: "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=400" },
-  { id: 3, city: "Bali", country: "Indonesia", flag: "🇮🇩", arrival: "2025-07-01", departure: "2025-09-30", purpose: "Vacation", rating: 5, notes: "Paradise! Villas are incredible value", image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400" },
-  { id: 4, city: "Berlin", country: "Germany", flag: "🇩🇪", arrival: "2024-09-01", departure: "2024-12-20", purpose: "Business", rating: 4, notes: "Great startup scene and networking events", image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400" },
-  { id: 5, city: "Tokyo", country: "Japan", flag: "🇯🇵", arrival: "2024-06-01", departure: "2024-08-30", purpose: "Vacation", rating: 5, notes: "Culture shock but absolutely worth it", image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400" },
-  { id: 6, city: "Medellín", country: "Colombia", flag: "🇨🇴", arrival: "2024-03-01", departure: "2024-05-15", purpose: "Workation", rating: 4, notes: "Spring weather year-round, love it", image: "https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?w=400" },
 ];
 
 /* ═══════════════════════════ HELPERS ═══════════════════════════ */
@@ -182,11 +175,15 @@ const DurationBadge = ({ arrival, departure }) => {
 /* ═══════════════════════════ MAIN COMPONENT ═══════════════════════════ */
 
 const AiTripTracker = () => {
+  /* ── Auth ── */
+  const { user } = useSupabaseAuth();
+
   /* ── State ── */
   const [trips, setTrips] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingTrip, setEditingTrip] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({
     city: "",
     country: "",
@@ -199,23 +196,21 @@ const AiTripTracker = () => {
     image: "",
   });
 
-  /* ── Load from localStorage ── */
+  /* ── Load trips from service (with localStorage fallback) ── */
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try { setTrips(JSON.parse(saved)); } catch { setTrips(sampleTrips); }
-    } else {
-      setTrips(sampleTrips);
-    }
-    setMounted(true);
-  }, []);
+    getTrips(user?.id).then(data => {
+      setTrips(data);
+      setLoading(false);
+      setMounted(true);
+    });
+  }, [user]);
 
-  /* ── Save to localStorage ── */
+  /* ── Save to localStorage (fallback) ── */
   useEffect(() => {
-    if (mounted) {
+    if (mounted && !user) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(trips));
     }
-  }, [trips, mounted]);
+  }, [trips, mounted, user]);
 
   /* ── Computed Stats ── */
   const stats = useMemo(() => {
@@ -288,19 +283,41 @@ const AiTripTracker = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
+    if (user) {
+      try { await deleteTripService(id, user.id); } catch (e) { console.warn('deleteTripService failed:', e); }
+    }
     setTrips((prev) => prev.filter((t) => t.id !== id));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.city || !form.country || !form.arrival || !form.departure) return;
 
     if (editingTrip) {
-      setTrips((prev) => prev.map((t) => (t.id === editingTrip.id ? { ...form, id: editingTrip.id } : t)));
+      if (user) {
+        try {
+          const updated = await updateTripService(editingTrip.id, user.id, form);
+          setTrips((prev) => prev.map((t) => (t.id === editingTrip.id ? updated : t)));
+        } catch (e) {
+          console.warn('updateTripService failed:', e);
+          setTrips((prev) => prev.map((t) => (t.id === editingTrip.id ? { ...form, id: editingTrip.id } : t)));
+        }
+      } else {
+        setTrips((prev) => prev.map((t) => (t.id === editingTrip.id ? { ...form, id: editingTrip.id } : t)));
+      }
     } else {
-      const newTrip = { ...form, id: Date.now() };
-      setTrips((prev) => [newTrip, ...prev]);
+      if (user) {
+        try {
+          const newTrip = await addTripService(user.id, form);
+          setTrips((prev) => [newTrip, ...prev]);
+        } catch (e) {
+          console.warn('addTripService failed:', e);
+          setTrips((prev) => [{ ...form, id: Date.now() }, ...prev]);
+        }
+      } else {
+        setTrips((prev) => [{ ...form, id: Date.now() }, ...prev]);
+      }
     }
     resetForm();
     setShowForm(false);
@@ -310,7 +327,16 @@ const AiTripTracker = () => {
 
   /* ═══════════════════════════ RENDER ═══════════════════════════ */
 
-  if (!mounted) return null;
+  if (!mounted || loading) {
+    return (
+      <div className="page-container flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+          <p className="text-gray-400 text-sm">Loading trips...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">

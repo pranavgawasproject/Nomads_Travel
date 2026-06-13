@@ -15,6 +15,7 @@ import { store, persistor } from "./redux/store.js";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import AuthContextProvider from "./context/AuthContext.jsx";
+import { SupabaseAuthProvider } from "./context/SupabaseAuthContext.jsx";
 const queryClient = new QueryClient();
 const theme = createTheme({
   typography: {
@@ -64,13 +65,15 @@ createRoot(document.getElementById("root")).render(
       <ThemeProvider theme={theme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <AuthContextProvider>
-            <QueryClientProvider client={queryClient}>
-              <HelmetProvider>
-                <RouterProvider router={router}>
-                  <App />
-                </RouterProvider>
-              </HelmetProvider>
-            </QueryClientProvider>
+            <SupabaseAuthProvider>
+              <QueryClientProvider client={queryClient}>
+                <HelmetProvider>
+                  <RouterProvider router={router}>
+                    <App />
+                  </RouterProvider>
+                </HelmetProvider>
+              </QueryClientProvider>
+            </SupabaseAuthProvider>
           </AuthContextProvider>
         </LocalizationProvider>
       </ThemeProvider>

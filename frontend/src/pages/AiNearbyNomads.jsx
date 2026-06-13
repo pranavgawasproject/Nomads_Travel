@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Users,
   MapPin,
@@ -17,42 +17,9 @@ import {
   X,
   Check,
 } from "lucide-react";
+import { getNomadProfiles, getMeetups } from '../services/supabaseService';
 
-/* ══════════════════════════════════════════════════════════════════════════
-   STATIC DATA
-   ══════════════════════════════════════════════════════════════════════════ */
 
-const nomads = [
-  { id: 1, name: "Sarah Chen", initials: "SC", gradient: "from-cyan-500 to-blue-500", city: "Bangkok", country: "Thailand", flag: "🇹🇭", homeCountry: "Canada 🇨🇦", role: "UX Designer", workType: "Full-time Remote", interests: ["Coworking", "Photography", "Street Food"], status: "available", lastActive: "2m ago" },
-  { id: 2, name: "Marcus Weber", initials: "MW", gradient: "from-purple-500 to-pink-500", city: "Lisbon", country: "Portugal", flag: "🇵🇹", homeCountry: "Germany 🇩🇪", role: "Software Engineer", workType: "Freelancer", interests: ["Surfing", "Coffee", "Hiking"], status: "open", lastActive: "15m ago" },
-  { id: 3, name: "Aisha Patel", initials: "AP", gradient: "from-amber-500 to-red-500", city: "Bali", country: "Indonesia", flag: "🇮🇩", homeCountry: "UK 🇬🇧", role: "Content Creator", workType: "Entrepreneur", interests: ["Yoga", "Writing", "Beach"], status: "available", lastActive: "5m ago" },
-  { id: 4, name: "Diego Santos", initials: "DS", gradient: "from-green-500 to-teal-500", city: "Medellín", country: "Colombia", flag: "🇨🇴", homeCountry: "Brazil 🇧🇷", role: "Data Scientist", workType: "Full-time Remote", interests: ["Hiking", "Music", "Cooking"], status: "busy", lastActive: "2h ago" },
-  { id: 5, name: "Emma Lindqvist", initials: "EL", gradient: "from-rose-500 to-orange-500", city: "Bangkok", country: "Thailand", flag: "🇹🇭", homeCountry: "Sweden 🇸🇪", role: "Marketing Manager", workType: "Full-time Remote", interests: ["Coworking", "Street Food", "Photography"], status: "available", lastActive: "8m ago" },
-  { id: 6, name: "Yuki Tanaka", initials: "YT", gradient: "from-indigo-500 to-cyan-500", city: "Berlin", country: "Germany", flag: "🇩🇪", homeCountry: "Japan 🇯🇵", role: "Product Designer", workType: "Freelancer", interests: ["Art", "Coffee", "Cycling"], status: "open", lastActive: "30m ago" },
-  { id: 7, name: "Alex Rivera", initials: "AR", gradient: "from-teal-500 to-emerald-500", city: "Lisbon", country: "Portugal", flag: "🇵🇹", homeCountry: "USA 🇺🇸", role: "Startup Founder", workType: "Entrepreneur", interests: ["Networking", "Surfing", "Tech"], status: "available", lastActive: "1m ago" },
-  { id: 8, name: "Nina Kowalski", initials: "NK", gradient: "from-violet-500 to-fuchsia-500", city: "Budapest", country: "Hungary", flag: "🇭🇺", homeCountry: "Poland 🇵🇱", role: "Copywriter", workType: "Freelancer", interests: ["Writing", "Coffee", "History"], status: "open", lastActive: "45m ago" },
-  { id: 9, name: "James Okafor", initials: "JO", gradient: "from-sky-500 to-indigo-500", city: "Bali", country: "Indonesia", flag: "🇮🇩", homeCountry: "Nigeria 🇳🇬", role: "Web Developer", workType: "Full-time Remote", interests: ["Surfing", "Coding", "Beach"], status: "available", lastActive: "10m ago" },
-  { id: 10, name: "Sofia Morales", initials: "SM", gradient: "from-pink-500 to-rose-500", city: "Barcelona", country: "Spain", flag: "🇪🇸", homeCountry: "Mexico 🇲🇽", role: "Graphic Designer", workType: "Freelancer", interests: ["Art", "Photography", "Wine"], status: "open", lastActive: "1h ago" },
-  { id: 11, name: "Liam Foster", initials: "LF", gradient: "from-orange-500 to-amber-500", city: "Bangkok", country: "Thailand", flag: "🇹🇭", homeCountry: "Australia 🇦🇺", role: "SEO Consultant", workType: "Entrepreneur", interests: ["Muay Thai", "Street Food", "Travel"], status: "busy", lastActive: "3h ago" },
-  { id: 12, name: "Hana Kim", initials: "HK", gradient: "from-cyan-400 to-purple-500", city: "Tokyo", country: "Japan", flag: "🇯🇵", homeCountry: "South Korea 🇰🇷", role: "App Developer", workType: "Full-time Remote", interests: ["Coding", "Coffee", "Anime"], status: "available", lastActive: "5m ago" },
-  { id: 13, name: "Oliver Schmidt", initials: "OS", gradient: "from-emerald-500 to-cyan-500", city: "Medellín", country: "Colombia", flag: "🇨🇴", homeCountry: "Austria 🇦🇹", role: "Video Editor", workType: "Freelancer", interests: ["Photography", "Dancing", "Cooking"], status: "open", lastActive: "20m ago" },
-  { id: 14, name: "Priya Sharma", initials: "PS", gradient: "from-yellow-500 to-red-500", city: "Bali", country: "Indonesia", flag: "🇮🇩", homeCountry: "India 🇮🇳", role: "Business Analyst", workType: "Full-time Remote", interests: ["Yoga", "Reading", "Nature"], status: "available", lastActive: "12m ago" },
-  { id: 15, name: "Tom Bakker", initials: "TB", gradient: "from-blue-500 to-violet-500", city: "Lisbon", country: "Portugal", flag: "🇵🇹", homeCountry: "Netherlands 🇳🇱", role: "Blockchain Dev", workType: "Entrepreneur", interests: ["Tech", "Surfing", "Wine"], status: "open", lastActive: "40m ago" },
-];
-
-const meetups = [
-  { id: 1, title: "Bangkok Coworking Friday", type: "Coworking Session", date: "Jun 14, 2025", time: "9:00 AM", city: "Bangkok", location: "The Hive Thonglor", attendees: 12, maxAttendees: 20, icon: "💻" },
-  { id: 2, title: "Lisbon Digital Nomads Meetup", type: "Networking Event", date: "Jun 15, 2025", time: "6:00 PM", city: "Lisbon", location: "Second Home Lisbon", attendees: 28, maxAttendees: 40, icon: "🤝" },
-  { id: 3, title: "Bali Sunset Surf Session", type: "Hiking Group", date: "Jun 16, 2025", time: "4:00 PM", city: "Bali", location: "Echo Beach, Canggu", attendees: 8, maxAttendees: 15, icon: "🏄" },
-  { id: 4, title: "Berlin Coffee & Code", type: "Coffee Meetup", date: "Jun 17, 2025", time: "10:00 AM", city: "Berlin", location: "Betahaus Café", attendees: 6, maxAttendees: 12, icon: "☕" },
-  { id: 5, title: "Medellín Workshop: Remote Taxes", type: "Workshop", date: "Jun 18, 2025", time: "2:00 PM", city: "Medellín", location: "Selina Co-work", attendees: 15, maxAttendees: 25, icon: "📚" },
-  { id: 6, title: "Budapest Nomad Walking Tour", type: "Networking Event", date: "Jun 19, 2025", time: "11:00 AM", city: "Budapest", location: "Deák Ferenc tér", attendees: 10, maxAttendees: 20, icon: "🚶" },
-];
-
-/* ── Derived constants ── */
-const ALL_CITIES = [...new Set(nomads.map((n) => n.city))].sort();
-const ALL_WORK_TYPES = [...new Set(nomads.map((n) => n.workType))];
-const ALL_INTERESTS = [...new Set(nomads.flatMap((n) => n.interests))].sort();
 
 const STATUS_CONFIG = {
   available: { label: "Available to meet", color: "bg-emerald-400", ring: "ring-emerald-400/30", badge: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" },
@@ -319,6 +286,9 @@ const MapPlaceholder = () => {
 
 const AiNearbyNomads = () => {
   /* ── State ── */
+  const [nomads, setNomads] = useState([]);
+  const [meetups, setMeetups] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [cityFilter, setCityFilter] = useState("All");
   const [workTypeFilter, setWorkTypeFilter] = useState("All");
   const [selectedInterests, setSelectedInterests] = useState([]);
@@ -328,31 +298,45 @@ const AiNearbyNomads = () => {
   const [greetedNomads, setGreetedNomads] = useState(new Set());
   const [joinedMeetups, setJoinedMeetups] = useState(new Set());
 
+  /* ── Fetch data ── */
+  useEffect(() => {
+    Promise.all([getNomadProfiles(), getMeetups()]).then(([nomadsData, meetupsData]) => {
+      setNomads(nomadsData);
+      setMeetups(meetupsData);
+      setLoading(false);
+    });
+  }, []);
+
+  /* ── Derived filter options ── */
+  const ALL_CITIES = useMemo(() => [...new Set(nomads.map((n) => n.city))].sort(), [nomads]);
+  const ALL_WORK_TYPES = useMemo(() => [...new Set(nomads.map((n) => n.workType))], [nomads]);
+  const ALL_INTERESTS = useMemo(() => [...new Set(nomads.flatMap((n) => n.interests || []))].sort(), [nomads]);
+
   /* ── Filtered nomads ── */
   const filteredNomads = useMemo(() => {
     return nomads.filter((n) => {
       if (cityFilter !== "All" && n.city !== cityFilter) return false;
       if (workTypeFilter !== "All" && n.workType !== workTypeFilter) return false;
       if (statusFilter !== "all" && n.status !== statusFilter) return false;
-      if (selectedInterests.length > 0 && !selectedInterests.some((i) => n.interests.includes(i))) return false;
+      if (selectedInterests.length > 0 && !selectedInterests.some((i) => (n.interests || []).includes(i))) return false;
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         return (
           n.name.toLowerCase().includes(q) ||
           n.role.toLowerCase().includes(q) ||
           n.city.toLowerCase().includes(q) ||
-          n.interests.some((i) => i.toLowerCase().includes(q))
+          (n.interests || []).some((i) => i.toLowerCase().includes(q))
         );
       }
       return true;
     });
-  }, [cityFilter, workTypeFilter, statusFilter, selectedInterests, searchQuery]);
+  }, [nomads, cityFilter, workTypeFilter, statusFilter, selectedInterests, searchQuery]);
 
   /* ── Filtered meetups ── */
   const filteredMeetups = useMemo(() => {
     if (cityFilter === "All") return meetups;
     return meetups.filter((m) => m.city === cityFilter);
-  }, [cityFilter]);
+  }, [meetups, cityFilter]);
 
   /* ── Stats ── */
   const stats = useMemo(() => {
@@ -364,7 +348,7 @@ const AiNearbyNomads = () => {
       cities: citiesCount,
       meetupsThisWeek: meetups.length,
     };
-  }, []);
+  }, [nomads, meetups]);
 
   /* ── Handlers ── */
   const toggleInterest = (interest) => {
@@ -394,6 +378,18 @@ const AiNearbyNomads = () => {
   /* ════════════════════════════════════════════════════════════════════════
      RENDER
      ════════════════════════════════════════════════════════════════════════ */
+
+  if (loading) {
+    return (
+      <div className="page-container flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+          <p className="text-gray-400 text-sm">Loading nomads...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-container">
       {/* ── Hero Section ── */}

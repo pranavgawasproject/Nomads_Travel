@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   DollarSign,
   Home,
@@ -17,103 +17,7 @@ import {
   TrendingUp,
   PieChart,
 } from "lucide-react";
-
-/* ══════════════════════════════════════════════════════════════════════════
-   STATIC DATA — 10 nomad cities with monthly cost breakdown
-   ══════════════════════════════════════════════════════════════════════════ */
-
-const costData = [
-  {
-    id: "bangkok",
-    name: "Bangkok",
-    country: "Thailand",
-    flag: "🇹🇭",
-    costs: { housing: 450, coworking: 120, food: 300, transport: 50, internet: 25, entertainment: 100, health: 80, visa: 30, misc: 95 },
-    tips: ["Eat at local street food stalls to save 60% on food", "Use Grab moto-taxi instead of regular taxis", "Stay in Ari or Ekkamai for cheaper rent with great vibes"],
-    currency: { EUR: 0.92, GBP: 0.79 },
-  },
-  {
-    id: "lisbon",
-    name: "Lisbon",
-    country: "Portugal",
-    flag: "🇵🇹",
-    costs: { housing: 950, coworking: 180, food: 450, transport: 45, internet: 35, entertainment: 150, health: 120, visa: 50, misc: 220 },
-    tips: ["Live in Almada for half the rent with river views", "Get a NHR tax regime for potential tax savings", "Use the monthly metro pass for unlimited transport"],
-    currency: { EUR: 0.92, GBP: 0.79 },
-  },
-  {
-    id: "bali",
-    name: "Bali",
-    country: "Indonesia",
-    flag: "🇮🇩",
-    costs: { housing: 500, coworking: 150, food: 250, transport: 80, internet: 30, entertainment: 120, health: 60, visa: 50, misc: 60 },
-    tips: ["Rent a villa in Canggu long-term for best value", "Use GoJek for affordable transport and food delivery", "Get a social visa (B211A) for 6-month stays"],
-    currency: { EUR: 0.92, GBP: 0.79 },
-  },
-  {
-    id: "medellin",
-    name: "Medellín",
-    country: "Colombia",
-    flag: "🇨🇴",
-    costs: { housing: 550, coworking: 130, food: 280, transport: 40, internet: 25, entertainment: 100, health: 70, visa: 40, misc: 65 },
-    tips: ["Stay in Laureles instead of Poblado for cheaper rent", "Use the Metro system - it is clean and affordable", "Eat at corrientazo restaurants for $2-3 meals"],
-    currency: { EUR: 0.92, GBP: 0.79 },
-  },
-  {
-    id: "berlin",
-    name: "Berlin",
-    country: "Germany",
-    flag: "🇩🇪",
-    costs: { housing: 1100, coworking: 200, food: 500, transport: 86, internet: 35, entertainment: 200, health: 200, visa: 80, misc: 399 },
-    tips: ["Apply for the freelance visa for long-term stays", "Shop at Lidl or Aldi for affordable groceries", "Use the BVG monthly ticket for all public transport"],
-    currency: { EUR: 0.92, GBP: 0.79 },
-  },
-  {
-    id: "tokyo",
-    name: "Tokyo",
-    country: "Japan",
-    flag: "🇯🇵",
-    costs: { housing: 1200, coworking: 200, food: 500, transport: 80, internet: 40, entertainment: 200, health: 150, visa: 60, misc: 270 },
-    tips: ["Live in share houses for affordable social living", "Eat at conveyor belt sushi and ramen shops", "Get a JR Pass for affordable train travel"],
-    currency: { EUR: 0.92, GBP: 0.79 },
-  },
-  {
-    id: "barcelona",
-    name: "Barcelona",
-    country: "Spain",
-    flag: "🇪🇸",
-    costs: { housing: 1050, coworking: 170, food: 420, transport: 50, internet: 35, entertainment: 180, health: 130, visa: 60, misc: 205 },
-    tips: ["Consider Gràcia or Poblenou for better value", "Use the T-Casual card for discounted metro rides", "Eat menú del día for affordable lunch deals"],
-    currency: { EUR: 0.92, GBP: 0.79 },
-  },
-  {
-    id: "budapest",
-    name: "Budapest",
-    country: "Hungary",
-    flag: "🇭🇺",
-    costs: { housing: 600, coworking: 150, food: 300, transport: 35, internet: 20, entertainment: 120, health: 90, visa: 50, misc: 135 },
-    tips: ["Live in District 8 or 9 for affordable central living", "Eat at étkezdekek (local canteens) for cheap meals", "Use Bubi bike sharing for daily commuting"],
-    currency: { EUR: 0.92, GBP: 0.79 },
-  },
-  {
-    id: "dubai",
-    name: "Dubai",
-    country: "UAE",
-    flag: "🇦🇪",
-    costs: { housing: 1500, coworking: 250, food: 600, transport: 100, internet: 80, entertainment: 300, health: 250, visa: 100, misc: 320 },
-    tips: ["Consider Sharjah for much cheaper rent nearby", "Use the metro and avoid taxis during peak hours", "Look for happy hour deals at upscale restaurants"],
-    currency: { EUR: 0.92, GBP: 0.79 },
-  },
-  {
-    id: "chiangmai",
-    name: "Chiang Mai",
-    country: "Thailand",
-    flag: "🇹🇭",
-    costs: { housing: 300, coworking: 100, food: 200, transport: 30, internet: 20, entertainment: 80, health: 50, visa: 30, misc: 40 },
-    tips: ["Nimman area has the best coworking and cafe scene", "Rent a scooter for affordable daily transport", "Eat at university area food courts for 40 baht meals"],
-    currency: { EUR: 0.92, GBP: 0.79 },
-  },
-];
+import { getCities, getCostOfLiving } from '../services/supabaseService';
 
 /* ══════════════════════════════════════════════════════════════════════════
    HELPERS
@@ -148,18 +52,34 @@ const getCityTotal = (city) => COST_KEYS.reduce((sum, k) => sum + city.costs[k],
    ══════════════════════════════════════════════════════════════════════════ */
 
 const AiCostOfLiving = () => {
+  const [cities, setCities] = useState([]);
   const [selectedCityId, setSelectedCityId] = useState(null);
+  const [costData, setCostData] = useState(null);
   const [currency, setCurrency] = useState("USD");
   const [viewMode, setViewMode] = useState("monthly");
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [sliderValues, setSliderValues] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  /* ── Fetch cities on mount ── */
+  useEffect(() => {
+    getCities().then(data => {
+      setCities(data);
+      if (data.length > 0) setSelectedCityId(data[0].id);
+      setLoading(false);
+    });
+  }, []);
+
+  /* ── Fetch cost data when selected city changes ── */
+  useEffect(() => {
+    if (selectedCityId) {
+      getCostOfLiving(selectedCityId).then(data => setCostData(data));
+    }
+  }, [selectedCityId]);
 
   /* ── Derived state ── */
-  const selectedCity = useMemo(
-    () => costData.find((c) => c.id === selectedCityId) || null,
-    [selectedCityId]
-  );
+  const selectedCity = costData;
 
   const convertedAmount = useCallback(
     (usdAmount) => {
@@ -230,12 +150,12 @@ const AiCostOfLiving = () => {
   /* ── Filtered cities for dropdown ── */
   const filteredCities = useMemo(
     () =>
-      costData.filter(
+      cities.filter(
         (c) =>
           c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           c.country.toLowerCase().includes(searchQuery.toLowerCase())
       ),
-    [searchQuery]
+    [cities, searchQuery]
   );
 
   /* ── Handlers ── */
@@ -254,13 +174,24 @@ const AiCostOfLiving = () => {
 
   /* ── Sort cities by total cost for the card grid ── */
   const sortedCities = useMemo(
-    () => [...costData].sort((a, b) => getCityTotal(a) - getCityTotal(b)),
-    []
+    () => [...cities].sort((a, b) => (a.costUSD || 0) - (b.costUSD || 0)),
+    [cities]
   );
 
   /* ══════════════════════════════════════════════════════════════════════
      RENDER
      ══════════════════════════════════════════════════════════════════════ */
+
+  if (loading) {
+    return (
+      <div className="page-container flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+          <p className="text-gray-400 text-sm">Loading cost data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">
@@ -378,7 +309,7 @@ const AiCostOfLiving = () => {
                   <span className="font-medium">{city.name}</span>
                   <span className="text-gray-500 text-sm">, {city.country}</span>
                   <span className="ml-auto text-accent font-semibold text-sm">
-                    {formatAmount(getCityTotal(city))}/{viewMode === "daily" ? "day" : viewMode === "weekly" ? "wk" : "mo"}
+                    {formatAmount(city.costUSD || 0)}/{viewMode === "daily" ? "day" : viewMode === "weekly" ? "wk" : "mo"}
                   </span>
                 </button>
               ))}
@@ -389,7 +320,7 @@ const AiCostOfLiving = () => {
         {/* City card grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {sortedCities.map((city) => {
-            const total = getCityTotal(city);
+            const total = city.costUSD || 0;
             const isSelected = selectedCityId === city.id;
             return (
               <button

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   AlertTriangle,
   Shield,
@@ -15,80 +15,9 @@ import {
   FileText,
   MapPin,
 } from "lucide-react";
+import { getVisaInfo, getVisaStays, addVisaStay, deleteVisaStay } from '../services/supabaseService';
+import { useSupabaseAuth } from '../context/SupabaseAuthContext';
 
-// ── Static Data ──────────────────────────────────────────────────────────────
-const countryStays = [
-  {
-    id: 1,
-    country: "Thailand",
-    flag: "🇹🇭",
-    daysThisYear: 65,
-    maxTouristDays: 60,
-    hasDNVisa: true,
-    dnVisaCost: "$500",
-    dnVisaDuration: "6 months",
-    stays: [{ arrival: "2025-01-15", departure: "2025-03-20" }],
-  },
-  {
-    id: 2,
-    country: "Portugal",
-    flag: "🇵🇹",
-    daysThisYear: 75,
-    maxTouristDays: 90,
-    hasDNVisa: true,
-    dnVisaCost: "€180",
-    dnVisaDuration: "1 year",
-    stays: [{ arrival: "2025-04-01", departure: "2025-06-14" }],
-  },
-  {
-    id: 3,
-    country: "Indonesia",
-    flag: "🇮🇩",
-    daysThisYear: 30,
-    maxTouristDays: 30,
-    hasDNVisa: true,
-    dnVisaCost: "$300",
-    dnVisaDuration: "6 months",
-    stays: [{ arrival: "2025-07-01", departure: "2025-07-30" }],
-  },
-  {
-    id: 4,
-    country: "Germany",
-    flag: "🇩🇪",
-    daysThisYear: 110,
-    maxTouristDays: 90,
-    hasDNVisa: true,
-    dnVisaCost: "€100",
-    dnVisaDuration: "1-3 years",
-    stays: [{ arrival: "2025-08-01", departure: "2025-11-18" }],
-  },
-  {
-    id: 5,
-    country: "Colombia",
-    flag: "🇨🇴",
-    daysThisYear: 0,
-    maxTouristDays: 90,
-    hasDNVisa: true,
-    dnVisaCost: "$170",
-    dnVisaDuration: "2 years",
-    stays: [],
-  },
-];
-
-const visaInfo = [
-  { country: "Thailand", flag: "🇹🇭", touristDays: 60, dnVisa: true, dnCost: "$500", dnDuration: "6 months" },
-  { country: "Portugal", flag: "🇵🇹", touristDays: 90, dnVisa: true, dnCost: "€180", dnDuration: "1 year" },
-  { country: "Indonesia", flag: "🇮🇩", touristDays: 30, dnVisa: true, dnCost: "$300", dnDuration: "6 months" },
-  { country: "Spain", flag: "🇪🇸", touristDays: 90, dnVisa: true, dnCost: "€70", dnDuration: "1 year" },
-  { country: "Germany", flag: "🇩🇪", touristDays: 90, dnVisa: true, dnCost: "€100", dnDuration: "1-3 years" },
-  { country: "Colombia", flag: "🇨🇴", touristDays: 90, dnVisa: true, dnCost: "$170", dnDuration: "2 years" },
-  { country: "Georgia", flag: "🇬🇪", touristDays: 365, dnVisa: false, dnCost: "N/A", dnDuration: "N/A" },
-  { country: "Croatia", flag: "🇭🇷", touristDays: 90, dnVisa: true, dnCost: "€80", dnDuration: "1 year" },
-  { country: "Estonia", flag: "🇪🇪", touristDays: 90, dnVisa: true, dnCost: "€100", dnDuration: "1 year" },
-  { country: "UAE", flag: "🇦🇪", touristDays: 30, dnVisa: true, dnCost: "$287", dnDuration: "1 year" },
-  { country: "Mexico", flag: "🇲🇽", touristDays: 180, dnVisa: false, dnCost: "N/A", dnDuration: "N/A" },
-  { country: "Brazil", flag: "🇧🇷", touristDays: 90, dnVisa: true, dnCost: "R$168", dnDuration: "1 year" },
-];
 
 const TAX_THRESHOLD = 183;
 const HOME_COUNTRY_DAYS = 85;
@@ -165,14 +94,15 @@ function calcDaysBetween(arrival, departure) {
 }
 
 // ── Calendar Heatmap Data ─────────────────────────────────────────────────────
-function generateCalendarData() {
+function generateCalendarData(stays = []) {
   const calendarData = {};
   MONTHS.forEach((_, idx) => {
     calendarData[idx] = [];
   });
 
-  countryStays.forEach((cs) => {
-    cs.stays.forEach((stay) => {
+  stays.forEach((cs) => {
+    const csStays = cs.stays || [];
+    csStays.forEach((stay) => {
       const arrival = new Date(stay.arrival);
       const departure = new Date(stay.departure);
       const startMonth = arrival.getMonth();
@@ -632,7 +562,7 @@ function VisaInfoTable() {
             </tr>
           </thead>
           <tbody>
-            {visaInfo.map((v) => (
+            {visaInfoData.map((v) => (
               <tr
                 key={v.country}
                 className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors"
@@ -700,10 +630,21 @@ function TipsSection() {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function AiVisaTracker() {
-  const [stays, setStays] = useState(countryStays);
+  const { user } = useSupabaseAuth();
+  const [stays, setStays] = useState([]);
+  const [visaInfoData, setVisaInfoData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const calendarData = useMemo(() => generateCalendarData(), []);
+  useEffect(() => {
+    Promise.all([getVisaInfo(), getVisaStays(user?.id)]).then(([visaData, staysData]) => {
+      setVisaInfoData(visaData);
+      setStays(staysData);
+      setLoading(false);
+    });
+  }, [user]);
+
+  const calendarData = useMemo(() => generateCalendarData(stays), [stays]);
 
   const countryNames = useMemo(
     () => stays.map((s) => s.country),
@@ -741,20 +682,38 @@ export default function AiVisaTracker() {
     return result;
   }, [stays]);
 
-  const handleAddStay = ({ country, arrival, departure, days }) => {
+  const handleAddStay = async ({ country, arrival, departure, days }) => {
+    if (user) {
+      try {
+        await addVisaStay(user.id, { country, arrival, departure, days });
+      } catch (e) {
+        console.warn('addVisaStay failed:', e);
+      }
+    }
     setStays((prev) =>
       prev.map((s) => {
         if (s.country === country) {
           return {
             ...s,
-            daysThisYear: s.daysThisYear + days,
-            stays: [...s.stays, { arrival, departure }],
+            daysThisYear: (s.daysThisYear || 0) + days,
+            stays: [...(s.stays || []), { arrival, departure }],
           };
         }
         return s;
       })
     );
   };
+
+  if (loading) {
+    return (
+      <div className="page-container flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+          <p className="text-gray-400 text-sm">Loading visa data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">

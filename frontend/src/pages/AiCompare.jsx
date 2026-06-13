@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   ArrowLeftRight,
   ArrowRight,
@@ -16,288 +16,7 @@ import {
   Search,
   ChevronDown,
 } from "lucide-react";
-
-/* ──────────────────────────────────────────────
-   Static city data (12 cities, all metrics)
-   ────────────────────────────────────────────── */
-const cities = [
-  {
-    id: "bangkok",
-    name: "Bangkok",
-    country: "Thailand",
-    flag: "\u{1F1F9}\u{1F1ED}",
-    image:
-      "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800",
-    scores: {
-      overall: 4.2,
-      cost: 3.8,
-      internet: 3.5,
-      safety: 3.2,
-      fun: 4.8,
-      walkability: 3.0,
-      nightlife: 4.7,
-      air: 2.8,
-    },
-    costUSD: 950,
-    internetMbps: 45,
-    avgTemp: 28,
-    visaDifficulty: "Easy",
-    airQuality: "Moderate",
-  },
-  {
-    id: "lisbon",
-    name: "Lisbon",
-    country: "Portugal",
-    flag: "\u{1F1F5}\u{1F1F9}",
-    image:
-      "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=800",
-    scores: {
-      overall: 4.5,
-      cost: 3.2,
-      internet: 4.0,
-      safety: 4.2,
-      fun: 4.3,
-      walkability: 4.0,
-      nightlife: 4.0,
-      air: 4.2,
-    },
-    costUSD: 2200,
-    internetMbps: 85,
-    avgTemp: 18,
-    visaDifficulty: "Medium",
-    airQuality: "Good",
-  },
-  {
-    id: "bali",
-    name: "Bali",
-    country: "Indonesia",
-    flag: "\u{1F1EE}\u{1F1E9}",
-    image:
-      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
-    scores: {
-      overall: 4.0,
-      cost: 4.2,
-      internet: 2.8,
-      safety: 3.5,
-      fun: 4.5,
-      walkability: 2.5,
-      nightlife: 3.8,
-      air: 3.0,
-    },
-    costUSD: 1100,
-    internetMbps: 25,
-    avgTemp: 27,
-    visaDifficulty: "Easy",
-    airQuality: "Moderate",
-  },
-  {
-    id: "medellin",
-    name: "Medell\u00EDn",
-    country: "Colombia",
-    flag: "\u{1F1E8}\u{1F1F4}",
-    image:
-      "https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?w=800",
-    scores: {
-      overall: 3.9,
-      cost: 4.0,
-      internet: 3.2,
-      safety: 2.8,
-      fun: 4.5,
-      walkability: 3.5,
-      nightlife: 4.5,
-      air: 3.5,
-    },
-    costUSD: 1200,
-    internetMbps: 35,
-    avgTemp: 22,
-    visaDifficulty: "Easy",
-    airQuality: "Moderate",
-  },
-  {
-    id: "berlin",
-    name: "Berlin",
-    country: "Germany",
-    flag: "\u{1F1E9}\u{1F1EA}",
-    image:
-      "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800",
-    scores: {
-      overall: 4.3,
-      cost: 2.5,
-      internet: 4.5,
-      safety: 4.0,
-      fun: 4.2,
-      walkability: 4.5,
-      nightlife: 4.8,
-      air: 3.8,
-    },
-    costUSD: 2800,
-    internetMbps: 100,
-    avgTemp: 10,
-    visaDifficulty: "Hard",
-    airQuality: "Good",
-  },
-  {
-    id: "tokyo",
-    name: "Tokyo",
-    country: "Japan",
-    flag: "\u{1F1EF}\u{1F1F5}",
-    image:
-      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800",
-    scores: {
-      overall: 4.4,
-      cost: 2.0,
-      internet: 4.8,
-      safety: 4.8,
-      fun: 4.5,
-      walkability: 4.8,
-      nightlife: 4.2,
-      air: 3.5,
-    },
-    costUSD: 3200,
-    internetMbps: 150,
-    avgTemp: 16,
-    visaDifficulty: "Medium",
-    airQuality: "Moderate",
-  },
-  {
-    id: "chiangmai",
-    name: "Chiang Mai",
-    country: "Thailand",
-    flag: "\u{1F1F9}\u{1F1ED}",
-    image:
-      "https://images.unsplash.com/photo-1528181304800-259b08848526?w=800",
-    scores: {
-      overall: 4.1,
-      cost: 4.5,
-      internet: 3.2,
-      safety: 3.5,
-      fun: 3.8,
-      walkability: 2.8,
-      nightlife: 3.5,
-      air: 2.5,
-    },
-    costUSD: 750,
-    internetMbps: 30,
-    avgTemp: 26,
-    visaDifficulty: "Easy",
-    airQuality: "Poor",
-  },
-  {
-    id: "barcelona",
-    name: "Barcelona",
-    country: "Spain",
-    flag: "\u{1F1EA}\u{1F1F8}",
-    image:
-      "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800",
-    scores: {
-      overall: 4.3,
-      cost: 2.8,
-      internet: 4.0,
-      safety: 3.8,
-      fun: 4.7,
-      walkability: 4.5,
-      nightlife: 4.5,
-      air: 4.0,
-    },
-    costUSD: 2500,
-    internetMbps: 80,
-    avgTemp: 17,
-    visaDifficulty: "Medium",
-    airQuality: "Good",
-  },
-  {
-    id: "mexicocity",
-    name: "Mexico City",
-    country: "Mexico",
-    flag: "\u{1F1F2}\u{1F1FD}",
-    image:
-      "https://images.unsplash.com/photo-1516482362041-8b87b69ed28d?w=800",
-    scores: {
-      overall: 3.7,
-      cost: 3.8,
-      internet: 3.0,
-      safety: 2.5,
-      fun: 4.3,
-      walkability: 3.2,
-      nightlife: 4.5,
-      air: 2.2,
-    },
-    costUSD: 1300,
-    internetMbps: 28,
-    avgTemp: 17,
-    visaDifficulty: "Easy",
-    airQuality: "Poor",
-  },
-  {
-    id: "budapest",
-    name: "Budapest",
-    country: "Hungary",
-    flag: "\u{1F1ED}\u{1F1FA}",
-    image:
-      "https://images.unsplash.com/photo-1551867633-194f125bddfa?w=800",
-    scores: {
-      overall: 4.2,
-      cost: 3.5,
-      internet: 4.2,
-      safety: 4.0,
-      fun: 4.0,
-      walkability: 4.0,
-      nightlife: 4.3,
-      air: 3.5,
-    },
-    costUSD: 1600,
-    internetMbps: 90,
-    avgTemp: 12,
-    visaDifficulty: "Medium",
-    airQuality: "Moderate",
-  },
-  {
-    id: "dubai",
-    name: "Dubai",
-    country: "UAE",
-    flag: "\u{1F1E6}\u{1F1EA}",
-    image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800",
-    scores: {
-      overall: 3.8,
-      cost: 1.8,
-      internet: 4.5,
-      safety: 4.8,
-      fun: 3.8,
-      walkability: 2.5,
-      nightlife: 3.5,
-      air: 2.0,
-    },
-    costUSD: 3500,
-    internetMbps: 120,
-    avgTemp: 33,
-    visaDifficulty: "Easy",
-    airQuality: "Poor",
-  },
-  {
-    id: "tbilisi",
-    name: "Tbilisi",
-    country: "Georgia",
-    flag: "\u{1F1EC}\u{1F1EA}",
-    image:
-      "https://images.unsplash.com/photo-1548786811-dd6e453ccca7?w=800",
-    scores: {
-      overall: 3.9,
-      cost: 4.5,
-      internet: 3.0,
-      safety: 4.0,
-      fun: 3.5,
-      walkability: 3.5,
-      nightlife: 3.8,
-      air: 3.8,
-    },
-    costUSD: 900,
-    internetMbps: 25,
-    avgTemp: 15,
-    visaDifficulty: "Easy",
-    airQuality: "Good",
-  },
-];
+import { getCities } from '../services/supabaseService';
 
 /* ──────────────────────────────────────────────
    Metric definitions
@@ -608,11 +327,17 @@ const WinnerBadge = () => (
    Main Component
    ────────────────────────────────────────────── */
 const AiCompare = () => {
+  const [cities, setCities] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [cityAId, setCityAId] = useState("bangkok");
   const [cityBId, setCityBId] = useState("lisbon");
 
-  const cityA = useMemo(() => cities.find((c) => c.id === cityAId), [cityAId]);
-  const cityB = useMemo(() => cities.find((c) => c.id === cityBId), [cityBId]);
+  useEffect(() => {
+    getCities().then(data => { setCities(data); setLoading(false); });
+  }, []);
+
+  const cityA = useMemo(() => cities.find((c) => c.id === cityAId), [cityAId, cities]);
+  const cityB = useMemo(() => cities.find((c) => c.id === cityBId), [cityBId, cities]);
 
   // Compute winners per metric
   const verdict = useMemo(() => {
@@ -675,7 +400,16 @@ const AiCompare = () => {
     return "tie";
   };
 
-  if (!cityA || !cityB) return null;
+  if (loading || !cityA || !cityB) {
+    return (
+      <div className="page-container bg-surface animate-fade-in flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+          <p className="text-gray-400 text-sm">Loading cities...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container bg-surface animate-fade-in">

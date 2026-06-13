@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   MessageSquare,
   Heart,
@@ -18,6 +18,8 @@ import {
   MessageCircle,
   ThumbsUp,
 } from "lucide-react";
+import { getForumPosts, getForumReplies, createPost, createReply, toggleLike } from '../services/supabaseService';
+import { useSupabaseAuth } from '../context/SupabaseAuthContext';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CATEGORY DEFINITIONS
@@ -54,241 +56,6 @@ const SORT_OPTIONS = [
   { value: "unanswered", label: "Unanswered" },
 ];
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   STATIC DATA — 12 posts with replies
-   ═══════════════════════════════════════════════════════════════════════════ */
-const posts = [
-  {
-    id: 1,
-    title: "Best countries for digital nomad visa in 2025?",
-    content:
-      "Looking to apply for a digital nomad visa. Which countries have the best programs right now? I am considering Portugal, Estonia, and Croatia. Any experiences with the application process?",
-    author: { name: "Sarah Chen", initials: "SC", gradient: "from-cyan-500 to-blue-500" },
-    category: "Visas & Immigration",
-    replies: 24,
-    likes: 45,
-    timeAgo: "2h ago",
-    pinned: true,
-    tags: ["visa", "digital-nomad", "2025"],
-    replyList: [
-      {
-        id: 101,
-        content:
-          "Portugal D8 visa is great! Took me about 3 months to process. The key is having all your documents apostilled beforehand.",
-        author: { name: "Marcus Weber", initials: "MW", gradient: "from-purple-500 to-pink-500" },
-        likes: 12,
-        timeAgo: "1h ago",
-      },
-      {
-        id: 102,
-        content:
-          "Estonia e-Residency is not really a visa - it does not give you the right to live there. Look into their digital nomad visa separately.",
-        author: { name: "Yuki Tanaka", initials: "YT", gradient: "from-indigo-500 to-cyan-500" },
-        likes: 8,
-        timeAgo: "45m ago",
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "How do you handle taxes when living in 3+ countries per year?",
-    content:
-      "I spent time in 4 countries last year and now I am confused about tax obligations. Do I need to file in each country? How do double taxation treaties work in practice?",
-    author: { name: "Alex Rivera", initials: "AR", gradient: "from-teal-500 to-emerald-500" },
-    category: "Taxes & Finance",
-    replies: 18,
-    likes: 38,
-    timeAgo: "5h ago",
-    pinned: false,
-    tags: ["taxes", "compliance", "multiple-countries"],
-    replyList: [
-      {
-        id: 201,
-        content:
-          "Generally you only pay taxes where you are a tax resident. The 183-day rule is key. Keep detailed records of your days in each country.",
-        author: { name: "Nina Kowalski", initials: "NK", gradient: "from-violet-500 to-fuchsia-500" },
-        likes: 15,
-        timeAgo: "4h ago",
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "Chiang Mai vs Bangkok for long-term stay?",
-    content:
-      "Trying to decide between Chiang Mai and Bangkok for a 6-month stay. I work as a developer and need reliable internet. Cost of living is also important. What are the pros and cons?",
-    author: { name: "James Okafor", initials: "JO", gradient: "from-sky-500 to-indigo-500" },
-    category: "Destinations",
-    replies: 31,
-    likes: 52,
-    timeAgo: "8h ago",
-    pinned: false,
-    tags: ["thailand", "chiang-mai", "bangkok"],
-    replyList: [
-      {
-        id: 301,
-        content:
-          "Chiang Mai is cheaper and has a great nomad community in Nimman. Bangkok has better internet and more things to do. I prefer CM for focus and BKK for lifestyle.",
-        author: { name: "Sarah Chen", initials: "SC", gradient: "from-cyan-500 to-blue-500" },
-        likes: 20,
-        timeAgo: "7h ago",
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: "Recommendations for portable monitors for travel?",
-    content:
-      "I need a second monitor for coding on the go. Has anyone used the ASUS ZenScreen or Lenovo ThinkVision? Looking for something lightweight that fits in a backpack.",
-    author: { name: "Yuki Tanaka", initials: "YT", gradient: "from-indigo-500 to-cyan-500" },
-    category: "Tech & Gear",
-    replies: 15,
-    likes: 22,
-    timeAgo: "12h ago",
-    pinned: false,
-    tags: ["gear", "monitors", "remote-work"],
-    replyList: [],
-  },
-  {
-    id: 5,
-    title: "Travel health insurance that actually covers nomads?",
-    content:
-      "Most travel insurance policies require you to have a home base. What insurance actually works for full-time nomads who do not have a permanent address?",
-    author: { name: "Aisha Patel", initials: "AP", gradient: "from-amber-500 to-red-500" },
-    category: "Health & Insurance",
-    replies: 27,
-    likes: 61,
-    timeAgo: "1d ago",
-    pinned: true,
-    tags: ["insurance", "health", "nomad-life"],
-    replyList: [
-      {
-        id: 501,
-        content:
-          "SafetyWing is designed specifically for nomads. I have been using them for 2 years. About $45/month with decent coverage.",
-        author: { name: "Diego Santos", initials: "DS", gradient: "from-green-500 to-teal-500" },
-        likes: 25,
-        timeAgo: "22h ago",
-      },
-    ],
-  },
-  {
-    id: 6,
-    title: "Best coworking spaces in Lisbon under \u20ac200/month?",
-    content:
-      "Moving to Lisbon next month and looking for affordable coworking options. Prefer areas with good natural light and a community vibe.",
-    author: { name: "Sofia Morales", initials: "SM", gradient: "from-pink-500 to-rose-500" },
-    category: "Coworking",
-    replies: 9,
-    likes: 14,
-    timeAgo: "1d ago",
-    pinned: false,
-    tags: ["lisbon", "coworking", "budget"],
-    replyList: [],
-  },
-  {
-    id: 7,
-    title: "How to convince your employer to go fully remote?",
-    content:
-      "I want to transition from hybrid to fully remote so I can travel while working. Has anyone successfully negotiated this? What arguments worked?",
-    author: { name: "Emma Lindqvist", initials: "EL", gradient: "from-rose-500 to-orange-500" },
-    category: "Remote Work",
-    replies: 33,
-    likes: 71,
-    timeAgo: "2d ago",
-    pinned: false,
-    tags: ["remote-work", "negotiation", "career"],
-    replyList: [
-      {
-        id: 701,
-        content:
-          "Build trust first by being hyper-productive while hybrid. Then propose a 3-month trial period with clear KPIs. That is how I got mine approved.",
-        author: { name: "Alex Rivera", initials: "AR", gradient: "from-teal-500 to-emerald-500" },
-        likes: 18,
-        timeAgo: "1d ago",
-      },
-    ],
-  },
-  {
-    id: 8,
-    title: "Setting up a US LLC as a non-resident nomad",
-    content:
-      "Has anyone set up a Wyoming or Delaware LLC while living abroad? Looking for the simplest process for invoicing international clients.",
-    author: { name: "Tom Bakker", initials: "TB", gradient: "from-blue-500 to-violet-500" },
-    category: "Legal",
-    replies: 19,
-    likes: 34,
-    timeAgo: "2d ago",
-    pinned: false,
-    tags: ["LLC", "us-business", "legal"],
-    replyList: [],
-  },
-  {
-    id: 9,
-    title: "Bali in rainy season - is it worth it?",
-    content:
-      "Thinking about spending November-February in Bali but worried about the rainy season. Anyone have experience? Does it rain all day or just brief showers?",
-    author: { name: "Priya Sharma", initials: "PS", gradient: "from-yellow-500 to-red-500" },
-    category: "Destinations",
-    replies: 11,
-    likes: 19,
-    timeAgo: "3d ago",
-    pinned: false,
-    tags: ["bali", "weather", "rainy-season"],
-    replyList: [],
-  },
-  {
-    id: 10,
-    title: "Anyone else struggle with loneliness on the road?",
-    content:
-      "I have been nomading for 6 months and while I love the freedom, I sometimes feel really isolated. How do you build meaningful connections while constantly moving?",
-    author: { name: "Liam Foster", initials: "LF", gradient: "from-orange-500 to-amber-500" },
-    category: "Social",
-    replies: 42,
-    likes: 89,
-    timeAgo: "3d ago",
-    pinned: false,
-    tags: ["mental-health", "loneliness", "community"],
-    replyList: [
-      {
-        id: 1001,
-        content:
-          "Join local coworking communities and attend events. I found that staying 2-3 months in one place instead of constantly moving helps build deeper friendships.",
-        author: { name: "Aisha Patel", initials: "AP", gradient: "from-amber-500 to-red-500" },
-        likes: 32,
-        timeAgo: "3d ago",
-      },
-    ],
-  },
-  {
-    id: 11,
-    title: "Starlink mini review - works for nomads?",
-    content:
-      "Thinking about getting Starlink Mini for areas with unreliable WiFi. Has anyone used it while traveling? How is the portability and performance?",
-    author: { name: "Oliver Schmidt", initials: "OS", gradient: "from-emerald-500 to-cyan-500" },
-    category: "Tech & Gear",
-    replies: 7,
-    likes: 16,
-    timeAgo: "4d ago",
-    pinned: false,
-    tags: ["starlink", "internet", "gear"],
-    replyList: [],
-  },
-  {
-    id: 12,
-    title: "Best bank accounts for digital nomads in 2025",
-    content:
-      "Looking for bank accounts with no foreign transaction fees, good exchange rates, and easy international transfers. Wise vs Revolut vs others?",
-    author: { name: "Diego Santos", initials: "DS", gradient: "from-green-500 to-teal-500" },
-    category: "Taxes & Finance",
-    replies: 28,
-    likes: 53,
-    timeAgo: "5d ago",
-    pinned: false,
-    tags: ["banking", "finance", "wise", "revolut"],
-    replyList: [],
-  },
-];
 
 /* ── Sidebar data ── */
 const trendingTopics = [
@@ -791,13 +558,20 @@ const NewPostForm = ({ onClose, onPost }) => {
    MAIN COMPONENT — AiForum
    ═══════════════════════════════════════════════════════════════════════════ */
 const AiForum = () => {
+  const { user } = useSupabaseAuth();
   const [activeCategory, setActiveCategory] = useState("All");
   const [sortBy, setSortBy] = useState("latest");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedPostId, setExpandedPostId] = useState(null);
   const [showNewPost, setShowNewPost] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
-  const [allPosts, setAllPosts] = useState(posts);
+  const [allPosts, setAllPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  /* ── Fetch posts on mount ── */
+  useEffect(() => {
+    getForumPosts().then(data => { setAllPosts(data); setLoading(false); });
+  }, []);
 
   /* ── Filtering & Sorting ── */
   const filteredPosts = useMemo(() => {
@@ -815,8 +589,8 @@ const AiForum = () => {
         (p) =>
           p.title.toLowerCase().includes(q) ||
           p.content.toLowerCase().includes(q) ||
-          p.tags.some((t) => t.toLowerCase().includes(q)) ||
-          p.author.name.toLowerCase().includes(q)
+          (p.tags || []).some((t) => t.toLowerCase().includes(q)) ||
+          (p.author?.name || "").toLowerCase().includes(q)
       );
     }
 
@@ -829,9 +603,9 @@ const AiForum = () => {
         case "popular":
           return b.likes - a.likes;
         case "replies":
-          return b.replies - a.replies;
+          return (b.replies || b.reply_count || 0) - (a.replies || a.reply_count || 0);
         case "unanswered":
-          return a.replies - b.replies;
+          return (a.replies || a.reply_count || 0) - (b.replies || b.reply_count || 0);
         case "latest":
         default:
           return 0; // keep original order (already sorted by time)
@@ -844,15 +618,64 @@ const AiForum = () => {
   }, [allPosts, activeCategory, searchQuery, sortBy]);
 
   /* ── Handlers ── */
-  const handleTogglePost = (id) => {
-    setExpandedPostId(expandedPostId === id ? null : id);
+  const handleTogglePost = async (id) => {
+    if (expandedPostId === id) {
+      setExpandedPostId(null);
+    } else {
+      setExpandedPostId(id);
+      // Fetch replies when expanding
+      try {
+        const replies = await getForumReplies(id);
+        setAllPosts(prev => prev.map(p => p.id === id ? { ...p, replyList: replies } : p));
+      } catch (e) {
+        console.warn('getForumReplies failed:', e);
+      }
+    }
   };
 
-  const handleNewPost = (newPost) => {
-    setAllPosts([newPost, ...allPosts]);
+  const handleLike = async (postId) => {
+    if (user) {
+      try {
+        const result = await toggleLike(user.id, postId);
+        // Update locally
+        setAllPosts(prev => prev.map(p => {
+          if (p.id === postId) {
+            return { ...p, likes: (p.likes || 0) + (result.liked ? 1 : -1) };
+          }
+          return p;
+        }));
+      } catch (e) {
+        console.warn('toggleLike failed:', e);
+      }
+    }
+  };
+
+  const handleNewPost = async (newPost) => {
+    if (user) {
+      try {
+        const created = await createPost(user.id, newPost);
+        setAllPosts([created, ...allPosts]);
+      } catch (e) {
+        console.warn('createPost failed:', e);
+        setAllPosts([newPost, ...allPosts]);
+      }
+    } else {
+      setAllPosts([newPost, ...allPosts]);
+    }
   };
 
   const currentSortLabel = SORT_OPTIONS.find((o) => o.value === sortBy)?.label || "Latest";
+
+  if (loading) {
+    return (
+      <div className="page-container flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+          <p className="text-gray-400 text-sm">Loading forum...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">
@@ -1000,6 +823,7 @@ const AiForum = () => {
                     post={post}
                     isExpanded={expandedPostId === post.id}
                     onToggle={() => handleTogglePost(post.id)}
+                    onLike={() => handleLike(post.id)}
                   />
                 ))
               ) : (
