@@ -28,6 +28,7 @@ import {
   TbUsers,
   TbLeaf,
 } from "react-icons/tb";
+import { getCities, getVisaInfo } from "../services/supabaseService";
 
 /* ────────────── Constants ────────────── */
 
@@ -212,6 +213,102 @@ const AiSearchResults = () => {
   const [typedText, setTypedText] = useState("");
   const [hasTypingPlayed, setHasTypingPlayed] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(null);
+  const [destinations, setDestinations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch cities + visa info from Supabase
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const [cities, visaData] = await Promise.all([getCities(), getVisaInfo()]);
+
+        // Build visa lookup by country name
+        const visaByCountry = {};
+        if (Array.isArray(visaData)) {
+          visaData.forEach((v) => {
+            if (v.country) visaByCountry[v.country] = v;
+          });
+        }
+
+        if (cities && cities.length > 0) {
+          const gradients = [
+            "from-emerald-500/40 to-teal-600/40",
+            "from-amber-500/40 to-orange-600/40",
+            "from-green-500/40 to-emerald-600/40",
+            "from-yellow-500/40 to-amber-600/40",
+            "from-pink-500/40 to-rose-600/40",
+            "from-violet-500/40 to-purple-600/40",
+            "from-red-500/40 to-orange-600/40",
+            "from-cyan-500/40 to-blue-600/40",
+            "from-teal-500/40 to-cyan-600/40",
+            "from-indigo-500/40 to-blue-600/40",
+            "from-lime-500/40 to-green-600/40",
+            "from-orange-500/40 to-red-600/40",
+          ];
+
+          const mapped = cities.map((city, i) => {
+            const visa = visaByCountry[city.country] || {};
+            const budgetNum = city.costUSD || 0;
+            const internetNum = city.internetMbps || 0;
+            const visaDays = visa.touristDays || 90;
+            const avgTemp = city.avgTemp || 0;
+            const overallScore = city.scores?.overall || 0;
+            const score = overallScore <= 5 ? Math.round(overallScore * 20) : Math.round(overallScore);
+
+            // Auto-generate tags
+            const tags = [];
+            if (budgetNum > 0 && budgetNum <= 800) tags.push("Affordable");
+            else if (budgetNum > 0 && budgetNum <= 1200) tags.push("Budget-Friendly");
+            if (internetNum >= 80) tags.push("Fast WiFi");
+            if (city.scores?.safety >= 4) tags.push("Safe");
+            if (city.scores?.nightlife >= 4) tags.push("Nightlife");
+            if (city.visaDifficulty === "Easy") tags.push("Easy Visa");
+            if (tags.length === 0) tags.push("Nomad-Friendly");
+
+            return {
+              _id: city.id,
+              city: city.name,
+              title: city.name,
+              country: city.country,
+              displayCountry: city.country,
+              continent: city.continent || "",
+              image: city.image || `https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600&q=80`,
+              budget: budgetNum ? `$${budgetNum}/mo` : "N/A",
+              budgetNum,
+              internet: internetNum ? `${internetNum} Mbps` : "N/A",
+              internetNum,
+              visa: visaDays ? `${visaDays} days` : "N/A",
+              visaNum: visaDays,
+              score,
+              tags: tags.slice(0, 3),
+              gradient: gradients[i % gradients.length],
+              allScores: {
+                safety: (city.scores?.safety || 0) * 2,
+                internet: (city.scores?.internet || 0) * 2,
+                cost: (city.scores?.cost || 0) * 2,
+                fun: (city.scores?.fun || 0) * 2,
+                community: (city.scores?.walkability || 0) * 2,
+              },
+              flag: city.flag || "",
+            };
+          });
+
+          console.log(`[SearchResults] ✅ Loaded ${mapped.length} cities from Supabase`);
+          setDestinations(mapped);
+        } else {
+          console.warn('[SearchResults] No cities from Supabase, using static fallback');
+          setDestinations(staticDestinations);
+        }
+      } catch (err) {
+        console.error('[SearchResults] Failed to fetch cities:', err);
+        setDestinations(staticDestinations);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   // Restore from URL params
   useEffect(() => {
@@ -264,7 +361,7 @@ const AiSearchResults = () => {
 
   // Filter and sort destinations
   const filteredDestinations = useMemo(() => {
-    let results = [...staticDestinations];
+    let results = [...destinations];
 
     // Filter by continent
     if (selectedContinent) {
@@ -303,7 +400,7 @@ const AiSearchResults = () => {
     // "rank" is already handled above
 
     return results;
-  }, [selectedContinent, selectedSubOption, sortBy]);
+  }, [destinations, selectedContinent, selectedSubOption, sortBy]);
 
   const handleDestinationClick = (destination) => {
     navigate(
@@ -360,6 +457,17 @@ const AiSearchResults = () => {
   return (
     <div className="min-h-screen bg-surface animate-fade-in">
       <div className="max-w-[85rem] mx-auto px-3 sm:px-6 py-4 lg:py-6">
+
+        {/* ─── Loading State ─── */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full" />
+            <span className="ml-3 text-gray-400 text-sm">Loading destinations...</span>
+          </div>
+        )}
+
+        {!loading && (
+        <>
 
         {/* ─── Header Section ─── */}
         <div className="mb-6">
@@ -620,6 +728,7 @@ const AiSearchResults = () => {
             </p>
           </div>
         )}
+        </>)}
       </div>
 
       {/* Click outside to close dropdowns */}

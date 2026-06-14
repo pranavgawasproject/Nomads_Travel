@@ -538,7 +538,7 @@ function CalendarHeatmap({ calendarData }) {
   );
 }
 
-function VisaInfoTable() {
+function VisaInfoTable({ visaInfoData = [] }) {
   return (
     <div className="glass-card overflow-hidden">
       <div className="p-5 border-b border-glass-border">
@@ -819,7 +819,7 @@ export default function AiVisaTracker() {
 
       {/* ── Visa Info Table ──────────────────────────────────────────────── */}
       <section className="section-container mb-8">
-        <VisaInfoTable />
+        <VisaInfoTable visaInfoData={visaInfoData} />
       </section>
 
       {/* ── Tips Section ─────────────────────────────────────────────────── */}
