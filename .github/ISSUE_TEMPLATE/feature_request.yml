@@ -1,0 +1,74 @@
+name: 💡 Feature Request
+description: Suggest a new feature for RoamIQ
+title: "[Feature] "
+labels: ["enhancement"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 💡 Feature Request
+        Tell us about the feature you'd like to see in RoamIQ.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Use Case
+      description: What problem does this solve?
+      placeholder: |
+        Describe the problem or use case that this feature addresses.
+        Why do you need this feature?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How should we solve this problem?
+      placeholder: |
+        Describe your proposed solution.
+        What should the feature do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other solutions have you considered?
+      placeholder: List any alternatives you've considered.
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups / Examples
+      description: Do you have any mockups, sketches, or examples?
+      placeholder: |
+        If you have any visual references, paste them here.
+        Or describe what it might look like.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - Low - Nice to have, but not urgent
+        - Medium - Should be addressed soon
+        - High - Important for upcoming release
+        - Critical - Must have for next release
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other context about this feature?
+      placeholder: Add any other context here.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

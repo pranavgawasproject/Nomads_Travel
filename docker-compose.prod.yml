@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # MongoDB Database (Production)
+  mongo:
+    image: mongo:7
+    container_name: roamiq-mongo-prod
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: roamiq
+    volumes:
+      - mongo_data_prod:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - roamiq-prod-network
+
+  # Backend API (Production)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: roamiq-backend-prod
+    restart: always
+    env_file:
+      - ./backend/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    networks:
+      - roamiq-prod-network
+
+  # Frontend (NGINX Production)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: roamiq-frontend-prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - roamiq-prod-network
+
+volumes:
+  mongo_data_prod:
+
+networks:
+  roamiq-prod-network:
+    driver: bridge

@@ -1,0 +1,49 @@
+name: Auto Label Issues
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label new issues
+        if: github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = github.context.issue;
+            
+            // Check for keywords in issue title/body
+            const body = (issue.body || '').toLowerCase();
+            const title = (issue.title || '').toLowerCase();
+            
+            const labels = [];
+            
+            if (title.includes('bug') || body.includes('bug') || body.includes('crash')) {
+              labels.push('bug');
+            }
+            if (title.includes('feat') || title.includes('feature') || title.includes('add')) {
+              labels.push('enhancement');
+            }
+            if (title.includes('docs') || body.includes('documentation')) {
+              labels.push('documentation');
+            }
+            if (title.includes('help') || body.includes('help')) {
+              labels.push('help wanted');
+            }
+            if (title.includes('beginner') || body.includes('good first')) {
+              labels.push('good first issue');
+            }
+            
+            if (labels.length > 0) {
+              github.rest.issues.addLabels({
+                owner: issue.owner,
+                repo: issue.repo,
+                issue_number: issue.number,
+                labels: labels
+              });
+            }
