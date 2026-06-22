@@ -94,10 +94,44 @@ app.use((err, req, res, next) => {
 });
 
 app.use(errorHandler);
+
+// Health check endpoint for Docker/Kubernetes
+app.get('/api/auth/health', (req, res) => {
+  const healthcheck = {
+    uptime: process.uptime(),
+    message: 'OK',
+    timestamp: Date.now(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    memory: {
+      rss: `${Math.round(process.memoryUsage().rss / 1024 / 1024)} MB`,
+      heapTotal: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)} MB`,
+      heapUsed: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`,
+    }
+  };
+  try {
+    return res.status(200).json(healthcheck);
+  } catch (error) {
+    healthcheck.message = error.message;
+    return res.status(503).json(healthcheck);
+  }
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    name: 'RoamIQ API',
+    version: '1.0.0',
+    description: 'The operating system for digital nomads',
+    documentation: '/api',
+    health: '/api/auth/health',
+    status: 'running'
+  });
+});
+
 app.listen(
   PORT,
   mongoose.connection.once("open", () => {
-    console.log("connected");
-    console.log(`Server is running on port ${PORT}`);
+    console.log("✅ Connected to MongoDB");
+    console.log(`🚀 Server is running on port ${PORT}`);
   }),
 );
