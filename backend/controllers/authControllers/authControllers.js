@@ -30,13 +30,13 @@ export const login = async (req, res) => {
 
     const accessToken = jwt.sign(
       { userInfo: { ...user } },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" },
+      process.env.JWT_ACCESS_SECRET,
+      { expiresIn: "1h" },
     );
 
     const refreshToken = jwt.sign(
       { userInfo: { ...user } },
-      process.env.REFRESH_TOKEN_SECRET,
+      process.env.JWT_REFRESH_SECRET,
       { expiresIn: "15d" },
     );
 

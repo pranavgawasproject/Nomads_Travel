@@ -1,0 +1,55 @@
+name: 🐛 Bug Report
+description: Report a bug to help us improve RoamIQ
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐛 Bug Description
+        A clear description of the bug. What did you expect vs what actually happened?
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Steps to Reproduce"
+      description: "How can we reproduce this bug?"
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected Behavior"
+      description: "What should happen instead?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: "Screenshots / Error Messages"
+      description: "Paste any relevant screenshots or error messages here"
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: "Severity"
+      options:
+        - Low — minor UX issue, app still works
+        - Medium — feature broken, no workaround
+        - High — app crashes or data loss
+        - Critical — security issue or total app failure
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: "Environment"
+      description: "Browser, OS, Node version, etc."
+      placeholder: "Chrome 126 / macOS / Node 20"

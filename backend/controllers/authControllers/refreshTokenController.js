@@ -16,15 +16,15 @@ export const refreshTokenController = async (req, res, next) => {
 
     jwt.verify(
       refreshToken,
-      process.env.REFRESH_TOKEN_SECRET,
+      process.env.JWT_REFRESH_SECRET,
       (err, decoded) => {
         if (err) {
           return res.sendStatus(403);
         }
         const accessToken = jwt.sign(
           { userInfo: { ...decoded.userInfo } },
-          process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: "15m" }
+          process.env.JWT_ACCESS_SECRET,
+          { expiresIn: "1h" }
         );
         delete user.password;
         delete user.refreshToken;
