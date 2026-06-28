@@ -186,7 +186,7 @@ export const bulkInsertPoc = async (req, res, next) => {
       try {
         // (API base URL now configured via env)
         const response = await axios.post(
-          "/api/host-user/bulk-insert-poc",
+          `${process.env.MASTER_PANEL_URL || "http://localhost:5000"}/api/host-user/bulk-insert-poc`,
           { pocs: masterPanelPocs },
           { headers: { "Content-Type": "application/json" } },
         );

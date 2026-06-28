@@ -42,7 +42,7 @@ export const bulkInsertCompanies = async (req, res, next) => {
 
     //fetch companies from master panel
     const hostCompanies = await axios.get(
-      "/api/hosts/companies",
+      `${process.env.MASTER_PANEL_URL || "http://localhost:5000"}/api/hosts/companies`,
     );
 
     const companyMap = new Map();
@@ -1408,7 +1408,7 @@ export const addCompanyImage = async (req, res, next) => {
         console.log("📤 Syncing logo to Master Panel:", payload);
 
         const response = await axios.patch(
-          "/api/hosts/upload-logo",
+          `${process.env.MASTER_PANEL_URL || "http://localhost:5000"}/api/hosts/upload-logo`,
           payload,
           { headers: { "Content-Type": "application/json" } },
         );
