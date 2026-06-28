@@ -2,3 +2,7 @@
 node_modules
 package-lock.json
 myenv
+.vercel
+.env*
+!.env.example
+
