@@ -77,6 +77,30 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    githubUrl: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    linkedinUrl: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    twitterUrl: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    travelTimeline: [
+      {
+        city: { type: String, trim: true },
+        country: { type: String, trim: true },
+        dateFrom: { type: String, trim: true },
+        dateTo: { type: String, trim: true },
+        status: { type: String, trim: true }, // 'past' | 'current' | 'future'
+      }
+    ],
   },
   { timestamps: true },
 );

@@ -121,6 +121,10 @@ const AiProfile = () => {
       contactNumber: user?.contactNumber || "",
       salary: user?.salary || "",
       designation: user?.designation || "",
+      githubUrl: user?.githubUrl || "",
+      linkedinUrl: user?.linkedinUrl || "",
+      twitterUrl: user?.twitterUrl || "",
+      travelTimeline: user?.travelTimeline || [],
     };
   }, [
     user?.fullName,
@@ -132,6 +136,10 @@ const AiProfile = () => {
     user?.contactNumber,
     user?.salary,
     user?.designation,
+    user?.githubUrl,
+    user?.linkedinUrl,
+    user?.twitterUrl,
+    user?.travelTimeline,
     countries,
   ]);
 
@@ -186,6 +194,42 @@ const AiProfile = () => {
 
     return () => clearInterval(typingInterval);
   }, []);
+
+  const [newTimelineCity, setNewTimelineCity] = useState("");
+  const [newTimelineCountry, setNewTimelineCountry] = useState("");
+  const [newTimelineFrom, setNewTimelineFrom] = useState("");
+  const [newTimelineTo, setNewTimelineTo] = useState("");
+  const [newTimelineStatus, setNewTimelineStatus] = useState("past");
+
+  const handleAddTimelineItem = () => {
+    if (!newTimelineCity || !newTimelineCountry || !newTimelineFrom) {
+      showErrorAlert("City, Country, and From Date are required");
+      return;
+    }
+    const newItem = {
+      city: newTimelineCity.trim(),
+      country: newTimelineCountry.trim(),
+      dateFrom: newTimelineFrom,
+      dateTo: newTimelineTo,
+      status: newTimelineStatus,
+    };
+    setProfileForm((prev) => ({
+      ...prev,
+      travelTimeline: [...(prev.travelTimeline || []), newItem],
+    }));
+    setNewTimelineCity("");
+    setNewTimelineCountry("");
+    setNewTimelineFrom("");
+    setNewTimelineTo("");
+    setNewTimelineStatus("past");
+  };
+
+  const handleRemoveTimelineItem = (indexToRemove) => {
+    setProfileForm((prev) => ({
+      ...prev,
+      travelTimeline: prev.travelTimeline.filter((_, idx) => idx !== indexToRemove),
+    }));
+  };
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
@@ -511,6 +555,140 @@ const AiProfile = () => {
                   onChange={handleProfileChange}
                   InputProps={{ readOnly: !editMode }}
                 />
+                <TextField
+                  label="GitHub Profile URL"
+                  variant="standard"
+                  fullWidth
+                  name="githubUrl"
+                  value={profileForm.githubUrl}
+                  onChange={handleProfileChange}
+                  InputProps={{ readOnly: !editMode }}
+                />
+                <TextField
+                  label="LinkedIn Profile URL"
+                  variant="standard"
+                  fullWidth
+                  name="linkedinUrl"
+                  value={profileForm.linkedinUrl}
+                  onChange={handleProfileChange}
+                  InputProps={{ readOnly: !editMode }}
+                />
+                <TextField
+                  label="Twitter / X Profile URL"
+                  variant="standard"
+                  fullWidth
+                  name="twitterUrl"
+                  value={profileForm.twitterUrl}
+                  onChange={handleProfileChange}
+                  InputProps={{ readOnly: !editMode }}
+                />
+              </div>
+
+              {/* ── Travel Timeline Section ── */}
+              <div className="mt-10 border-t border-glass-border pt-8">
+                <h3 className="mb-6 text-small font-semibold uppercase tracking-wider text-gray-400">
+                  Travel Timeline & History
+                </h3>
+
+                {/* Timeline Render */}
+                {profileForm.travelTimeline && profileForm.travelTimeline.length > 0 ? (
+                  <div className="relative pl-6 border-l-2 border-accent/20 space-y-6">
+                    {profileForm.travelTimeline.map((item, idx) => (
+                      <div key={idx} className="relative group">
+                        {/* Dot */}
+                        <span className={`absolute -left-[31px] top-1.5 w-4 h-4 rounded-full border-2 border-surface flex items-center justify-center ${
+                          item.status === 'current' ? 'bg-accent shadow-glow-sm' :
+                          item.status === 'future' ? 'bg-indigo-500' : 'bg-gray-600'
+                        }`} />
+                        
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <span className="text-tiny px-2 py-0.5 rounded-md font-bold bg-glass text-gray-300 mr-2 uppercase">
+                              {item.status}
+                            </span>
+                            <span className="text-content font-bold text-gray-200">
+                              {item.city}, {item.country}
+                            </span>
+                            <p className="text-small text-gray-500 mt-1">
+                              {item.dateFrom} {item.dateTo ? `to ${item.dateTo}` : '(Current)'}
+                            </p>
+                          </div>
+                          {editMode && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveTimelineItem(idx)}
+                              className="text-red-400 hover:text-red-300 text-tiny bg-red-500/10 px-2.5 py-1 rounded-lg border border-red-500/20"
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-small text-gray-500 italic text-center py-4">No travel plans or history added yet.</p>
+                )}
+
+                {/* Add Timeline Item Form (Only in editMode) */}
+                {editMode && (
+                  <div className="mt-8 rounded-2xl border border-glass-border bg-glass p-5 space-y-4">
+                    <h4 className="text-small font-semibold text-gray-300">Add Destination</h4>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <TextField
+                        label="City"
+                        variant="standard"
+                        fullWidth
+                        value={newTimelineCity}
+                        onChange={(e) => setNewTimelineCity(e.target.value)}
+                      />
+                      <TextField
+                        label="Country"
+                        variant="standard"
+                        fullWidth
+                        value={newTimelineCountry}
+                        onChange={(e) => setNewTimelineCountry(e.target.value)}
+                      />
+                      <TextField
+                        label="From Date"
+                        type="date"
+                        variant="standard"
+                        fullWidth
+                        InputLabelProps={{ shrink: true }}
+                        value={newTimelineFrom}
+                        onChange={(e) => setNewTimelineFrom(e.target.value)}
+                      />
+                      <TextField
+                        label="To Date (Optional)"
+                        type="date"
+                        variant="standard"
+                        fullWidth
+                        InputLabelProps={{ shrink: true }}
+                        value={newTimelineTo}
+                        onChange={(e) => setNewTimelineTo(e.target.value)}
+                      />
+                      <TextField
+                        label="Status"
+                        variant="standard"
+                        fullWidth
+                        select
+                        value={newTimelineStatus}
+                        onChange={(e) => setNewTimelineStatus(e.target.value)}
+                      >
+                        <MenuItem value="past">Past Destination</MenuItem>
+                        <MenuItem value="current">Current Location</MenuItem>
+                        <MenuItem value="future">Upcoming Trip</MenuItem>
+                      </TextField>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddTimelineItem}
+                      className="mt-2 text-tiny bg-accent/20 hover:bg-accent/30 text-accent font-semibold px-4 py-2 rounded-xl border border-accent/30 transition-all shadow-glow-sm"
+                    >
+                      + Add Location
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Buttons */}

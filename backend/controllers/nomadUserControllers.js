@@ -92,6 +92,10 @@ export const updateProfile = async (req, res) => {
       designation,
       contactCode,
       contactNumber,
+      githubUrl,
+      linkedinUrl,
+      twitterUrl,
+      travelTimeline,
     } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -110,6 +114,14 @@ export const updateProfile = async (req, res) => {
     if (designation) user.designation = designation.trim();
     if (contactCode) user.contactCode = contactCode.trim();
     if (contactNumber) user.contactNumber = contactNumber.trim();
+    
+    // Profiles 2.0 social links
+    if (githubUrl !== undefined) user.githubUrl = githubUrl.trim();
+    if (linkedinUrl !== undefined) user.linkedinUrl = linkedinUrl.trim();
+    if (twitterUrl !== undefined) user.twitterUrl = twitterUrl.trim();
+    
+    // Profiles 2.0 travel timeline
+    if (travelTimeline !== undefined) user.travelTimeline = travelTimeline;
 
     const updatedUser = await user.save();
 
@@ -125,6 +137,10 @@ export const updateProfile = async (req, res) => {
         designation: updatedUser.designation,
         contactCode: updatedUser.contactCode,
         contactNumber: updatedUser.contactNumber,
+        githubUrl: updatedUser.githubUrl,
+        linkedinUrl: updatedUser.linkedinUrl,
+        twitterUrl: updatedUser.twitterUrl,
+        travelTimeline: updatedUser.travelTimeline,
       },
     });
   } catch (error) {
