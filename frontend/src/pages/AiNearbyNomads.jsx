@@ -167,8 +167,9 @@ const NomadCard = ({ nomad, onSayHello }) => {
 };
 
 /* ── Meetup Card ── */
-const MeetupCard = ({ meetup, onJoin }) => {
-  const fillPct = Math.round((meetup.attendees / meetup.maxAttendees) * 100);
+const MeetupCard = ({ meetup, isJoined, onJoin }) => {
+  const currentAttendees = meetup.attendees + (isJoined ? 1 : 0);
+  const fillPct = Math.round((currentAttendees / meetup.maxAttendees) * 100);
   const typeColor = MEETUP_TYPE_COLORS[meetup.type] || "bg-gray-500/15 text-gray-400 border-gray-500/20";
 
   return (
@@ -205,10 +206,10 @@ const MeetupCard = ({ meetup, onJoin }) => {
         <div className="flex items-center justify-between text-xs">
           <span className="text-gray-400">
             <Users className="w-3 h-3 inline mr-1" />
-            {meetup.attendees}/{meetup.maxAttendees} attending
+            {currentAttendees}/{meetup.maxAttendees} attending
           </span>
           <span className={`font-medium ${fillPct >= 80 ? "text-amber-400" : "text-accent"}`}>
-            {fillPct >= 80 ? "Almost full" : "Spots left"}
+            {isJoined ? "Joined" : fillPct >= 80 ? "Almost full" : "Spots left"}
           </span>
         </div>
         <div className="w-full h-1.5 rounded-full bg-white/5 overflow-hidden">
@@ -221,11 +222,16 @@ const MeetupCard = ({ meetup, onJoin }) => {
 
       {/* Join button */}
       <button
-        onClick={() => onJoin(meetup)}
-        className="btn-primary text-xs sm:text-sm py-2 flex items-center justify-center gap-1.5 mt-auto"
+        onClick={() => !isJoined && onJoin(meetup)}
+        disabled={isJoined}
+        className={`text-xs sm:text-sm py-2 flex items-center justify-center gap-1.5 mt-auto transition-all rounded-lg ${
+          isJoined
+            ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 cursor-default"
+            : "btn-primary"
+        }`}
       >
         <Check className="w-3.5 h-3.5" />
-        Join Meetup
+        {isJoined ? "Joined" : "Join Meetup"}
       </button>
     </div>
   );
@@ -601,6 +607,7 @@ const AiNearbyNomads = () => {
               <MeetupCard
                 key={meetup.id}
                 meetup={meetup}
+                isJoined={joinedMeetups.has(meetup.id)}
                 onJoin={(m) => {
                   if (!joinedMeetups.has(m.id)) handleJoinMeetup(m);
                 }}
