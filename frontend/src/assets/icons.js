@@ -37,7 +37,6 @@ const icons = {
   adminsupport: "/icons/adminsupport.png",
   purifiedwater: "/icons/purifiedwater.png",
   waterpurifier: "/icons/purifiedwater.png",
-  purifiedwater: "/icons/purifiedwater.png",
   receptionist: "/icons/receptionist.webp",
   receptionsupport: "/icons/receptionist.webp",
   reception24x7: "/icons/receptionist.webp",
