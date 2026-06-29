@@ -248,7 +248,6 @@ const connectWithUsSchema = yup.object().shape({
 const nomadsSignupSchema = yup
   .object()
   .shape({
-    fullName: yup.string().trim().optional(),
     fullName: yup.string().trim().required("Full name is required"),
     countryOfResidence: yup.string().trim().optional(),
     country: yup.string().trim().optional(),

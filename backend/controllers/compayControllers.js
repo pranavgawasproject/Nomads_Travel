@@ -2037,7 +2037,7 @@ export const updateLeads = async (req, res, next) => {
   try {
     const { status, comment, leadId } = req.body;
 
-    if ((!leadId && typeof status !== boolean) || (!leadId && !comment)) {
+    if ((!leadId && typeof status !== "boolean") || (!leadId && !comment)) {
       return res.status(400).json({
         message: "Missing required fields",
       });

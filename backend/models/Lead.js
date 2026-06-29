@@ -47,7 +47,7 @@ const leadSchema = new mongoose.Schema(
       type: String,
       lowercase: true,
       trim: true,
-      match: [/.+\@.+\..+/, "Invalid email address"],
+      match: [/.+@.+\..+/, "Invalid email address"],
     },
     startDate: {
       type: Date,
