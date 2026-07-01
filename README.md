@@ -1,5 +1,10 @@
 # 🌍 RoamIQ — The Operating System for Digital Nomads
 
+> 🎨 **UI redesign available on the [`redesign/nextjs-ui`](../../tree/redesign/nextjs-ui) branch.**
+> A from-scratch Next.js 16 + Tailwind 4 + shadcn/ui redesign of the frontend.
+> See [`REDESIGN.md`](REDESIGN.md) for the full diff and integration plan.
+> The original Vite + MUI frontend is preserved in the `main` branch history.
+
 <div align="center">
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
