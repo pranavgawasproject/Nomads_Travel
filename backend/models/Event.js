@@ -63,6 +63,33 @@ const eventSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    attendees: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "NomadUser",
+      },
+    ],
+    discussions: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "NomadUser",
+          required: true,
+        },
+        userName: {
+          type: String,
+          required: true,
+        },
+        comment: {
+          type: String,
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true },
 );

@@ -143,3 +143,77 @@ export const bulkInsertEvents = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getEventDetails = async (req, res, next) => {
+  try {
+    const { eventId } = req.params;
+    const event = await Event.findById(eventId)
+      .populate("attendees", "fullName email country designation")
+      .populate("discussions.user", "fullName designation");
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    return res.status(200).json(event);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const rsvpEvent = async (req, res, next) => {
+  try {
+    const { eventId } = req.params;
+    const { userId, rsvpStatus } = req.body;
+
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    if (rsvpStatus === "going") {
+      if (!event.attendees.includes(userId)) {
+        event.attendees.push(userId);
+      }
+    } else {
+      event.attendees = event.attendees.filter((id) => id.toString() !== userId);
+    }
+
+    await event.save();
+    return res.status(200).json({
+      message: rsvpStatus === "going" ? "RSVP successful" : "Cancelled RSVP successfully",
+      attendees: event.attendees,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addEventComment = async (req, res, next) => {
+  try {
+    const { eventId } = req.params;
+    const { userId, userName, comment } = req.body;
+
+    if (!comment || !comment.trim()) {
+      return res.status(400).json({ message: "Comment content is required" });
+    }
+
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    event.discussions.push({
+      user: userId,
+      userName: userName || "Anonymous",
+      comment: comment.trim(),
+    });
+
+    await event.save();
+    return res.status(201).json({
+      message: "Comment added successfully",
+      discussions: event.discussions,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
