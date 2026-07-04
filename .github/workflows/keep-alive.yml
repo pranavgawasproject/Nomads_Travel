@@ -1,0 +1,16 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Runs every 5 days at 03:00 UTC (safely under Supabase's 7-day inactivity pause)
+    - cron: "0 3 */5 * *"
+  workflow_dispatch: # manual trigger button
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Nomads Travel Supabase project
+        run: |
+          curl -fsS -o /dev/null -w "Nomads Travel: HTTP %{http_code} (paused? expect 200)\n" \
+            "https://davvpymbybvniexmkgcu.supabase.co/rest/v1/"

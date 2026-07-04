@@ -4,13 +4,10 @@ import {
   changePassword,
   favoriteDestinations,
   getLikes,
-  getSaves,
   getUserFavoriteDestinations,
   getUserLikes,
   getUsers,
-  getUserSaves,
   likeListings,
-  saveListings,
   updateProfile,
 } from "../controllers/nomadUserControllers.js";
 
