@@ -1,5 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, MapPin, Wifi, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +20,9 @@ const stats = [
 ];
 
 export function Hero() {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
   return (
     <section
       id="top"
@@ -95,15 +101,23 @@ export function Hero() {
             className="mt-8 max-w-2xl"
           >
             <form
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={(e) => {
+                e.preventDefault();
+                const params = query.trim()
+                  ? `?search=${encodeURIComponent(query.trim())}`
+                  : "";
+                router.push(`/destinations${params}`);
+              }}
               className="group flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 p-2 pl-4 backdrop-blur-xl transition-colors focus-within:border-white/40 focus-within:bg-white/15"
             >
               <Sparkles className="h-5 w-5 shrink-0 text-sunset" />
               <input
                 type="text"
-                placeholder="Ask me anything about your next move…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search a city, country, or vibe…"
                 className="min-w-0 flex-1 bg-transparent py-2 text-sm text-white placeholder:text-white/60 focus:outline-none sm:text-base"
-                aria-label="Ask the AI planner"
+                aria-label="Search destinations"
               />
               <Button
                 type="submit"
@@ -118,13 +132,13 @@ export function Hero() {
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <span className="text-xs text-white/60">Try:</span>
               {examples.map((ex) => (
-                <button
+                <Link
                   key={ex}
-                  type="button"
+                  href={`/destinations?search=${encodeURIComponent(ex)}`}
                   className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-white/80 transition-colors hover:bg-white/15 hover:text-white"
                 >
                   {ex}
-                </button>
+                </Link>
               ))}
             </div>
           </motion.div>
@@ -159,13 +173,14 @@ export function Hero() {
       >
         <div className="grid gap-3 sm:grid-cols-3">
           {[
-            { icon: MapPin, label: "Live destinations", value: "2,400+ cities" },
-            { icon: Wifi, label: "Coworking & coliving", value: "18,500 spots" },
-            { icon: Zap, label: "AI planner latency", value: "< 3 seconds" },
+            { icon: MapPin, label: "Live destinations", value: "Explore cities", href: "/destinations" },
+            { icon: Wifi, label: "Coworking & coliving", value: "8,200+ spots", href: "/workspaces" },
+            { icon: Zap, label: "Visa lookup", value: "190+ countries", href: "/visa" },
           ].map((card) => (
-            <div
+            <Link
               key={card.label}
-              className="flex items-center gap-3 rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm backdrop-blur"
+              href={card.href}
+              className="flex items-center gap-3 rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-sm backdrop-blur transition-colors hover:border-accent/50"
             >
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-secondary text-forest">
                 <card.icon className="h-4 w-4" />
@@ -174,7 +189,7 @@ export function Hero() {
                 <div className="text-xs text-muted-foreground">{card.label}</div>
                 <div className="font-serif text-base font-semibold">{card.value}</div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </motion.div>

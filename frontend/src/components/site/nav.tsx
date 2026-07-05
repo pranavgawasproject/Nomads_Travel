@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Compass, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -8,17 +10,19 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "Explore", href: "#explore" },
-  { label: "Rankings", href: "#destinations" },
-  { label: "Compare", href: "#compare" },
-  { label: "Roadmap", href: "#roadmap" },
-  { label: "Community", href: "#community" },
+  { label: "Destinations", href: "/destinations" },
+  { label: "Workspaces", href: "/workspaces" },
+  { label: "Visa Finder", href: "/visa" },
+  { label: "Community", href: "/community" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "About", href: "/about" },
 ];
 
 export function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -37,25 +41,34 @@ export function SiteNav() {
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-8">
-        <a href="#top" className="group flex items-center gap-2.5">
+        <Link href="/" className="group flex items-center gap-2.5">
           <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm transition-transform group-hover:-rotate-12">
             <Compass className="h-5 w-5" strokeWidth={2.2} />
           </span>
           <span className="font-serif text-xl font-semibold tracking-tight">
             Roam<span className="text-accent">IQ</span>
           </span>
-        </a>
+        </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="rounded-full px-3.5 py-1.5 text-sm font-medium text-foreground/70 transition-colors hover:bg-secondary hover:text-foreground"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const active =
+              pathname === link.href || pathname?.startsWith(link.href + "/");
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-secondary text-foreground"
+                    : "text-foreground/70 hover:bg-secondary hover:text-foreground"
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -70,20 +83,11 @@ export function SiteNav() {
           </button>
 
           <Button
-            variant="ghost"
-            size="sm"
-            className="hidden text-sm font-medium text-foreground/70 hover:text-foreground sm:inline-flex"
-            asChild
-          >
-            <a href="#cta">Log in</a>
-          </Button>
-
-          <Button
             size="sm"
             className="hidden rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 sm:inline-flex"
             asChild
           >
-            <a href="#cta">Start roaming</a>
+            <Link href="/destinations">Start roaming</Link>
           </Button>
 
           <button
@@ -108,21 +112,18 @@ export function SiteNav() {
           >
             <div className="mx-auto flex max-w-7xl flex-col gap-1 px-5 py-4">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
                   className="rounded-lg px-3 py-2.5 text-sm font-medium text-foreground/80 hover:bg-secondary"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
               <div className="mt-2 flex items-center gap-2">
-                <Button variant="outline" size="sm" className="flex-1" asChild>
-                  <a href="#cta">Log in</a>
-                </Button>
                 <Button size="sm" className="flex-1 bg-primary text-primary-foreground" asChild>
-                  <a href="#cta">Start roaming</a>
+                  <Link href="/destinations">Start roaming</Link>
                 </Button>
               </div>
             </div>

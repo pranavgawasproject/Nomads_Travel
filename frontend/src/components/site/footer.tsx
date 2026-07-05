@@ -1,36 +1,33 @@
 "use client";
 
+import Link from "next/link";
 import { Compass, Twitter, Instagram, Github, Youtube, Mail } from "lucide-react";
 
 const columns = [
   {
     title: "Platform",
     links: [
-      { label: "Explore destinations", href: "#explore" },
-      { label: "World rankings", href: "#destinations" },
-      { label: "AI trip planner", href: "#explore" },
-      { label: "Cost comparison", href: "#compare" },
-      { label: "Nomad community", href: "#community" },
+      { label: "Destinations", href: "/destinations" },
+      { label: "Workspaces & stays", href: "/workspaces" },
+      { label: "Visa finder", href: "/visa" },
+      { label: "Cost comparison", href: "/pricing" },
+      { label: "Nomad community", href: "/community" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Press kit", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Roadmap", href: "#roadmap" },
+      { label: "About", href: "/about" },
+      { label: "Roadmap", href: "/about#roadmap" },
+      { label: "Pricing", href: "/pricing" },
     ],
   },
   {
     title: "Resources",
     links: [
-      { label: "Visa guides", href: "#" },
-      { label: "City deep-dives", href: "#" },
-      { label: "Remote job board", href: "#" },
-      { label: "Tax residency 101", href: "#" },
-      { label: "FAQs", href: "#" },
+      { label: "Visa guides", href: "/visa" },
+      { label: "City deep-dives", href: "/destinations" },
+      { label: "Coworking listings", href: "/workspaces" },
     ],
   },
   {
@@ -39,8 +36,7 @@ const columns = [
       { label: "Privacy policy", href: "#" },
       { label: "Terms & conditions", href: "#" },
       { label: "Content policy", href: "#" },
-      { label: "Cookie settings", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "Contact", href: "mailto:hello@roamiq.com" },
     ],
   },
 ];
@@ -59,14 +55,14 @@ export function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.4fr_2fr] lg:gap-16">
           {/* Brand */}
           <div>
-            <a href="#top" className="group inline-flex items-center gap-2.5">
+            <Link href="/" className="group inline-flex items-center gap-2.5">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
                 <Compass className="h-5 w-5" />
               </span>
               <span className="font-serif text-xl font-semibold tracking-tight">
                 Roam<span className="text-accent">IQ</span>
               </span>
-            </a>
+            </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
               Building the future of global explorer living. Discover where to
               live, work, and thrive — powered by AI intelligence that actually
@@ -105,12 +101,12 @@ export function Footer() {
                 <ul className="mt-4 space-y-2.5">
                   {col.links.map((l) => (
                     <li key={l.label}>
-                      <a
+                      <Link
                         href={l.href}
                         className="text-sm text-foreground/80 transition-colors hover:text-accent"
                       >
                         {l.label}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>
