@@ -1,7 +1,20 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// Next.js only inlines env vars prefixed with NEXT_PUBLIC_ into the client bundle.
+// The VITE_* fallback covers server-side rendering until the Vercel project also
+// has NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY set (required for
+// this client to work in the browser, not just during the build).
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Missing Supabase credentials. Set NEXT_PUBLIC_SUPABASE_URL and " +
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY in your Vercel project's environment variables."
+  );
+}
 
 /**
  * Single shared Supabase client using the public anon key.
