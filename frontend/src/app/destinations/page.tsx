@@ -18,32 +18,38 @@ async function getCities(params: {
   continent?: string;
   sort?: string;
 }) {
-  let query = supabase.from("cities").select("*");
+  try {
+    let query = supabase.from("cities").select("*");
 
-  if (params.search) {
-    query = query.or(
-      `name.ilike.%${params.search}%,country.ilike.%${params.search}%`
-    );
-  }
-  if (params.continent && params.continent !== "All") {
-    query = query.eq("continent", params.continent);
-  }
+    if (params.search) {
+      query = query.or(
+        `name.ilike.%${params.search}%,country.ilike.%${params.search}%`
+      );
+    }
+    if (params.continent && params.continent !== "All") {
+      query = query.eq("continent", params.continent);
+    }
 
-  if (params.sort === "cost_usd_asc") {
-    query = query.order("cost_usd", { ascending: true });
-  } else if (params.sort === "internet_mbps") {
-    query = query.order("internet_mbps", { ascending: false });
-  } else {
-    query = query.order("overall_score", { ascending: false });
-  }
+    if (params.sort === "cost_usd_asc") {
+      query = query.order("cost_usd", { ascending: true });
+    } else if (params.sort === "internet_mbps") {
+      query = query.order("internet_mbps", { ascending: false });
+    } else {
+      query = query.order("overall_score", { ascending: false });
+    }
 
-  const { data, error } = await query;
-  if (error) {
-    console.error(error);
+    const { data, error } = await query;
+    if (error) {
+      console.error(error);
+      return [];
+    }
+    return data as City[];
+  } catch (error) {
+    console.error("Error in getCities:", error);
     return [];
   }
-  return data as City[];
 }
+
 
 export default async function DestinationsPage({
   searchParams,

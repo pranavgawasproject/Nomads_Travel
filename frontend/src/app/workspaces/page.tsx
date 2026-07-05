@@ -28,35 +28,41 @@ async function getListings(params: {
   const from = (page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
 
-  let query = supabase
-    .from("listings")
-    .select(
-      "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags",
-      { count: "exact" }
-    )
-    .eq("is_public", true)
-    .eq("is_active", true);
+  try {
+    let query = supabase
+      .from("listings")
+      .select(
+        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags",
+        { count: "exact" }
+      )
+      .eq("is_public", true)
+      .eq("is_active", true);
 
-  if (params.search) {
-    query = query.ilike("company_name", `%${params.search}%`);
-  }
-  if (params.type) {
-    query = query.eq("company_type", params.type);
-  }
-  if (params.city) {
-    query = query.ilike("city", `%${params.city}%`);
-  }
+    if (params.search) {
+      query = query.ilike("company_name", `%${params.search}%`);
+    }
+    if (params.type) {
+      query = query.eq("company_type", params.type);
+    }
+    if (params.city) {
+      query = query.ilike("city", `%${params.city}%`);
+    }
 
-  const { data, error, count } = await query
-    .order("ratings", { ascending: false })
-    .range(from, to);
+    const { data, error, count } = await query
+      .order("ratings", { ascending: false })
+      .range(from, to);
 
-  if (error) {
-    console.error(error);
+    if (error) {
+      console.error(error);
+      return { listings: [] as Listing[], count: 0, page };
+    }
+    return { listings: (data ?? []) as Listing[], count: count ?? 0, page };
+  } catch (error) {
+    console.error("Error in getListings:", error);
     return { listings: [] as Listing[], count: 0, page };
   }
-  return { listings: (data ?? []) as Listing[], count: count ?? 0, page };
 }
+
 
 export default async function WorkspacesPage({
   searchParams,

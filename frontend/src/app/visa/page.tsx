@@ -6,17 +6,23 @@ import { supabase, type VisaInfo } from "@/lib/supabase";
 export const revalidate = 300;
 
 async function getVisaInfo(search?: string) {
-  let query = supabase.from("visa_info").select("*").order("country");
-  if (search) {
-    query = query.ilike("country", `%${search}%`);
-  }
-  const { data, error } = await query;
-  if (error) {
-    console.error(error);
+  try {
+    let query = supabase.from("visa_info").select("*").order("country");
+    if (search) {
+      query = query.ilike("country", `%${search}%`);
+    }
+    const { data, error } = await query;
+    if (error) {
+      console.error(error);
+      return [];
+    }
+    return data as VisaInfo[];
+  } catch (error) {
+    console.error("Error in getVisaInfo:", error);
     return [];
   }
-  return data as VisaInfo[];
 }
+
 
 export default async function VisaPage({
   searchParams,

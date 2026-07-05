@@ -6,20 +6,26 @@ import { supabase, type Meetup, type ForumPost } from "@/lib/supabase";
 export const revalidate = 120;
 
 async function getCommunityData() {
-  const [{ data: meetups }, { data: posts }] = await Promise.all([
-    supabase.from("meetups").select("*").order("date").limit(9),
-    supabase
-      .from("forum_posts")
-      .select("*")
-      .order("pinned", { ascending: false })
-      .order("created_at", { ascending: false })
-      .limit(9),
-  ]);
-  return {
-    meetups: (meetups ?? []) as Meetup[],
-    posts: (posts ?? []) as ForumPost[],
-  };
+  try {
+    const [{ data: meetups }, { data: posts }] = await Promise.all([
+      supabase.from("meetups").select("*").order("date").limit(9),
+      supabase
+        .from("forum_posts")
+        .select("*")
+        .order("pinned", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(9),
+    ]);
+    return {
+      meetups: (meetups ?? []) as Meetup[],
+      posts: (posts ?? []) as ForumPost[],
+    };
+  } catch (error) {
+    console.error("Error fetching community data:", error);
+    return { meetups: [], posts: [] };
+  }
 }
+
 
 export default async function CommunityPage() {
   const { meetups, posts } = await getCommunityData();

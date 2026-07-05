@@ -47,33 +47,48 @@ export default async function CityDetailPage({
 }) {
   const { id } = await params;
 
-  const [{ data: city }, { data: cost }] = await Promise.all([
-    supabase.from("cities").select("*").eq("id", id).maybeSingle(),
-    supabase.from("cost_of_living").select("*").eq("city_id", id).maybeSingle(),
-  ]);
+  let city: any = null;
+  let cost: any = null;
+  let visa: any = null;
+  let listings: any = null;
+
+  try {
+    const [cityRes, costRes] = await Promise.all([
+      supabase.from("cities").select("*").eq("id", id).maybeSingle(),
+      supabase.from("cost_of_living").select("*").eq("city_id", id).maybeSingle(),
+    ]);
+    city = cityRes.data;
+    cost = costRes.data;
+
+    if (city) {
+      const [visaRes, listingsRes] = await Promise.all([
+        supabase
+          .from("visa_info")
+          .select("*")
+          .eq("country", city.country)
+          .maybeSingle(),
+        supabase
+          .from("listings")
+          .select("id, company_name, company_type, city, country, starting_price, ratings, total_reviews, images")
+          .eq("city", city.name)
+          .eq("is_public", true)
+          .order("ratings", { ascending: false })
+          .limit(6),
+      ]);
+      visa = visaRes.data;
+      listings = listingsRes.data;
+    }
+  } catch (error) {
+    console.error("Error fetching city detail data:", error);
+  }
 
   if (!city) notFound();
 
   const typedCity = city as City;
-
-  const [{ data: visa }, { data: listings }] = await Promise.all([
-    supabase
-      .from("visa_info")
-      .select("*")
-      .eq("country", typedCity.country)
-      .maybeSingle(),
-    supabase
-      .from("listings")
-      .select("id, company_name, company_type, city, country, starting_price, ratings, total_reviews, images")
-      .eq("city", typedCity.name)
-      .eq("is_public", true)
-      .order("ratings", { ascending: false })
-      .limit(6),
-  ]);
-
   const typedCost = cost as CostOfLiving | null;
   const typedVisa = visa as VisaInfo | null;
   const typedListings = (listings ?? []) as Listing[];
+
 
   const photo = cityPhotos[typedCity.id];
   const [gradient] = cityGradient(typedCity.id);
