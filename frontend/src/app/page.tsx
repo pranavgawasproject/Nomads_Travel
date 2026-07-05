@@ -1,13 +1,13 @@
 import { SiteNav } from "@/components/site/nav";
 import { Hero } from "@/components/site/hero";
 import { Features } from "@/components/site/features";
-import { Destinations } from "@/components/site/destinations";
-import { Comparison } from "@/components/site/comparison";
+import { DestinationsPreview } from "@/components/site/destinations-preview";
 import { WhyRoamIQ } from "@/components/site/why-roamiq";
-import { Roadmap } from "@/components/site/roadmap";
 import { Testimonials } from "@/components/site/testimonials";
 import { CTA } from "@/components/site/cta";
 import { Footer } from "@/components/site/footer";
+
+export const revalidate = 300;
 
 export default function Page() {
   return (
@@ -16,10 +16,8 @@ export default function Page() {
       <main className="flex-1">
         <Hero />
         <Features />
-        <Destinations />
-        <Comparison />
+        <DestinationsPreview />
         <WhyRoamIQ />
-        <Roadmap />
         <Testimonials />
         <CTA />
       </main>

@@ -1,11 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Globe2,
   BarChart3,
-  Sparkles,
-  Plane,
+  FileCheck2,
+  Building2,
   Users,
   Wallet,
   ArrowUpRight,
@@ -17,7 +18,7 @@ type Feature = {
   title: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
-  badge?: string;
+  href: string;
   status?: "live" | "soon";
   image?: string;
   className: string;
@@ -29,8 +30,9 @@ const features: Feature[] = [
     id: "explore",
     title: "Explore Destinations",
     description:
-      "Browse coworking, coliving & cafes across 2,400+ cities. Filter by budget, climate, visa, and time zone.",
+      "Browse 20+ cities ranked on cost, internet, safety & fun — filter by continent and budget.",
     icon: Globe2,
+    href: "/destinations",
     status: "live",
     image:
       "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1400&q=80",
@@ -38,40 +40,44 @@ const features: Feature[] = [
     accent: "forest",
   },
   {
-    id: "rankings",
-    title: "World Rankings",
+    id: "workspaces",
+    title: "Workspaces & Stays",
     description:
-      "Cities ranked by budget, WiFi, visa ease, safety & community size — updated weekly.",
-    icon: BarChart3,
+      "8,000+ coworking spaces, coliving houses, cafés and hostels — searchable by city and type.",
+    icon: Building2,
+    href: "/workspaces",
     status: "live",
     className: "lg:col-span-2",
     accent: "sunset",
   },
   {
-    id: "planner",
-    title: "AI Trip Planner",
+    id: "visa",
+    title: "Visa Finder",
     description:
-      "Tell us your dream trip. We draft an itinerary, budget, and visa checklist in seconds.",
-    icon: Sparkles,
+      "Tourist stay limits and digital nomad visa options across 190+ countries, side by side.",
+    icon: FileCheck2,
+    href: "/visa",
     status: "live",
     className: "lg:col-span-2",
     accent: "terracotta",
   },
   {
-    id: "deals",
-    title: "Travel Deals",
-    description: "Best flight & stay deals this month.",
-    icon: Plane,
-    status: "soon",
+    id: "rankings",
+    title: "Cost Comparison",
+    description: "See exactly where every dollar goes between any two cities.",
+    icon: BarChart3,
+    href: "/pricing",
+    status: "live",
     className: "lg:col-span-2",
     accent: "clay",
   },
   {
     id: "community",
     title: "Nomad Community",
-    description: "Connect with like-minded explorers nearby.",
+    description: "Meetups and forum discussions from nomads on the ground.",
     icon: Users,
-    status: "soon",
+    href: "/community",
+    status: "live",
     className: "lg:col-span-2",
     accent: "forest",
   },
@@ -80,6 +86,7 @@ const features: Feature[] = [
     title: "Savings Calculator",
     description: "See exactly how much you keep by roaming smart.",
     icon: Wallet,
+    href: "/pricing",
     status: "soon",
     className: "lg:col-span-2",
     accent: "sunset",
@@ -135,6 +142,7 @@ function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
         feature.className
       )}
     >
+      <Link href={feature.href} className="absolute inset-0 z-20" aria-label={feature.title} />
       {feature.image && (
         <>
           <div
@@ -191,18 +199,15 @@ function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
           </p>
 
           {feature.status === "live" && (
-            <a
-              href="#cta"
+            <span
               className={cn(
-                "mt-4 inline-flex items-center gap-1 text-sm font-medium transition-all",
-                feature.image
-                  ? "text-white hover:gap-2"
-                  : "text-forest hover:gap-2 hover:text-forest/80"
+                "mt-4 inline-flex items-center gap-1 text-sm font-medium transition-all group-hover:gap-2",
+                feature.image ? "text-white" : "text-forest"
               )}
             >
               Explore
               <ArrowUpRight className="h-4 w-4" />
-            </a>
+            </span>
           )}
         </div>
       </div>
