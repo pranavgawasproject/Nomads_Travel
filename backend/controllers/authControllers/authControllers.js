@@ -143,7 +143,7 @@ export const forgotPassword = async (req, res) => {
         success: true,
         message: "Password reset email sent successfully",
       });
-    } catch (error) {
+    } catch {
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save({ validateBeforeSave: false });
@@ -193,7 +193,7 @@ export const aiForgotPassword = async (req, res) => {
         success: true,
         message: "Password reset email sent successfully",
       });
-    } catch (error) {
+    } catch {
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save({ validateBeforeSave: false });
