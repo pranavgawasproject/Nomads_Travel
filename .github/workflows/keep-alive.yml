@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Ping Nomads Travel Supabase project
         run: |
-          curl -fsS -o /dev/null -w "Nomads Travel: HTTP %{http_code} (paused? expect 200)\n" \
+          curl -sS -o /dev/null -w "Nomads Travel: HTTP %{http_code} (expect 200 or 401)\n" \
             "https://davvpymbybvniexmkgcu.supabase.co/rest/v1/"
