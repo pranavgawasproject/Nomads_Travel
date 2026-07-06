@@ -1,10 +1,10 @@
-import axios from "axios";
+// import axios from "axios";
 import { Readable } from "stream";
 import csvParser from "csv-parser";
 import Blog from "../models/Blog.js";
-import TestBlog from "../models/TestBlog.js";
+// import TestBlog from "../models/TestBlog.js";
 
-const RSS2JSON_BASE = "https://api.rss2json.com/v1/api.json";
+// const RSS2JSON_BASE = "https://api.rss2json.com/v1/api.json";
 
 // RSS feeds for different locations (can expand later)
 // const RSS_FEEDS = {
@@ -14,14 +14,14 @@ const RSS2JSON_BASE = "https://api.rss2json.com/v1/api.json";
 //   default: "https://www.nomadicmatt.com/feed/",
 // };
 
-const RSS_FEEDS = {
-    Goa: "https://www.nomadicmatt.com/feed/", // works ✅
-    // Goa: "https://www.holidify.com/blog/feed/", // Goa travel articles from Holidify
-    Bali: "https://thehoneycombers.com/bali/feed/",
-
-    Bangkok: "https://www.traveldudes.com/feed/", // works ✅
-    default: "https://www.nomadicmatt.com/feed/",
-};
+// const RSS_FEEDS = {
+//     Goa: "https://www.nomadicmatt.com/feed/", // works ✅
+//     // Goa: "https://www.holidify.com/blog/feed/", // Goa travel articles from Holidify
+//     Bali: "https://thehoneycombers.com/bali/feed/",
+// 
+//     Bangkok: "https://www.traveldudes.com/feed/", // works ✅
+//     default: "https://www.nomadicmatt.com/feed/",
+// };
 
 // export const getBlogs = async (req, res, next) => {
 //   try {
