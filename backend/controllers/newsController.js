@@ -4,7 +4,7 @@
 import News from "../models/News.js";
 import { Readable } from "stream";
 import csvParser from "csv-parser";
-import TestNews from "../models/TestNews.js";
+// import TestNews from "../models/TestNews.js";
 
 // const BASE = "https://gnews.io/api/v4";
 // const APIKEY = process.env.GNEWS_API_KEY;

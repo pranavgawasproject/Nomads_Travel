@@ -2,7 +2,7 @@ import Review from "../models/Reviews.js";
 import { Readable } from "stream";
 import csvParser from "csv-parser";
 import Company from "../models/Company.js";
-import TestReview from "../models/TestReview.js";
+// import TestReview from "../models/TestReview.js";
 import NomadUser from "../models/NomadUser.js";
 
 export const bulkInsertReviews = async (req, res, next) => {
@@ -340,7 +340,7 @@ export const updateReviewStatus = async (req, res, next) => {
 
 export const getReviewsByCompany = async (req, res, next) => {
   try {
-    const { companyId, companyType = "", status = "pending" } = req.query;
+    const { companyId, companyType = "", status: _status = "pending" } = req.query;
 
     let cmpQuery = {};
 

@@ -2,7 +2,7 @@ import * as yup from "yup";
 import Lead from "../../models/Lead.js";
 import mongoose from "mongoose";
 import { sendMail, sendAdminFormNotification } from "../../config/mailer.js"; // adjust path if different
-import User from "../../models/NomadUser.js";
+// import User from "../../models/NomadUser.js";
 import NomadUser from "../../models/NomadUser.js";
 import VisaSupport from "../../models/VisaSupport.js";
 import OverallActivationSupport from "../../models/OverallActivationSupport.js";
@@ -11,7 +11,7 @@ import Consultation from "../../models/Consultation.js";
 import Workation from "../../models/Workation.js";
 import BecomeContributor from "../../models/BecomeContributor.js";
 import { randomUUID } from "crypto";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import { uploadFileToS3 } from "../../config/s3Config.js";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 
@@ -552,21 +552,8 @@ export const addB2CformSubmission = async (req, res, next) => {
     }
 
     const {
-      companyName,
       companyId,
       company,
-      companyType,
-      country,
-      state,
-      fullName,
-      personelCount,
-      phone,
-      email,
-      source,
-      productType,
-      startDate,
-      endDate,
-      name,
     } = req.body;
     // Configuration for each sheet type
     const sheetConfig = {

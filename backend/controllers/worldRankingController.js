@@ -472,7 +472,7 @@ export const importWorldRankingTsv = async (req, res, next) => {
         try {
           const parsed = JSON.parse(bodyText);
           tsv = parsed?.tsv ?? parsed?.data ?? parsed?.payload ?? null;
-        } catch (_error) {
+        } catch {
           tsv = bodyText;
         }
       } else {

@@ -8,7 +8,7 @@ import {
 } from "../controllers/visaRuleController.js";
 import {
   deleteFileFromS3ByKey,
-  deleteFileFromS3ByUrl,
+  // deleteFileFromS3ByUrl,
   uploadFileToS3,
 } from "../config/s3Config.js";
 import csvParser from "csv-parser";
@@ -474,7 +474,7 @@ export const createStateWiseWeight = async (req, res, next) => {
     if (typeof createPayload.weight === "string") {
       try {
         createPayload.weight = JSON.parse(createPayload.weight);
-      } catch (error) {
+      } catch {
         return res.status(400).json({
           success: false,
           message: "Invalid JSON format for weight field.",
@@ -486,7 +486,7 @@ export const createStateWiseWeight = async (req, res, next) => {
     if (typeof createPayload.labels === "string") {
       try {
         createPayload.labels = JSON.parse(createPayload.labels);
-      } catch (error) {
+      } catch {
         return res.status(400).json({
           success: false,
           message: "Invalid JSON format for labels field.",
@@ -497,7 +497,7 @@ export const createStateWiseWeight = async (req, res, next) => {
     if (typeof createPayload.images === "string") {
       try {
         createPayload.images = JSON.parse(createPayload.images);
-      } catch (error) {
+      } catch {
         return res.status(400).json({
           success: false,
           message: "Invalid JSON format for images field.",
@@ -507,7 +507,7 @@ export const createStateWiseWeight = async (req, res, next) => {
     if (typeof createPayload.imageUrls === "string") {
       try {
         createPayload.imageUrls = JSON.parse(createPayload.imageUrls);
-      } catch (error) {
+      } catch {
         return res.status(400).json({
           success: false,
           message: "Invalid JSON format for imageUrls field.",
@@ -602,7 +602,7 @@ export const updateStateWiseWeight = async (req, res, next) => {
     if (typeof updatePayload.weight === "string") {
       try {
         updatePayload.weight = JSON.parse(updatePayload.weight);
-      } catch (error) {
+      } catch {
         return res.status(400).json({
           success: false,
           message: "Invalid JSON format for weight field.",
@@ -612,7 +612,7 @@ export const updateStateWiseWeight = async (req, res, next) => {
     if (typeof updatePayload.labels === "string") {
       try {
         updatePayload.labels = JSON.parse(updatePayload.labels);
-      } catch (error) {
+      } catch {
         return res.status(400).json({
           success: false,
           message: "Invalid JSON format for labels field.",
@@ -622,7 +622,7 @@ export const updateStateWiseWeight = async (req, res, next) => {
     if (typeof updatePayload.images === "string") {
       try {
         updatePayload.images = JSON.parse(updatePayload.images);
-      } catch (error) {
+      } catch {
         return res.status(400).json({
           success: false,
           message: "Invalid JSON format for images field.",
@@ -632,7 +632,7 @@ export const updateStateWiseWeight = async (req, res, next) => {
     if (typeof updatePayload.imageUrls === "string") {
       try {
         updatePayload.imageUrls = JSON.parse(updatePayload.imageUrls);
-      } catch (error) {
+      } catch {
         return res.status(400).json({
           success: false,
           message: "Invalid JSON format for imageUrls field.",

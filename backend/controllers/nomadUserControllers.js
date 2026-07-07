@@ -47,7 +47,7 @@ const normalizeFavoriteDestinationImages = (destination = {}) => {
   };
 };
 
-export const getUsers = async (req, res, next) => {
+export const getUsers = async (req, res, _next) => {
   try {
     const { userId } = req.query;
     let query = {};

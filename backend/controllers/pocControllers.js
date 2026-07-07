@@ -2,9 +2,9 @@ import PointOfContact from "../models/PointOfContact.js";
 import { Readable } from "stream";
 import csvParser from "csv-parser";
 import Company from "../models/Company.js";
-import TestPointOfContact from "../models/TestPointOfContacts.js";
+// import TestPointOfContact from "../models/TestPointOfContacts.js";
 import axios from "axios";
-import TestListing from "../models/TestCompany.js";
+// import TestListing from "../models/TestCompany.js";
 
 export const bulkInsertPoc = async (req, res, next) => {
   try {

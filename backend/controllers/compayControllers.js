@@ -7,27 +7,27 @@ import { deleteFileFromS3ByUrl, uploadFileToS3 } from "../config/s3Config.js";
 import mongoose from "mongoose";
 import Lead from "../models/Lead.js";
 import axios from "axios";
-import TestListing from "../models/TestCompany.js";
+// import TestListing from "../models/TestCompany.js";
 import NomadUser from "../models/NomadUser.js";
 
 // Utility to calculate distance between two lat/lng points in meters
-function getDistanceFromLatLonInM(lat1, lon1, lat2, lon2) {
-  const R = 6371e3; // Earth radius in meters
-  const toRad = (deg) => (deg * Math.PI) / 180;
-
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-    Math.cos(toRad(lat2)) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // distance in meters
-}
+// function getDistanceFromLatLonInM(lat1, lon1, lat2, lon2) {
+//   const R = 6371e3; // Earth radius in meters
+//   const toRad = (deg) => (deg * Math.PI) / 180;
+// 
+//   const dLat = toRad(lat2 - lat1);
+//   const dLon = toRad(lon2 - lon1);
+// 
+//   const a =
+//     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+//     Math.cos(toRad(lat1)) *
+//     Math.cos(toRad(lat2)) *
+//     Math.sin(dLon / 2) *
+//     Math.sin(dLon / 2);
+// 
+//   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//   return R * c; // distance in meters
+// }
 
 export const bulkInsertCompanies = async (req, res, next) => {
   try {
@@ -1053,7 +1053,7 @@ export const getCompanyData = async (req, res, next) => {
             location, // { lat, lng } or null
             reviews,
           };
-        } catch (err) {
+        } catch {
           // On details failure, still return basic info + location from Nearby
           return {
             place_id: place.place_id,
@@ -1738,7 +1738,7 @@ export const editCompany = async (req, res, next) => {
       ratings,
       totalReviews,
       inclusions,
-      cost,
+      cost: _cost,
       companyType,
       companyTitle,
       companyName,
@@ -1862,7 +1862,7 @@ export const editCompany = async (req, res, next) => {
     // }
 
     if (Array.isArray(reviews)) {
-      const existingReviews = await Review.find({ company: company._id });
+      const _existingReviews = await Review.find({ company: company._id });
 
       const incomingIds = reviews.map((r) => r._id).filter(Boolean);
 
@@ -2009,7 +2009,7 @@ export const deactivateProduct = async (req, res, next) => {
   }
 };
 
-export const getCompanyLeads = async (req, res, next) => {
+export const getCompanyLeads = async (req, res, _next) => {
   try {
     const { companyId } = req.query;
     let query = {};
@@ -2033,7 +2033,7 @@ export const getCompanyLeads = async (req, res, next) => {
   }
 };
 
-export const updateLeads = async (req, res, next) => {
+export const updateLeads = async (req, res, _next) => {
   try {
     const { status, comment, leadId } = req.body;
 
