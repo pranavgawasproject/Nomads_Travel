@@ -61,38 +61,6 @@ app.use("/api/news", newsRoutes);
 app.use("/api/blogs", blogRoutes); // New Blog Route
 app.use("/api/events", eventRoutes);
 
-app.all("/*splat", (req, res) => {
-  if (req.accepts("html")) {
-    res.status(404).send("<h1>404 not found</h1>");
-  } else if (req.accepts("json")) {
-    return res.status(404).json({ message: "404 not found" });
-  } else {
-    res.type("text").status(404).send("404 not found");
-  }
-});
-
-app.use((err, req, res, next) => {
-  // Multer: file too large
-  if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
-    return res.status(413).json({
-      message:
-        "Some files are too large. Please keep images under the allowed size and try again.",
-    });
-  }
-
-  // express.json() or express.urlencoded(): body too large
-  if (err.type === "entity.too.large") {
-    return res.status(413).json({
-      message:
-        "The data you’re sending is too large. Please reduce the size and try again.",
-    });
-  }
-
-  next(err);
-});
-
-app.use(errorHandler);
-
 // Health check endpoint for Docker/Kubernetes
 app.get('/api/auth/health', (req, res) => {
   const healthcheck = {
@@ -125,6 +93,38 @@ app.get('/', (req, res) => {
     status: 'running'
   });
 });
+
+app.all("/*splat", (req, res) => {
+  if (req.accepts("html")) {
+    res.status(404).send("<h1>404 not found</h1>");
+  } else if (req.accepts("json")) {
+    return res.status(404).json({ message: "404 not found" });
+  } else {
+    res.type("text").status(404).send("404 not found");
+  }
+});
+
+app.use((err, req, res, next) => {
+  // Multer: file too large
+  if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+    return res.status(413).json({
+      message:
+        "Some files are too large. Please keep images under the allowed size and try again.",
+    });
+  }
+
+  // express.json() or express.urlencoded(): body too large
+  if (err.type === "entity.too.large") {
+    return res.status(413).json({
+      message:
+        "The data you’re sending is too large. Please reduce the size and try again.",
+    });
+  }
+
+  next(err);
+});
+
+app.use(errorHandler);
 
 app.listen(
   PORT,
