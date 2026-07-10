@@ -12,7 +12,7 @@ build/
 .env
 .env.local
 .env.*.local
-.env.example
+# .env.example should be tracked
 
 # Logs
 logs/
