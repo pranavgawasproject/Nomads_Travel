@@ -1,9 +1,8 @@
 # 🌍 RoamIQ — The Operating System for Digital Nomads
 
-> 🎨 **UI redesign available on the [`redesign/nextjs-ui`](../../tree/redesign/nextjs-ui) branch.**
-> A from-scratch Next.js 16 + Tailwind 4 + shadcn/ui redesign of the frontend.
-> See [`REDESIGN.md`](REDESIGN.md) for the full diff and integration plan.
-> The original Vite + MUI frontend is preserved in the `main` branch history.
+> 🎨 **Redesigned frontend has been merged into main.**
+> A modern Next.js 16 + Tailwind 4 + shadcn/ui stack.
+> The original Vite + MUI frontend is preserved in the main branch history.
 
 <div align="center">
 
@@ -64,13 +63,11 @@
 ## 🏗️ Tech Stack
 
 ```
-Frontend (React 19 + Vite)
-├── Redux Toolkit + React Query (state)
-├── Tailwind CSS + MUI (design system)
+Frontend (Next.js 16 + React 19)
+├── Tailwind CSS 4 + shadcn/ui (design system)
 ├── Supabase (auth, listings, forum, trips)
 ├── Google Maps API (location features)
-├── Lucide Icons + React Icons
-└── Motion / Framer Motion (animations)
+└── Motion / Framer Motion 12 (animations)
 
 Backend (Node.js + Express)
 ├── MongoDB Atlas + Mongoose ODM
@@ -115,7 +112,7 @@ npm run dev             # → http://localhost:3000
 cd ../frontend
 cp .env.example .env    # Fill in your API keys
 npm install
-npm run dev             # → http://localhost:5173
+npm run dev             # → http://localhost:3000
 ```
 
 ### 4. Supabase Setup
@@ -141,15 +138,12 @@ docker-compose up -d
 
 ```
 Nomads_Travel/
-├── frontend/                    # React 19 application
+├── frontend/                    # Next.js 16 application
 │   └── src/
-│       ├── pages/               # 55+ page components
-│       ├── components/          # Reusable UI components
-│       ├── services/            # Supabase + API service layer
-│       ├── context/             # Auth contexts (MongoDB + Supabase)
+│       ├── app/                 # Next.js pages & layouts
+│       ├── components/          # Reusable UI & shadcn components
 │       ├── hooks/               # Custom React hooks
-│       ├── features/            # Redux slices
-│       └── utils/               # Helpers, validators, axios
+│       └── utils/               # Helpers, validators
 │
 ├── backend/                     # Express.js API
 │   ├── controllers/             # Business logic (30+ controllers)

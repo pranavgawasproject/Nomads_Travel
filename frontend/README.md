@@ -5,8 +5,7 @@ replaces the original Vite + React + MUI frontend with a modern **Next.js 16 +
 Tailwind CSS 4 + shadcn/ui** stack.
 
 > **Looking for the original Vite frontend?** It is preserved in the `main`
-> branch history. Use `git diff main..redesign/nextjs-ui -- frontend/` to
-> compare.
+> branch history.
 
 ---
 
