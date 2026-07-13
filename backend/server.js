@@ -126,10 +126,10 @@ app.use((err, req, res, next) => {
 
 app.use(errorHandler);
 
-app.listen(
-  PORT,
-  mongoose.connection.once("open", () => {
-    console.log("✅ Connected to MongoDB");
-    console.log(`🚀 Server is running on port ${PORT}`);
-  }),
-);
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on port ${PORT}`);
+});
+
+mongoose.connection.once("open", () => {
+  console.log("✅ Connected to MongoDB");
+});
