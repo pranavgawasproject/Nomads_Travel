@@ -42,14 +42,36 @@ export default function CommunityPage() {
   const [loading, setLoading] = useState(true);
 
   // User Session State (Stored in LocalStorage)
-  const [username, setUsername] = useState("");
-  const [userRole, setUserRole] = useState("Digital Nomad");
+  const [username, setUsername] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("nomad_username") || "";
+    }
+    return "";
+  });
+  const [userRole, setUserRole] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("nomad_role") || "Digital Nomad";
+    }
+    return "Digital Nomad";
+  });
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [pendingAction, setPendingAction] = useState<{type: string; targetId: string} | null>(null);
 
   // User Interaction States
-  const [myRSVPs, setMyRSVPs] = useState<string[]>([]);
-  const [myLikes, setMyLikes] = useState<string[]>([]);
+  const [myRSVPs, setMyRSVPs] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("nomad_rsvps");
+      return stored ? JSON.parse(stored) : [];
+    }
+    return [];
+  });
+  const [myLikes, setMyLikes] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("nomad_likes");
+      return stored ? JSON.parse(stored) : [];
+    }
+    return [];
+  });
   
   // UI Modals / Expanded Views
   const [activeThread, setActiveThread] = useState<ForumPost | null>(null);
@@ -62,19 +84,6 @@ export default function CommunityPage() {
   const [replyText, setReplyText] = useState("");
   const [postSearch, setPostSearch] = useState("");
   const [postCategory, setPostCategory] = useState("All");
-
-  // Load user details & locally stored interactions
-  useEffect(() => {
-    const storedName = localStorage.getItem("nomad_username");
-    const storedRole = localStorage.getItem("nomad_role");
-    const storedRSVPs = localStorage.getItem("nomad_rsvps");
-    const storedLikes = localStorage.getItem("nomad_likes");
-
-    if (storedName) setUsername(storedName);
-    if (storedRole) setUserRole(storedRole);
-    if (storedRSVPs) setMyRSVPs(JSON.parse(storedRSVPs));
-    if (storedLikes) setMyLikes(JSON.parse(storedLikes));
-  }, []);
 
   // Fetch from Supabase + merge local custom additions
   const fetchData = useCallback(async () => {
@@ -126,8 +135,13 @@ export default function CommunityPage() {
   }, [activeThread]);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    // Run fetchData asynchronously to prevent synchronous setState during effect execution
+    const initFetch = async () => {
+      await Promise.resolve();
+      fetchData();
+    };
+    initFetch();
+  }, [fetchData]);
 
   // Profile saver helper
   const handleSaveProfile = (name: string, role: string) => {
