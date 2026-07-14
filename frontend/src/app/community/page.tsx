@@ -16,7 +16,10 @@ import {
   MessageCircle,
   Globe,
   Tag,
-  Check
+  Check,
+  Github,
+  Twitter,
+  Linkedin
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -53,6 +56,30 @@ export default function CommunityPage() {
       return localStorage.getItem("nomad_role") || "Digital Nomad";
     }
     return "Digital Nomad";
+  });
+  const [userTwitter, setUserTwitter] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("nomad_twitter") || "";
+    }
+    return "";
+  });
+  const [userGithub, setUserGithub] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("nomad_github") || "";
+    }
+    return "";
+  });
+  const [userLinkedin, setUserLinkedin] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("nomad_linkedin") || "";
+    }
+    return "";
+  });
+  const [userTimeline, setUserTimeline] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("nomad_timeline") || "";
+    }
+    return "";
   });
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [pendingAction, setPendingAction] = useState<{type: string; targetId: string} | null>(null);
@@ -144,12 +171,20 @@ export default function CommunityPage() {
   }, [fetchData]);
 
   // Profile saver helper
-  const handleSaveProfile = (name: string, role: string) => {
+  const handleSaveProfile = (name: string, role: string, twitter: string, github: string, linkedin: string, timeline: string) => {
     if (!name.trim()) return;
     localStorage.setItem("nomad_username", name);
     localStorage.setItem("nomad_role", role);
+    localStorage.setItem("nomad_twitter", twitter);
+    localStorage.setItem("nomad_github", github);
+    localStorage.setItem("nomad_linkedin", linkedin);
+    localStorage.setItem("nomad_timeline", timeline);
     setUsername(name);
     setUserRole(role);
+    setUserTwitter(twitter);
+    setUserGithub(github);
+    setUserLinkedin(linkedin);
+    setUserTimeline(timeline);
     setShowProfileModal(false);
 
     // Resume the action that triggered the login modal
@@ -452,22 +487,56 @@ export default function CommunityPage() {
             </div>
             
             {/* Quick Profile Widget */}
-            <div className="flex-shrink-0 bg-card border border-border p-4 rounded-2xl flex items-center gap-3.5 shadow-sm min-w-[240px]">
-              <div className="h-10 w-10 rounded-full bg-accent/15 flex items-center justify-center text-accent">
-                <User size={20} />
-              </div>
-              <div>
-                <div className="text-xs text-muted-foreground">Nomad Profile</div>
-                <div className="font-semibold text-sm truncate max-w-[150px]">
-                  {username || "Guest Nomad"}
+            <div className="flex-shrink-0 bg-card border border-border p-5 rounded-2xl flex flex-col gap-3 shadow-sm min-w-[260px]">
+              <div className="flex items-center gap-3.5">
+                <div className="h-10 w-10 rounded-full bg-accent/15 flex items-center justify-center text-accent">
+                  <User size={20} />
                 </div>
-                <button
-                  onClick={() => setShowProfileModal(true)}
-                  className="text-xs text-accent font-medium hover:underline text-left block"
-                >
-                  {username ? "Edit name & role" : "Setup profile name"}
-                </button>
+                <div>
+                  <div className="text-xs text-muted-foreground">Nomad Profile</div>
+                  <div className="font-semibold text-sm truncate max-w-[150px]">
+                    {username || "Guest Nomad"}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground truncate max-w-[150px]">
+                    {userRole}
+                  </div>
+                </div>
               </div>
+              
+              {(userTwitter || userGithub || userLinkedin || userTimeline) && (
+                <div className="border-t border-border pt-2.5 space-y-2">
+                  {userTimeline && (
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <MapPin size={12} className="text-accent flex-shrink-0" />
+                      <span className="truncate max-w-[220px]" title={userTimeline}>{userTimeline}</span>
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    {userGithub && (
+                      <a href={`https://github.com/${userGithub.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground transition-colors" title="GitHub">
+                        <Github size={12} />
+                      </a>
+                    )}
+                    {userTwitter && (
+                      <a href={`https://twitter.com/${userTwitter.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground transition-colors" title="Twitter / X">
+                        <Twitter size={12} />
+                      </a>
+                    )}
+                    {userLinkedin && (
+                      <a href={`https://linkedin.com/in/${userLinkedin}`} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground transition-colors" title="LinkedIn">
+                        <Linkedin size={12} />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <button
+                onClick={() => setShowProfileModal(true)}
+                className="text-xs text-accent font-medium hover:underline text-left block mt-1"
+              >
+                {username ? "Edit profile settings" : "Setup profile"}
+              </button>
             </div>
           </div>
         </section>
@@ -806,23 +875,23 @@ export default function CommunityPage() {
               <h3 className="font-serif text-lg font-semibold mb-1">Set Nomad Identity</h3>
               <p className="text-xs text-muted-foreground mb-4">Choose a display name and role to interact with meetups and forums.</p>
               
-              <div className="space-y-4">
+              <div className="space-y-3 max-h-[350px] overflow-y-auto pr-1">
                 <div>
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5 block">Display Name</label>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">Display Name</label>
                   <input 
                     type="text" 
                     placeholder="e.g. Alex Green" 
                     defaultValue={username}
                     id="modal-username-input"
-                    className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2 text-sm outline-none focus:border-accent"
+                    className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-1.5 text-xs outline-none focus:border-accent"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5 block">Nomad Role</label>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">Nomad Role</label>
                   <select 
                     id="modal-role-select"
                     defaultValue={userRole}
-                    className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2 text-sm outline-none focus:border-accent"
+                    className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-1.5 text-xs outline-none focus:border-accent"
                   >
                     <option value="Digital Nomad">Digital Nomad</option>
                     <option value="Software Engineer">Software Engineer</option>
@@ -830,6 +899,46 @@ export default function CommunityPage() {
                     <option value="Content Creator">Content Creator</option>
                     <option value="Remote Founder">Remote Founder</option>
                   </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">GitHub Username</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. alexgreen" 
+                    defaultValue={userGithub}
+                    id="modal-github-input"
+                    className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-1.5 text-xs outline-none focus:border-accent"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">Twitter / X Handle</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. alexgreen_dev" 
+                    defaultValue={userTwitter}
+                    id="modal-twitter-input"
+                    className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-1.5 text-xs outline-none focus:border-accent"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">LinkedIn Username</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. alexgreen-profile" 
+                    defaultValue={userLinkedin}
+                    id="modal-linkedin-input"
+                    className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-1.5 text-xs outline-none focus:border-accent"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">Travel Timeline</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Bali -> Bangkok -> Lisbon" 
+                    defaultValue={userTimeline}
+                    id="modal-timeline-input"
+                    className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-1.5 text-xs outline-none focus:border-accent"
+                  />
                 </div>
               </div>
 
@@ -842,9 +951,13 @@ export default function CommunityPage() {
                 </button>
                 <button 
                   onClick={() => {
-                    const name = (document.getElementById("modal-username-input") as HTMLInputElement)?.value;
-                    const role = (document.getElementById("modal-role-select") as HTMLSelectElement)?.value;
-                    handleSaveProfile(name, role);
+                    const name = (document.getElementById("modal-username-input") as HTMLInputElement)?.value || "";
+                    const role = (document.getElementById("modal-role-select") as HTMLSelectElement)?.value || "Digital Nomad";
+                    const github = (document.getElementById("modal-github-input") as HTMLInputElement)?.value || "";
+                    const twitter = (document.getElementById("modal-twitter-input") as HTMLInputElement)?.value || "";
+                    const linkedin = (document.getElementById("modal-linkedin-input") as HTMLInputElement)?.value || "";
+                    const timeline = (document.getElementById("modal-timeline-input") as HTMLInputElement)?.value || "";
+                    handleSaveProfile(name, role, twitter, github, linkedin, timeline);
                   }}
                   className="flex-1 py-2 text-xs bg-accent text-white rounded-xl hover:bg-accent/95 transition-colors font-medium"
                 >
