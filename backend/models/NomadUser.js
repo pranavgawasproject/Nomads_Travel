@@ -92,6 +92,16 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    portfolioUrl: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    skills: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     travelTimeline: [
       {
         city: { type: String, trim: true },

@@ -81,6 +81,18 @@ export default function CommunityPage() {
     }
     return "";
   });
+  const [userPortfolio, setUserPortfolio] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("nomad_portfolio") || "";
+    }
+    return "";
+  });
+  const [userSkills, setUserSkills] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("nomad_skills") || "";
+    }
+    return "";
+  });
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [pendingAction, setPendingAction] = useState<{type: string; targetId: string} | null>(null);
 
@@ -171,7 +183,16 @@ export default function CommunityPage() {
   }, [fetchData]);
 
   // Profile saver helper
-  const handleSaveProfile = (name: string, role: string, twitter: string, github: string, linkedin: string, timeline: string) => {
+  const handleSaveProfile = (
+    name: string, 
+    role: string, 
+    twitter: string, 
+    github: string, 
+    linkedin: string, 
+    timeline: string,
+    portfolio: string,
+    skills: string
+  ) => {
     if (!name.trim()) return;
     localStorage.setItem("nomad_username", name);
     localStorage.setItem("nomad_role", role);
@@ -179,12 +200,16 @@ export default function CommunityPage() {
     localStorage.setItem("nomad_github", github);
     localStorage.setItem("nomad_linkedin", linkedin);
     localStorage.setItem("nomad_timeline", timeline);
+    localStorage.setItem("nomad_portfolio", portfolio);
+    localStorage.setItem("nomad_skills", skills);
     setUsername(name);
     setUserRole(role);
     setUserTwitter(twitter);
     setUserGithub(github);
     setUserLinkedin(linkedin);
     setUserTimeline(timeline);
+    setUserPortfolio(portfolio);
+    setUserSkills(skills);
     setShowProfileModal(false);
 
     // Resume the action that triggered the login modal
@@ -503,7 +528,7 @@ export default function CommunityPage() {
                 </div>
               </div>
               
-              {(userTwitter || userGithub || userLinkedin || userTimeline) && (
+              {(userTwitter || userGithub || userLinkedin || userTimeline || userPortfolio || userSkills) && (
                 <div className="border-t border-border pt-2.5 space-y-2">
                   {userTimeline && (
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -511,6 +536,30 @@ export default function CommunityPage() {
                       <span className="truncate max-w-[220px]" title={userTimeline}>{userTimeline}</span>
                     </div>
                   )}
+                  
+                  {userPortfolio && (
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Globe size={12} className="text-accent flex-shrink-0" />
+                      <a href={userPortfolio.startsWith('http') ? userPortfolio : `https://${userPortfolio}`} target="_blank" rel="noopener noreferrer" className="hover:underline text-accent text-[11px] truncate max-w-[200px]" title={userPortfolio}>
+                        Portfolio Website
+                      </a>
+                    </div>
+                  )}
+
+                  {userSkills && (
+                    <div className="flex flex-wrap gap-1 pt-0.5">
+                      {userSkills.split(',').map((skill, index) => {
+                        const cleanSkill = skill.trim();
+                        if (!cleanSkill) return null;
+                        return (
+                          <span key={index} className="bg-accent/15 text-accent text-[9px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap">
+                            {cleanSkill}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+
                   <div className="flex gap-2">
                     {userGithub && (
                       <a href={`https://github.com/${userGithub.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="p-1 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground transition-colors" title="GitHub">
@@ -940,6 +989,26 @@ export default function CommunityPage() {
                     className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-1.5 text-xs outline-none focus:border-accent"
                   />
                 </div>
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">Portfolio URL</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. https://alexgreen.dev" 
+                    defaultValue={userPortfolio}
+                    id="modal-portfolio-input"
+                    className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-1.5 text-xs outline-none focus:border-accent"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">Skills & Expertise (comma separated)</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. React, Node.js, Product Design" 
+                    defaultValue={userSkills}
+                    id="modal-skills-input"
+                    className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-1.5 text-xs outline-none focus:border-accent"
+                  />
+                </div>
               </div>
 
               <div className="flex gap-3 mt-6">
@@ -957,7 +1026,9 @@ export default function CommunityPage() {
                     const twitter = (document.getElementById("modal-twitter-input") as HTMLInputElement)?.value || "";
                     const linkedin = (document.getElementById("modal-linkedin-input") as HTMLInputElement)?.value || "";
                     const timeline = (document.getElementById("modal-timeline-input") as HTMLInputElement)?.value || "";
-                    handleSaveProfile(name, role, twitter, github, linkedin, timeline);
+                    const portfolio = (document.getElementById("modal-portfolio-input") as HTMLInputElement)?.value || "";
+                    const skills = (document.getElementById("modal-skills-input") as HTMLInputElement)?.value || "";
+                    handleSaveProfile(name, role, twitter, github, linkedin, timeline, portfolio, skills);
                   }}
                   className="flex-1 py-2 text-xs bg-accent text-white rounded-xl hover:bg-accent/95 transition-colors font-medium"
                 >

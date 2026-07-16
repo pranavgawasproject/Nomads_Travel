@@ -49,10 +49,10 @@
 #### Features
 
 - [ ] **User Profiles 2.0**
-  - [ ] Portfolio/portfolio showcase
-  - [ ] Travel history timeline
-  - [ ] Skills & expertise badges
-  - [ ] Social links (GitHub, LinkedIn, Twitter)
+  - [x] Portfolio/portfolio showcase
+  - [x] Travel history timeline
+  - [x] Skills & expertise badges
+  - [x] Social links (GitHub, LinkedIn, Twitter)
 
 - [ ] **Social Features**
   - [ ] Follow/unfollow users
