@@ -23,7 +23,10 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: "RoamIQ — The Operating System for Digital Nomads",
   description:
     "The all-in-one platform for digital nomads: AI-powered visa intelligence, remote job board, global city listings, workation planning, and community. Built for the 35M remote workers living their best location-independent life.",
@@ -40,8 +43,12 @@ export const metadata: Metadata = {
     "digital nomad tools",
   ],
   authors: [{ name: "RoamIQ" }],
+  alternates: {
+    canonical: BASE_URL,
+  },
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/logo.svg",
+    apple: "/logo.svg",
   },
   openGraph: {
     title: "RoamIQ — The Operating System for Digital Nomads",
@@ -49,12 +56,22 @@ export const metadata: Metadata = {
       "The all-in-one platform for digital nomads: AI-powered visa intelligence, remote job board, global city listings, workation planning, and community.",
     siteName: "RoamIQ",
     type: "website",
+    url: BASE_URL,
+    images: [
+      {
+        url: "/logo.svg",
+        width: 512,
+        height: 512,
+        alt: "RoamIQ logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "RoamIQ — The Operating System for Digital Nomads",
     description:
       "The all-in-one platform for digital nomads: AI-powered visa intelligence, remote job board, global city listings, workation planning, and community.",
+    images: ["/logo.svg"],
   },
 };
 
