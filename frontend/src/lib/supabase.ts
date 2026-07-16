@@ -117,4 +117,5 @@ export type ForumPost = {
   likes: number;
   reply_count: number;
   created_at: string;
+  best_answer_id?: string | null;
 };

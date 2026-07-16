@@ -70,7 +70,7 @@
   - [x] Q&A section
   - [ ] City-specific threads
   - [x] Upvote/downvote (Likes)
-  - [ ] Mark as "Best Answer"
+  - [x] Mark as "Best Answer"
 
 - [ ] **Bug Fixes**
   - [ ] Performance improvements

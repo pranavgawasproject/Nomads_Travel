@@ -373,6 +373,44 @@ export default function CommunityPage() {
     } catch (_) {}
   };
 
+  // Best Answer Handler
+  const handleMarkBestAnswer = async (postId: string, replyId: string | null) => {
+    if (!username) {
+      setShowProfileModal(true);
+      return;
+    }
+
+    const updatedPosts = posts.map(p => {
+      if (p.id === postId) {
+        return { ...p, best_answer_id: replyId };
+      }
+      return p;
+    });
+    setPosts(updatedPosts);
+
+    const localPosts = JSON.parse(localStorage.getItem("local_posts") || "[]") as ForumPost[];
+    const targetPost = updatedPosts.find(p => p.id === postId);
+    if (targetPost) {
+      const filteredLocal = localPosts.filter(p => p.id !== postId);
+      localStorage.setItem("local_posts", JSON.stringify([...filteredLocal, targetPost]));
+      setActiveThread(targetPost);
+    }
+
+    try {
+      await supabase
+        .from("forum_posts")
+        .update({ best_answer_id: replyId })
+        .eq("id", postId);
+    } catch (_) {}
+  };
+
+  const handleToggleBestAnswer = async (replyId: string) => {
+    if (!activeThread) return;
+    const isCurrentBest = activeThread.best_answer_id === replyId;
+    const newBestId = isCurrentBest ? null : replyId;
+    await handleMarkBestAnswer(activeThread.id, newBestId);
+  };
+
   // Add Post Handler
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -854,20 +892,49 @@ export default function CommunityPage() {
                       <div className="space-y-4">
                         {replies
                           .filter(r => r.post_id === activeThread.id)
-                          .map((reply) => (
-                            <div key={reply.id} className="bg-secondary/35 border border-border/70 rounded-xl p-4.5">
-                              <div className="flex items-center justify-between mb-1.5">
-                                <div className="flex items-center gap-2">
-                                  <div className="font-semibold text-xs text-foreground/80">{reply.user_name}</div>
-                                  <div className="text-[10px] text-muted-foreground px-2 py-0.5 bg-secondary rounded-full font-medium">{reply.user_role}</div>
+                          .map((reply) => {
+                            const isBestAnswer = activeThread.best_answer_id === reply.id;
+                            return (
+                              <div 
+                                key={reply.id} 
+                                className={`border rounded-xl p-4.5 transition-all ${
+                                  isBestAnswer 
+                                    ? "border-emerald-500/50 bg-emerald-500/5 dark:bg-emerald-500/10 shadow-sm" 
+                                    : "bg-secondary/35 border-border/70"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <div className="font-semibold text-xs text-foreground/80">{reply.user_name}</div>
+                                    <div className="text-[10px] text-muted-foreground px-2 py-0.5 bg-secondary rounded-full font-medium">{reply.user_role}</div>
+                                    {isBestAnswer && (
+                                      <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full font-semibold">
+                                        <Check size={10} className="stroke-[3]" /> Best Answer
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="text-[9px] text-muted-foreground font-mono">
+                                    {new Date(reply.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                                  </span>
                                 </div>
-                                <span className="text-[9px] text-muted-foreground font-mono">
-                                  {new Date(reply.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                                </span>
+                                <div className="flex justify-between items-start gap-4">
+                                  <p className="text-xs leading-relaxed text-foreground/80 flex-1">{reply.content}</p>
+                                  <button
+                                    onClick={() => handleToggleBestAnswer(reply.id)}
+                                    className={`flex-shrink-0 text-[10px] font-medium px-2.5 py-1 rounded-lg transition-all inline-flex items-center gap-1 border ${
+                                      isBestAnswer
+                                        ? "border-rose-500/30 text-rose-500 bg-rose-500/5 hover:bg-rose-500/10"
+                                        : "border-border/60 text-muted-foreground hover:text-emerald-500 hover:border-emerald-500/30 hover:bg-emerald-500/5"
+                                    }`}
+                                    title={isBestAnswer ? "Unmark as best answer" : "Mark as best answer"}
+                                  >
+                                    <Check size={11} className={isBestAnswer ? "stroke-[3]" : ""} />
+                                    <span>{isBestAnswer ? "Best Answer ✓" : "Mark Best"}</span>
+                                  </button>
+                                </div>
                               </div>
-                              <p className="text-xs leading-relaxed text-foreground/80">{reply.content}</p>
-                            </div>
-                          ))}
+                            );
+                          })}
                         
                         {replies.filter(r => r.post_id === activeThread.id).length === 0 && (
                           <p className="text-xs text-muted-foreground py-6 text-center italic">No replies on this topic yet. Start the conversation!</p>
