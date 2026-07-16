@@ -48,7 +48,7 @@
 
 #### Features
 
-- [ ] **User Profiles 2.0**
+- [x] **User Profiles 2.0**
   - [x] Portfolio/portfolio showcase
   - [x] Travel history timeline
   - [x] Skills & expertise badges
@@ -61,15 +61,15 @@
   - [ ] Direct messaging
 
 - [ ] **Community Events**
-  - [ ] Create/edit events
-  - [ ] RSVP management
+  - [x] Create/edit events
+  - [x] RSVP management
   - [ ] Event reminders
-  - [ ] Attendee list
+  - [x] Attendee list
 
 - [ ] **Forum/Discussions**
-  - [ ] Q&A section
+  - [x] Q&A section
   - [ ] City-specific threads
-  - [ ] Upvote/downvote
+  - [x] Upvote/downvote (Likes)
   - [ ] Mark as "Best Answer"
 
 - [ ] **Bug Fixes**
