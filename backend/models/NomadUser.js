@@ -111,6 +111,18 @@ const userSchema = new mongoose.Schema(
         status: { type: String, trim: true }, // 'past' | 'current' | 'future'
       }
     ],
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "NomadUser",
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "NomadUser",
+      },
+    ],
   },
   { timestamps: true },
 );

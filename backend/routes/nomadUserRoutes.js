@@ -9,6 +9,8 @@ import {
   getUsers,
   likeListings,
   updateProfile,
+  followUser,
+  unfollowUser,
 } from "../controllers/nomadUserControllers.js";
 
 const router = Router();
@@ -21,5 +23,7 @@ router.get("/favorite-destination/:userId", getUserFavoriteDestinations);
 router.patch("/like", likeListings);
 router.get("/likes/:userId", getUserLikes);
 router.get("/likes", getLikes);
+router.post("/follow", followUser);
+router.post("/unfollow", unfollowUser);
 
 export default router;

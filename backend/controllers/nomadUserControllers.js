@@ -65,6 +65,8 @@ export const getUsers = async (req, res, _next) => {
       { path: "saves", select: "" },
       { path: "likes", select: "" },
       { path: "favoriteDestination", select: "" },
+      { path: "followers", select: "fullName email designation" },
+      { path: "following", select: "fullName email designation" },
     ]);
 
     if (!users || !users.length) {
@@ -448,6 +450,80 @@ export const likeListings = async (req, res, next) => {
       likes: updatedUser.likes,
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+export const followUser = async (req, res, next) => {
+  try {
+    const { userId, targetId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(targetId)) {
+      return res.status(400).json({ message: "Invalid user ID or target ID" });
+    }
+
+    if (userId === targetId) {
+      return res.status(400).json({ message: "You cannot follow yourself" });
+    }
+
+    const user = await NomadUser.findById(userId);
+    const target = await NomadUser.findById(targetId);
+
+    if (!user || !target) {
+      return res.status(404).json({ message: "User or target not found" });
+    }
+
+    // Add to following if not already present
+    if (!user.following.includes(targetId)) {
+      user.following.push(targetId);
+      await user.save();
+    }
+
+    // Add to followers if not already present
+    if (!target.followers.includes(userId)) {
+      target.followers.push(userId);
+      await target.save();
+    }
+
+    return res.status(200).json({
+      message: "Followed user successfully",
+      following: user.following,
+    });
+  } catch (error) {
+    console.error("[followUser] error:", error);
+    next(error);
+  }
+};
+
+export const unfollowUser = async (req, res, next) => {
+  try {
+    const { userId, targetId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(targetId)) {
+      return res.status(400).json({ message: "Invalid user ID or target ID" });
+    }
+
+    const user = await NomadUser.findById(userId);
+    const target = await NomadUser.findById(targetId);
+
+    if (!user || !target) {
+      return res.status(404).json({ message: "User or target not found" });
+    }
+
+    // Remove from following
+    user.following = user.following.filter((id) => id.toString() !== targetId);
+    await user.save();
+
+    // Remove from followers
+    target.followers = target.followers.filter((id) => id.toString() !== userId);
+    await target.save();
+
+    return res.status(200).json({
+      message: "Unfollowed user successfully",
+      following: user.following,
+    });
+  } catch (error) {
+    console.error("[unfollowUser] error:", error);
     next(error);
   }
 };
