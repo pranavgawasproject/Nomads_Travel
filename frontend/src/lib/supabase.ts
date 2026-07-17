@@ -118,4 +118,6 @@ export type ForumPost = {
   reply_count: number;
   created_at: string;
   best_answer_id?: string | null;
+  city?: string | null;
 };
+

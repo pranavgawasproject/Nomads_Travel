@@ -68,7 +68,7 @@
 
 - [ ] **Forum/Discussions**
   - [x] Q&A section
-  - [ ] City-specific threads
+  - [x] City-specific threads
   - [x] Upvote/downvote (Likes)
   - [x] Mark as "Best Answer"
 

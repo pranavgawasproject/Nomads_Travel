@@ -118,11 +118,12 @@ export default function CommunityPage() {
   const [showNewMeetupModal, setShowNewMeetupModal] = useState(false);
 
   // Form States
-  const [newPost, setNewPost] = useState({ title: "", content: "", category: "General", tags: "" });
+  const [newPost, setNewPost] = useState({ title: "", content: "", category: "General", tags: "", city: "" });
   const [newMeetup, setNewMeetup] = useState({ title: "", type: "Networking Event", date: "", time: "", city: "", location: "", max_attendees: "20", icon: "🤝" });
   const [replyText, setReplyText] = useState("");
   const [postSearch, setPostSearch] = useState("");
   const [postCategory, setPostCategory] = useState("All");
+  const [postCity, setPostCity] = useState("All");
 
   // Fetch from Supabase + merge local custom additions
   const fetchData = useCallback(async () => {
@@ -139,7 +140,16 @@ export default function CommunityPage() {
       ]);
 
       const formattedMeetups = (dbMeetups ?? []) as Meetup[];
-      const formattedPosts = (dbPosts ?? []) as ForumPost[];
+      const formattedPosts = (dbPosts ?? []).map((p: any) => {
+        const cityTag = p.tags?.find((t: string) => t.startsWith("city:"));
+        const city = cityTag ? cityTag.replace("city:", "") : null;
+        const cleanTags = p.tags ? p.tags.filter((t: string) => !t.startsWith("city:")) : [];
+        return {
+          ...p,
+          city,
+          tags: cleanTags.length > 0 ? cleanTags : null
+        };
+      }) as ForumPost[];
 
       // Load custom items created locally
       const localMeetups = JSON.parse(localStorage.getItem("local_meetups") || "[]") as Meetup[];
@@ -425,6 +435,10 @@ export default function CommunityPage() {
       .map(t => t.trim())
       .filter(t => t.length > 0);
 
+    if (newPost.city.trim()) {
+      tagsArray.push(`city:${newPost.city.trim()}`);
+    }
+
     const postToCreate: ForumPost = {
       id: `post-${Date.now()}`,
       title: newPost.title.trim(),
@@ -434,7 +448,8 @@ export default function CommunityPage() {
       pinned: false,
       likes: 0,
       reply_count: 0,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      city: newPost.city.trim() || null
     };
 
     const updatedPosts = [postToCreate, ...posts];
@@ -443,7 +458,7 @@ export default function CommunityPage() {
     const localPosts = JSON.parse(localStorage.getItem("local_posts") || "[]") as ForumPost[];
     localStorage.setItem("local_posts", JSON.stringify([postToCreate, ...localPosts]));
 
-    setNewPost({ title: "", content: "", category: "General", tags: "" });
+    setNewPost({ title: "", content: "", category: "General", tags: "", city: "" });
     setShowNewPostModal(false);
 
     try {
@@ -526,7 +541,8 @@ export default function CommunityPage() {
     const matchesSearch = p.title.toLowerCase().includes(postSearch.toLowerCase()) || 
                           p.content.toLowerCase().includes(postSearch.toLowerCase());
     const matchesCategory = postCategory === "All" || p.category === postCategory;
-    return matchesSearch && matchesCategory;
+    const matchesCity = postCity === "All" || (p.city && p.city.toLowerCase() === postCity.toLowerCase());
+    return matchesSearch && matchesCategory && matchesCity;
   });
 
   return (
@@ -764,20 +780,37 @@ export default function CommunityPage() {
                         />
                       </div>
                       
-                      <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
-                        {["All", "General", "Q&A", "Housing", "Visas"].map((cat) => (
-                          <button
-                            key={cat}
-                            onClick={() => setPostCategory(cat)}
-                            className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all ${
-                              postCategory === cat 
-                                ? "bg-accent text-white"
-                                : "bg-card border border-border text-muted-foreground hover:text-foreground"
-                            }`}
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
+                          {["All", "General", "Q&A", "Housing", "Visas"].map((cat) => (
+                            <button
+                              key={cat}
+                              onClick={() => setPostCategory(cat)}
+                              className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all ${
+                                postCategory === cat 
+                                  ? "bg-accent text-white"
+                                  : "bg-card border border-border text-muted-foreground hover:text-foreground"
+                              }`}
+                            >
+                              {cat}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* City Filter Dropdown */}
+                        <div className="flex items-center gap-1.5 bg-card border border-border rounded-full px-3 py-1 text-xs text-muted-foreground hover:text-foreground">
+                          <MapPin size={12} className="text-accent" />
+                          <select
+                            value={postCity}
+                            onChange={(e) => setPostCity(e.target.value)}
+                            className="bg-transparent outline-none cursor-pointer pr-1 text-xs font-medium text-foreground/80 hover:text-foreground"
                           >
-                            {cat}
-                          </button>
-                        ))}
+                            <option value="All">All Cities</option>
+                            {(Array.from(new Set(posts.map(p => p.city).filter(Boolean))) as string[]).map(city => (
+                              <option key={city} value={city}>{city}</option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
                     </div>
 
@@ -796,7 +829,7 @@ export default function CommunityPage() {
                             <div key={p.id} className="rounded-2xl border border-border bg-card p-5 hover:border-accent/40 transition-all flex flex-col justify-between">
                               <div className="cursor-pointer" onClick={() => setActiveThread(p)}>
                                 <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-2">
+                                  <div className="flex items-center gap-2 flex-wrap">
                                     {p.pinned && (
                                       <span className="inline-flex items-center gap-1 text-[10px] bg-accent/15 text-accent px-2 py-0.5 rounded-full font-bold">
                                         <Pin size={10} /> PINNED
@@ -805,6 +838,11 @@ export default function CommunityPage() {
                                     <span className="rounded-full bg-secondary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground/70">
                                       {p.category}
                                     </span>
+                                    {p.city && (
+                                      <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-semibold text-accent">
+                                        <MapPin size={10} /> {p.city}
+                                      </span>
+                                    )}
                                   </div>
                                   <span className="text-[10px] text-muted-foreground font-mono">
                                     {new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
@@ -861,10 +899,15 @@ export default function CommunityPage() {
                     </button>
 
                     <div className="border-b border-border pb-6">
-                      <div className="flex items-center gap-2 mb-3">
+                      <div className="flex items-center gap-2 mb-3 flex-wrap">
                         <span className="rounded-full bg-secondary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground/70">
                           {activeThread.category}
                         </span>
+                        {activeThread.city && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-1 text-[10px] font-semibold text-accent">
+                            <MapPin size={10} /> {activeThread.city}
+                          </span>
+                        )}
                         <span className="text-xs text-muted-foreground font-mono">
                           {new Date(activeThread.created_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                         </span>
@@ -1262,7 +1305,7 @@ export default function CommunityPage() {
               <p className="text-xs text-muted-foreground mb-4">Post a new thread to the digital nomad boards.</p>
               
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <div>
                     <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">Category</label>
                     <select
@@ -1277,10 +1320,20 @@ export default function CommunityPage() {
                     </select>
                   </div>
                   <div>
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">City (Optional)</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Lisbon" 
+                      value={newPost.city}
+                      onChange={(e) => setNewPost({...newPost, city: e.target.value})}
+                      className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2 text-xs outline-none focus:border-accent"
+                    />
+                  </div>
+                  <div>
                     <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 block">Tags (comma separated)</label>
                     <input 
                       type="text" 
-                      placeholder="e.g. taxes, lisbon, tech" 
+                      placeholder="e.g. taxes, tech" 
                       value={newPost.tags}
                       onChange={(e) => setNewPost({...newPost, tags: e.target.value})}
                       className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2 text-xs outline-none focus:border-accent"
