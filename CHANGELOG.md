@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Social follow and unfollow features with backend unit tests
+- City-specific discussion threads and filtering for community engagement
+- "Mark as Best Answer" functionality for community forum replies
 - YC-ready README with strong pitch, stars badge, YC W25 badge
 - CONTRIBUTING.md with contribution guidelines
 - PITCH.md for investor deck

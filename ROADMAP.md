@@ -55,7 +55,7 @@
   - [x] Social links (GitHub, LinkedIn, Twitter)
 
 - [ ] **Social Features**
-  - [ ] Follow/unfollow users
+  - [x] Follow/unfollow users
   - [ ] Activity feed
   - [ ] @mentions and notifications
   - [ ] Direct messaging
