@@ -28,6 +28,7 @@ import workationRoutes from "./routes/workationRoutes.js";
 import becomeContributorRoutes from "./routes/becomeContributorRoutes.js";
 import stateWiseWeightRoutes from "./routes/stateWiseWeightRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
+import activityFeedRoutes from "./routes/activityFeedRoutes.js";
 
 const app = express();
 config({ override: true });
@@ -60,6 +61,7 @@ app.use("/api/state-wise-weight", stateWiseWeightRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/blogs", blogRoutes); // New Blog Route
 app.use("/api/events", eventRoutes);
+app.use("/api/activities", verifyJwt, activityFeedRoutes);
 
 // Health check endpoint for Docker/Kubernetes
 app.get('/api/auth/health', (req, res) => {

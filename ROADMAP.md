@@ -56,7 +56,7 @@
 
 - [ ] **Social Features**
   - [x] Follow/unfollow users
-  - [ ] Activity feed
+  - [x] Activity feed
   - [ ] @mentions and notifications
   - [ ] Direct messaging
 
