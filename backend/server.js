@@ -30,6 +30,8 @@ import stateWiseWeightRoutes from "./routes/stateWiseWeightRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import activityFeedRoutes from "./routes/activityFeedRoutes.js";
 
+import rateLimiter from "./middlewares/rateLimiter.js";
+
 const app = express();
 config({ override: true });
 connectDb(process.env.MONGO_URL);
@@ -41,7 +43,8 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 const PORT = process.env.PORT || 3000;
 
-app.use("/api/auth", authRoutes);
+const authLimiter = rateLimiter({ windowMs: 15 * 60 * 1000, max: 100 });
+app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/user", verifyJwt, nomadUserRoutes);
 app.use("/api/company", companyRoutes);
 app.use("/api/poc", pocRoutes);
