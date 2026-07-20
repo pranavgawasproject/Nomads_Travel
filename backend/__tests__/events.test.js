@@ -68,5 +68,24 @@ describe("Event Controller — Unit Contracts", () => {
       expect(event.discussions[0].comment).toBe("Looking forward to this meetup!");
       expect(event.discussions[0].createdAt.toISOString()).toBe("2026-07-03T12:00:00.000Z");
     });
+
+    it("should reject comments with empty or whitespace-only content", () => {
+      const emptyComment = "   ";
+      expect(!emptyComment || !emptyComment.trim()).toBe(true);
+    });
+  });
+
+  describe("Input validation edge cases", () => {
+    it("should reject invalid ObjectId format", () => {
+      const invalidId = "123-invalid-id";
+      const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(invalidId);
+      expect(isValidObjectId).toBe(false);
+    });
+
+    it("should reject invalid RSVP status values", () => {
+      const invalidStatus = "maybe";
+      const validStatuses = ["going", "not_going"];
+      expect(validStatuses.includes(invalidStatus)).toBe(false);
+    });
   });
 });

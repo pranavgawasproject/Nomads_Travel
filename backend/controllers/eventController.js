@@ -147,6 +147,9 @@ export const bulkInsertEvents = async (req, res, next) => {
 export const getEventDetails = async (req, res, next) => {
   try {
     const { eventId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({ message: "Invalid event ID" });
+    }
     const event = await Event.findById(eventId)
       .populate("attendees", "fullName email country designation")
       .populate("discussions.user", "fullName designation");
@@ -164,17 +167,27 @@ export const rsvpEvent = async (req, res, next) => {
     const { eventId } = req.params;
     const { userId, rsvpStatus } = req.body;
 
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({ message: "Invalid event ID" });
+    }
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid or missing user ID" });
+    }
+    if (!rsvpStatus || !["going", "not_going"].includes(rsvpStatus)) {
+      return res.status(400).json({ message: "Invalid RSVP status" });
+    }
+
     const event = await Event.findById(eventId);
     if (!event) {
       return res.status(404).json({ message: "Event not found" });
     }
 
     if (rsvpStatus === "going") {
-      if (!event.attendees.includes(userId)) {
+      if (!event.attendees.map(id => id.toString()).includes(userId.toString())) {
         event.attendees.push(userId);
       }
     } else {
-      event.attendees = event.attendees.filter((id) => id.toString() !== userId);
+      event.attendees = event.attendees.filter((id) => id.toString() !== userId.toString());
     }
 
     await event.save();
@@ -192,7 +205,13 @@ export const addEventComment = async (req, res, next) => {
     const { eventId } = req.params;
     const { userId, userName, comment } = req.body;
 
-    if (!comment || !comment.trim()) {
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({ message: "Invalid event ID" });
+    }
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid or missing user ID" });
+    }
+    if (!comment || typeof comment !== "string" || !comment.trim()) {
       return res.status(400).json({ message: "Comment content is required" });
     }
 
@@ -203,7 +222,7 @@ export const addEventComment = async (req, res, next) => {
 
     event.discussions.push({
       user: userId,
-      userName: userName || "Anonymous",
+      userName: userName ? userName.trim() : "Anonymous",
       comment: comment.trim(),
     });
 
