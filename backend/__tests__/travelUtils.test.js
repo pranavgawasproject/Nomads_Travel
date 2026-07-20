@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate } from '../utils/travelUtils.js';
 
 describe('Travel Utilities — Living Cost & Currency', () => {
   describe('calculateNomadLivingCost', () => {
@@ -88,6 +88,22 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(result.percentage).toBe(0);
     });
   });
+
+  describe('calculateCoworkingCostEstimate', () => {
+    it('calculates coworking desk cost based on pass type', () => {
+      const res = calculateCoworkingCostEstimate(300, 10, 'hotdesk');
+      expect(res.totalCost).toBe(100);
+      expect(res.dailyRate).toBe(10);
+
+      const dedicated = calculateCoworkingCostEstimate(300, 10, 'dedicated');
+      expect(dedicated.totalCost).toBe(140);
+    });
+
+    it('returns 0 for invalid inputs', () => {
+      expect(calculateCoworkingCostEstimate(0, 10).totalCost).toBe(0);
+    });
+  });
 });
+
 
 

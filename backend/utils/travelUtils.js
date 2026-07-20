@@ -116,5 +116,23 @@ export function calculateTimeZoneOverlap(offsetA, offsetB, startHour = 9, endHou
   return { overlapHours: Math.round(overlap * 10) / 10, percentage };
 }
 
+export function calculateCoworkingCostEstimate(monthlyDeskCostUsd, durationDays, passType = 'hotdesk') {
+  if (typeof monthlyDeskCostUsd !== 'number' || monthlyDeskCostUsd <= 0 || isNaN(monthlyDeskCostUsd)) {
+    return { totalCost: 0, dailyRate: 0 };
+  }
+  if (typeof durationDays !== 'number' || durationDays <= 0 || isNaN(durationDays)) {
+    return { totalCost: 0, dailyRate: 0 };
+  }
+  const multiplier = passType === 'dedicated' ? 1.4 : passType === 'private_office' ? 2.2 : 1.0;
+  const baseDaily = (monthlyDeskCostUsd / 30) * multiplier;
+  const totalCost = Math.round(baseDaily * durationDays * 100) / 100;
+  return {
+    totalCost,
+    dailyRate: Math.round(baseDaily * 100) / 100,
+    passType
+  };
+}
+
+
 
 
