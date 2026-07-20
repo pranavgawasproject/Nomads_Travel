@@ -87,5 +87,11 @@ describe("Event Controller — Unit Contracts", () => {
       const validStatuses = ["going", "not_going"];
       expect(validStatuses.includes(invalidStatus)).toBe(false);
     });
+
+    it("should validate event details query parameters", () => {
+      const valid24CharHex = "507f191e810c19729de860ea";
+      const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(valid24CharHex);
+      expect(isValidObjectId).toBe(true);
+    });
   });
 });

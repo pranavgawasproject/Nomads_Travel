@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Readable } from "stream";
 import csvParser from "csv-parser";
 import Event from "../models/Event.js";
