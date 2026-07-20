@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit } from '../utils/travelUtils.js';
 
 describe('Travel Utilities — Living Cost & Currency', () => {
   describe('calculateNomadLivingCost', () => {
@@ -103,7 +103,29 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(calculateCoworkingCostEstimate(0, 10).totalCost).toBe(0);
     });
   });
+
+  describe('calculateVisaStayLimit', () => {
+    it('calculates remaining visa days and deadline date', () => {
+      const res = calculateVisaStayLimit('2026-01-01', 90, 30);
+      expect(res.daysRemaining).toBe(60);
+      expect(res.isWarning).toBe(false);
+      expect(res.deadlineDate).toBe('2026-03-02');
+    });
+
+    it('triggers warning when 14 or fewer days remain', () => {
+      const res = calculateVisaStayLimit('2026-01-01', 90, 80);
+      expect(res.daysRemaining).toBe(10);
+      expect(res.isWarning).toBe(true);
+    });
+
+    it('handles invalid or empty inputs gracefully', () => {
+      const res = calculateVisaStayLimit(null);
+      expect(res.daysRemaining).toBe(0);
+      expect(res.isWarning).toBe(false);
+    });
+  });
 });
+
 
 
 

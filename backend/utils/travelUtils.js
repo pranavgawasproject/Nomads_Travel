@@ -133,6 +133,32 @@ export function calculateCoworkingCostEstimate(monthlyDeskCostUsd, durationDays,
   };
 }
 
+export function calculateVisaStayLimit(entryDateStr, allowedDays = 90, currentUsageDays = 0) {
+  if (!entryDateStr || typeof entryDateStr !== 'string') {
+    return { daysRemaining: 0, isWarning: false, deadlineDate: '' };
+  }
+  const entryDate = new Date(entryDateStr);
+  if (isNaN(entryDate.getTime())) {
+    return { daysRemaining: 0, isWarning: false, deadlineDate: '' };
+  }
+  const limit = typeof allowedDays === 'number' && allowedDays > 0 ? allowedDays : 90;
+  const used = typeof currentUsageDays === 'number' && currentUsageDays >= 0 ? currentUsageDays : 0;
+  const netAllowed = Math.max(0, limit - used);
+
+  const deadline = new Date(entryDate);
+  deadline.setDate(deadline.getDate() + netAllowed);
+
+  const deadlineStr = deadline.toISOString().split('T')[0];
+  const isWarning = netAllowed <= 14;
+
+  return {
+    daysRemaining: netAllowed,
+    isWarning,
+    deadlineDate: deadlineStr
+  };
+}
+
+
 
 
 
