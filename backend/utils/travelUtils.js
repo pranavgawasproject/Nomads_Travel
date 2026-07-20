@@ -86,3 +86,23 @@ export function validateDestinationFilter(query = {}) {
   return sanitized;
 }
 
+export function calculateNomadScore({ internetSpeedMbps = 0, monthlyCostUsd = 2000, safetyRating = 3, visaEaseScore = 3 } = {}) {
+  const speed = Math.max(0, typeof internetSpeedMbps === 'number' ? internetSpeedMbps : 0);
+  const cost = Math.max(1, typeof monthlyCostUsd === 'number' ? monthlyCostUsd : 2000);
+  const safety = Math.min(5, Math.max(1, typeof safetyRating === 'number' ? safetyRating : 3));
+  const visa = Math.min(5, Math.max(1, typeof visaEaseScore === 'number' ? visaEaseScore : 3));
+
+  const speedScore = Math.min(100, (speed / 100) * 100);
+  const costScore = Math.max(0, Math.min(100, 100 - ((cost - 500) / 3500) * 100));
+  const safetyScore = (safety / 5) * 100;
+  const visaScore = (visa / 5) * 100;
+
+  const totalScore = Math.round((speedScore * 0.35 + costScore * 0.25 + safetyScore * 0.20 + visaScore * 0.20) * 10) / 10;
+  return {
+    score: Math.min(100, Math.max(0, totalScore)),
+    rating: totalScore >= 80 ? 'Excellent' : totalScore >= 60 ? 'Good' : totalScore >= 40 ? 'Average' : 'Challenging',
+    breakdown: { speedScore: Math.round(speedScore), costScore: Math.round(costScore), safetyScore: Math.round(safetyScore), visaScore: Math.round(visaScore) }
+  };
+}
+
+

@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore } from '../utils/travelUtils.js';
 
 describe('Travel Utilities — Living Cost & Currency', () => {
   describe('calculateNomadLivingCost', () => {
@@ -47,4 +47,20 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(calculateCurrencyExchange(100, 0)).toBe(0);
     });
   });
+
+  describe('calculateNomadScore', () => {
+    it('should calculate composite nomad score for a high-performing hub', () => {
+      const result = calculateNomadScore({ internetSpeedMbps: 120, monthlyCostUsd: 1200, safetyRating: 4.5, visaEaseScore: 4.5 });
+      expect(result.score).toBeGreaterThan(70);
+      expect(result.rating).toBeDefined();
+    });
+
+    it('should fallback gracefully for empty inputs', () => {
+      const result = calculateNomadScore({});
+      expect(result.score).toBeGreaterThanOrEqual(0);
+      expect(result.score).toBeLessThanOrEqual(100);
+      expect(result.breakdown).toBeDefined();
+    });
+  });
 });
+
