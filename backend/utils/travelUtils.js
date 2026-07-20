@@ -37,3 +37,52 @@ export function calculateCurrencyExchange(amount, rate) {
   }
   return Math.round(amount * rate * 100) / 100;
 }
+
+export function calculateTripBudget({ totalBudget, durationDays, accommodationShare = 0.4, foodShare = 0.3, activitiesShare = 0.2, contingencyShare = 0.1 } = {}) {
+  if (typeof totalBudget !== 'number' || totalBudget <= 0 || isNaN(totalBudget)) {
+    return { valid: false, error: 'Total budget must be a positive number' };
+  }
+  if (typeof durationDays !== 'number' || durationDays <= 0 || !Number.isInteger(durationDays)) {
+    return { valid: false, error: 'Duration days must be a positive integer' };
+  }
+
+  const accommodation = Math.round(totalBudget * accommodationShare * 100) / 100;
+  const food = Math.round(totalBudget * foodShare * 100) / 100;
+  const activities = Math.round(totalBudget * activitiesShare * 100) / 100;
+  const contingency = Math.round(totalBudget * contingencyShare * 100) / 100;
+  const dailySpendable = Math.round(((food + activities) / durationDays) * 100) / 100;
+
+  return {
+    valid: true,
+    totalBudget,
+    durationDays,
+    breakdown: {
+      accommodation,
+      food,
+      activities,
+      contingency
+    },
+    dailySpendable
+  };
+}
+
+export function validateDestinationFilter(query = {}) {
+  const sanitized = {};
+  if (query.region && typeof query.region === 'string') {
+    sanitized.region = query.region.trim();
+  }
+  if (query.maxCost && !isNaN(Number(query.maxCost))) {
+    sanitized.maxCost = Math.max(0, Number(query.maxCost));
+  }
+  if (query.minInternetMbps && !isNaN(Number(query.minInternetMbps))) {
+    sanitized.minInternetMbps = Math.max(0, Number(query.minInternetMbps));
+  }
+  if (typeof query.safetyScore === 'number' || (typeof query.safetyScore === 'string' && !isNaN(Number(query.safetyScore)))) {
+    const score = Number(query.safetyScore);
+    if (score >= 1 && score <= 5) {
+      sanitized.safetyScore = score;
+    }
+  }
+  return sanitized;
+}
+
