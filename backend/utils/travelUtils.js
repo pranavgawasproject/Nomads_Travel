@@ -105,4 +105,16 @@ export function calculateNomadScore({ internetSpeedMbps = 0, monthlyCostUsd = 20
   };
 }
 
+export function calculateTimeZoneOverlap(offsetA, offsetB, startHour = 9, endHour = 17) {
+  if (typeof offsetA !== 'number' || typeof offsetB !== 'number' || isNaN(offsetA) || isNaN(offsetB)) {
+    return { overlapHours: 0, percentage: 0 };
+  }
+  const workDuration = Math.max(1, Math.min(24, endHour - startHour));
+  const diff = Math.abs(offsetA - offsetB);
+  const overlap = Math.max(0, workDuration - diff);
+  const percentage = Math.round((overlap / workDuration) * 100);
+  return { overlapHours: Math.round(overlap * 10) / 10, percentage };
+}
+
+
 

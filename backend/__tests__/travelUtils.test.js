@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap } from '../utils/travelUtils.js';
 
 describe('Travel Utilities — Living Cost & Currency', () => {
   describe('calculateNomadLivingCost', () => {
@@ -62,5 +62,32 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(result.breakdown).toBeDefined();
     });
   });
+
+  describe('calculateTimeZoneOverlap', () => {
+    it('should calculate 8 hours overlap for identical timezones', () => {
+      const result = calculateTimeZoneOverlap(0, 0);
+      expect(result.overlapHours).toBe(8);
+      expect(result.percentage).toBe(100);
+    });
+
+    it('should calculate partial overlap for 3 hours difference', () => {
+      const result = calculateTimeZoneOverlap(-5, -8);
+      expect(result.overlapHours).toBe(5);
+      expect(result.percentage).toBe(63);
+    });
+
+    it('should return 0 overlap when time difference exceeds work duration', () => {
+      const result = calculateTimeZoneOverlap(-5, 5);
+      expect(result.overlapHours).toBe(0);
+      expect(result.percentage).toBe(0);
+    });
+
+    it('should handle invalid inputs gracefully', () => {
+      const result = calculateTimeZoneOverlap(null, 'invalid');
+      expect(result.overlapHours).toBe(0);
+      expect(result.percentage).toBe(0);
+    });
+  });
 });
+
 
