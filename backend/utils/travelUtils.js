@@ -296,6 +296,34 @@ export function calculateNomadWorkationSavings({ homeMonthlyExpense = 3000, dest
   };
 }
 
+export function calculateNomadEmergencyFundRequirement({ monthlyLivingExpense = 2000, durationMonths = 6, bufferPercentage = 20, includesEmergencyFlight = true, emergencyFlightCostUsd = 1200 } = {}) {
+  if (typeof monthlyLivingExpense !== 'number' || monthlyLivingExpense <= 0 || isNaN(monthlyLivingExpense)) {
+    return { valid: false, error: 'Monthly living expense must be a positive number' };
+  }
+  if (typeof durationMonths !== 'number' || durationMonths <= 0 || isNaN(durationMonths)) {
+    return { valid: false, error: 'Duration months must be a positive number' };
+  }
+
+  const baseExpenseTotal = monthlyLivingExpense * durationMonths;
+  const safeBufferPct = typeof bufferPercentage === 'number' && bufferPercentage >= 0 ? bufferPercentage : 20;
+  const bufferAmount = Math.round(baseExpenseTotal * (safeBufferPct / 100) * 100) / 100;
+  const safeFlightCost = includesEmergencyFlight && typeof emergencyFlightCostUsd === 'number' && emergencyFlightCostUsd >= 0 ? emergencyFlightCostUsd : 0;
+
+  const totalEmergencyFundRequired = Math.round((baseExpenseTotal + bufferAmount + safeFlightCost) * 100) / 100;
+  const recommendedMonthlySavingTarget = Math.round((totalEmergencyFundRequired / (durationMonths * 2)) * 100) / 100;
+
+  return {
+    valid: true,
+    baseExpenseTotal,
+    bufferAmount,
+    emergencyFlightCost: safeFlightCost,
+    totalEmergencyFundRequired,
+    recommendedMonthlySavingTarget,
+    bufferPercentage: safeBufferPct
+  };
+}
+
+
 
 
 

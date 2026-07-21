@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement } from '../utils/travelUtils.js';
+
 
 describe('Travel Utilities — Living Cost & Currency', () => {
   describe('calculateNomadLivingCost', () => {
@@ -229,7 +230,33 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Home monthly expense must be a positive number');
     });
   });
+
+  describe('calculateNomadEmergencyFundRequirement', () => {
+    it('calculates total required emergency fund including buffer and flight cost', () => {
+      const res = calculateNomadEmergencyFundRequirement({ monthlyLivingExpense: 2000, durationMonths: 6, bufferPercentage: 20, includesEmergencyFlight: true, emergencyFlightCostUsd: 1200 });
+      expect(res.valid).toBe(true);
+      expect(res.baseExpenseTotal).toBe(12000);
+      expect(res.bufferAmount).toBe(2400);
+      expect(res.emergencyFlightCost).toBe(1200);
+      expect(res.totalEmergencyFundRequired).toBe(15600);
+      expect(res.recommendedMonthlySavingTarget).toBe(1300);
+    });
+
+    it('handles zero buffer and no emergency flight option correctly', () => {
+      const res = calculateNomadEmergencyFundRequirement({ monthlyLivingExpense: 1500, durationMonths: 3, bufferPercentage: 0, includesEmergencyFlight: false });
+      expect(res.valid).toBe(true);
+      expect(res.totalEmergencyFundRequired).toBe(4500);
+      expect(res.emergencyFlightCost).toBe(0);
+    });
+
+    it('returns error for non-positive living expenses or duration', () => {
+      const res = calculateNomadEmergencyFundRequirement({ monthlyLivingExpense: 0, durationMonths: 6 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Monthly living expense must be a positive number');
+    });
+  });
 });
+
 
 
 
