@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter } from '../utils/travelUtils.js';
 
 describe('Travel Utilities — Living Cost & Currency', () => {
   describe('calculateNomadLivingCost', () => {
@@ -124,7 +124,41 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.isWarning).toBe(false);
     });
   });
+
+  describe('calculateTripBudget', () => {
+    it('calculates category breakdowns and daily spendable correctly', () => {
+      const budget = calculateTripBudget({ totalBudget: 2000, durationDays: 20 });
+      expect(budget.valid).toBe(true);
+      expect(budget.breakdown.accommodation).toBe(800);
+      expect(budget.breakdown.food).toBe(600);
+      expect(budget.breakdown.activities).toBe(400);
+      expect(budget.breakdown.contingency).toBe(200);
+      expect(budget.dailySpendable).toBe(50);
+    });
+
+    it('returns error for invalid budget or duration', () => {
+      const res = calculateTripBudget({ totalBudget: -100, durationDays: 10 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Total budget must be a positive number');
+    });
+  });
+
+  describe('validateDestinationFilter', () => {
+    it('sanitizes query fields and trims region strings', () => {
+      const filter = validateDestinationFilter({ region: ' Europe ', maxCost: '1500', minInternetMbps: '50', safetyScore: '4' });
+      expect(filter.region).toBe('Europe');
+      expect(filter.maxCost).toBe(1500);
+      expect(filter.minInternetMbps).toBe(50);
+      expect(filter.safetyScore).toBe(4);
+    });
+
+    it('ignores invalid safetyScore values outside 1-5', () => {
+      const filter = validateDestinationFilter({ safetyScore: 10 });
+      expect(filter.safetyScore).toBeUndefined();
+    });
+  });
 });
+
 
 
 
