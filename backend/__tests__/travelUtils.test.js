@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule } from '../utils/travelUtils.js';
 
 describe('Travel Utilities — Living Cost & Currency', () => {
   describe('calculateNomadLivingCost', () => {
@@ -157,7 +157,25 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(filter.safetyScore).toBeUndefined();
     });
   });
+
+  describe('calculateEventReminderSchedule', () => {
+    it('calculates reminder timestamps and evaluates upcoming status', () => {
+      const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      const res = calculateEventReminderSchedule(futureDate);
+      expect(res.isValid).toBe(true);
+      expect(res.isUpcomingSoon).toBe(true);
+      expect(res.reminder24h).toBeDefined();
+      expect(res.reminder2h).toBeDefined();
+    });
+
+    it('handles invalid dates gracefully', () => {
+      const res = calculateEventReminderSchedule('invalid-date');
+      expect(res.isValid).toBe(false);
+      expect(res.isUpcomingSoon).toBe(false);
+    });
+  });
 });
+
 
 
 

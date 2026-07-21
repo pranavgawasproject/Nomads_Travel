@@ -63,7 +63,7 @@
 - [ ] **Community Events**
   - [x] Create/edit events
   - [x] RSVP management
-  - [ ] Event reminders
+  - [x] Event reminders
   - [x] Attendee list
 
 - [ ] **Forum/Discussions**

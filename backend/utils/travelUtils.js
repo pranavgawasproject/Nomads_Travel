@@ -158,6 +158,33 @@ export function calculateVisaStayLimit(entryDateStr, allowedDays = 90, currentUs
   };
 }
 
+export function calculateEventReminderSchedule(eventDateStr) {
+  if (!eventDateStr || typeof eventDateStr !== 'string') {
+    return { isValid: false, reminder24h: '', reminder2h: '', isUpcomingSoon: false };
+  }
+  const eventDate = new Date(eventDateStr);
+  if (isNaN(eventDate.getTime())) {
+    return { isValid: false, reminder24h: '', reminder2h: '', isUpcomingSoon: false };
+  }
+
+  const reminder24h = new Date(eventDate.getTime() - 24 * 60 * 60 * 1000).toISOString();
+  const reminder2h = new Date(eventDate.getTime() - 2 * 60 * 60 * 1000).toISOString();
+
+  const now = new Date();
+  const diffHours = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+  const isUpcomingSoon = diffHours > 0 && diffHours <= 48;
+
+  return {
+    isValid: true,
+    eventTimestamp: eventDate.toISOString(),
+    reminder24h,
+    reminder2h,
+    isUpcomingSoon,
+    hoursUntilEvent: Math.round(diffHours * 10) / 10
+  };
+}
+
+
 
 
 
