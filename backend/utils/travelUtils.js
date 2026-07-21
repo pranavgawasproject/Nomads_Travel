@@ -230,6 +230,32 @@ export function calculateNomadTaxResidencyRisk(stays = [], maxThresholdDays = 18
   };
 }
 
+export function calculateTravelInsuranceEstimate({ age = 30, durationDays = 30, includesHealth = true, includesEquipment = false, coverageTier = 'standard' } = {}) {
+  if (typeof durationDays !== 'number' || durationDays <= 0 || isNaN(durationDays)) {
+    return { valid: false, error: 'Duration days must be a positive number' };
+  }
+  const validAge = typeof age === 'number' && age > 0 ? age : 30;
+  const ageMultiplier = validAge > 60 ? 1.8 : validAge > 40 ? 1.3 : 1.0;
+  const tierMultiplier = coverageTier === 'premium' ? 1.5 : coverageTier === 'basic' ? 0.75 : 1.0;
+
+  let baseDailyRate = 2.5;
+  if (includesHealth) baseDailyRate += 1.0;
+  if (includesEquipment) baseDailyRate += 1.5;
+
+  const totalCost = Math.round(baseDailyRate * durationDays * ageMultiplier * tierMultiplier * 100) / 100;
+  const dailyRate = Math.round((totalCost / durationDays) * 100) / 100;
+
+  return {
+    valid: true,
+    totalCost,
+    dailyRate,
+    durationDays,
+    coverageTier,
+    includesHealth: Boolean(includesHealth),
+    includesEquipment: Boolean(includesEquipment)
+  };
+}
+
 
 
 

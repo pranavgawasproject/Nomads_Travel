@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate } from '../utils/travelUtils.js';
 
 describe('Travel Utilities — Living Cost & Currency', () => {
   describe('calculateNomadLivingCost', () => {
@@ -194,6 +194,21 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.hasHighRisk).toBe(false);
       expect(res.totalStaysCount).toBe(0);
       expect(res.countryBreakdown).toEqual([]);
+    });
+  });
+
+  describe('calculateTravelInsuranceEstimate', () => {
+    it('calculates insurance costs for default options', () => {
+      const res = calculateTravelInsuranceEstimate({ durationDays: 10 });
+      expect(res.valid).toBe(true);
+      expect(res.totalCost).toBe(35);
+      expect(res.dailyRate).toBe(3.5);
+    });
+
+    it('handles invalid durationDays gracefully', () => {
+      const res = calculateTravelInsuranceEstimate({ durationDays: -5 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Duration days must be a positive number');
     });
   });
 });
