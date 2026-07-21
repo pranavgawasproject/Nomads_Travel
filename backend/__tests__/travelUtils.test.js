@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk } from '../utils/travelUtils.js';
 
 describe('Travel Utilities — Living Cost & Currency', () => {
   describe('calculateNomadLivingCost', () => {
@@ -174,7 +174,30 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.isUpcomingSoon).toBe(false);
     });
   });
+
+  describe('calculateNomadTaxResidencyRisk', () => {
+    it('calculates total days, risk percentage and detects threshold exceedance', () => {
+      const stays = [
+        { country: 'Portugal', days: 190 },
+        { country: 'Spain', days: 90 },
+        { country: 'Thailand', days: 60 }
+      ];
+      const res = calculateNomadTaxResidencyRisk(stays, 183);
+      expect(res.hasHighRisk).toBe(true);
+      expect(res.totalDaysTracked).toBe(340);
+      expect(res.warningCountries).toEqual(['Portugal']);
+      expect(res.countryBreakdown[0].riskPercentage).toBe(100);
+    });
+
+    it('handles empty stays array gracefully', () => {
+      const res = calculateNomadTaxResidencyRisk([]);
+      expect(res.hasHighRisk).toBe(false);
+      expect(res.totalStaysCount).toBe(0);
+      expect(res.countryBreakdown).toEqual([]);
+    });
+  });
 });
+
 
 
 

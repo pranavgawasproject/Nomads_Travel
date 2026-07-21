@@ -184,6 +184,53 @@ export function calculateEventReminderSchedule(eventDateStr) {
   };
 }
 
+export function calculateNomadTaxResidencyRisk(stays = [], maxThresholdDays = 183) {
+  if (!Array.isArray(stays) || stays.length === 0) {
+    return {
+      hasHighRisk: false,
+      totalStaysCount: 0,
+      totalDaysTracked: 0,
+      countryBreakdown: [],
+      warningCountries: []
+    };
+  }
+
+  const threshold = typeof maxThresholdDays === 'number' && maxThresholdDays > 0 ? maxThresholdDays : 183;
+  const totals = {};
+  let totalDaysTracked = 0;
+
+  stays.forEach(stay => {
+    if (!stay || typeof stay.country !== 'string' || typeof stay.days !== 'number' || stay.days <= 0) {
+      return;
+    }
+    const country = stay.country.trim();
+    if (!country) return;
+    totals[country] = (totals[country] || 0) + stay.days;
+    totalDaysTracked += stay.days;
+  });
+
+  const countryBreakdown = Object.entries(totals).map(([country, days]) => {
+    const riskPercentage = Math.min(100, Math.round((days / threshold) * 100));
+    return {
+      country,
+      days,
+      riskPercentage,
+      exceedsThreshold: days >= threshold
+    };
+  }).sort((a, b) => b.days - a.days);
+
+  const warningCountries = countryBreakdown.filter(c => c.exceedsThreshold).map(c => c.country);
+
+  return {
+    hasHighRisk: warningCountries.length > 0,
+    totalStaysCount: stays.length,
+    totalDaysTracked,
+    countryBreakdown,
+    warningCountries
+  };
+}
+
+
 
 
 
