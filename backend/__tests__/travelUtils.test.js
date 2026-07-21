@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings } from '../utils/travelUtils.js';
 
 describe('Travel Utilities — Living Cost & Currency', () => {
   describe('calculateNomadLivingCost', () => {
@@ -211,7 +211,26 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Duration days must be a positive number');
     });
   });
+
+  describe('calculateNomadWorkationSavings', () => {
+    it('calculates net monthly and total savings correctly with recommendation', () => {
+      const res = calculateNomadWorkationSavings({ homeMonthlyExpense: 3000, destinationMonthlyExpense: 1200, flightCostUsd: 500, durationMonths: 3 });
+      expect(res.valid).toBe(true);
+      expect(res.monthlySavings).toBe(1800);
+      expect(res.grossHomeTotal).toBe(9000);
+      expect(res.grossDestinationTotal).toBe(4100);
+      expect(res.netTotalSavings).toBe(4900);
+      expect(res.recommendation).toBe('Highly Favorable');
+    });
+
+    it('returns error for invalid expense or duration inputs', () => {
+      const res = calculateNomadWorkationSavings({ homeMonthlyExpense: -500 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Home monthly expense must be a positive number');
+    });
+  });
 });
+
 
 
 

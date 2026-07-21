@@ -256,6 +256,47 @@ export function calculateTravelInsuranceEstimate({ age = 30, durationDays = 30, 
   };
 }
 
+export function calculateNomadWorkationSavings({ homeMonthlyExpense = 3000, destinationMonthlyExpense = 1500, flightCostUsd = 600, durationMonths = 3 } = {}) {
+  if (typeof homeMonthlyExpense !== 'number' || homeMonthlyExpense <= 0 || isNaN(homeMonthlyExpense)) {
+    return { valid: false, error: 'Home monthly expense must be a positive number' };
+  }
+  if (typeof destinationMonthlyExpense !== 'number' || destinationMonthlyExpense <= 0 || isNaN(destinationMonthlyExpense)) {
+    return { valid: false, error: 'Destination monthly expense must be a positive number' };
+  }
+  if (typeof durationMonths !== 'number' || durationMonths <= 0 || isNaN(durationMonths)) {
+    return { valid: false, error: 'Duration months must be a positive number' };
+  }
+
+  const safeFlightCost = typeof flightCostUsd === 'number' && flightCostUsd >= 0 ? flightCostUsd : 0;
+  const grossHomeTotal = homeMonthlyExpense * durationMonths;
+  const grossDestinationTotal = (destinationMonthlyExpense * durationMonths) + safeFlightCost;
+  const monthlySavings = Math.round((homeMonthlyExpense - destinationMonthlyExpense) * 100) / 100;
+  const netTotalSavings = Math.round((grossHomeTotal - grossDestinationTotal) * 100) / 100;
+
+  const roiPercentage = Math.round(((grossHomeTotal - grossDestinationTotal) / grossHomeTotal) * 100);
+
+  let recommendation = 'Cost Neutral';
+  if (netTotalSavings > 1000) {
+    recommendation = 'Highly Favorable';
+  } else if (netTotalSavings > 0) {
+    recommendation = 'Moderate Savings';
+  } else if (netTotalSavings < 0) {
+    recommendation = 'Higher Cost';
+  }
+
+  return {
+    valid: true,
+    monthlySavings,
+    grossHomeTotal,
+    grossDestinationTotal,
+    netTotalSavings,
+    roiPercentage,
+    flightCostUsd: safeFlightCost,
+    recommendation
+  };
+}
+
+
 
 
 
