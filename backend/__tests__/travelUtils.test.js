@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate } from '../utils/travelUtils.js';
 
 
 
@@ -299,6 +299,33 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const res = calculateNomadSimDataBudget({ durationDays: -10 });
       expect(res.valid).toBe(false);
       expect(res.error).toBe('Duration days must be a positive number');
+    });
+  });
+
+  describe('calculateNomadCarbonOffsetEstimate', () => {
+    it('calculates total CO2 emissions and offset cost correctly', () => {
+      const res = calculateNomadCarbonOffsetEstimate({ flightHours: 10, busTrainHours: 5, stayDurationDays: 30, isEcoStay: false });
+      expect(res.valid).toBe(true);
+      expect(res.flightEmissionsKg).toBe(900);
+      expect(res.transitEmissionsKg).toBe(75);
+      expect(res.stayEmissionsKg).toBe(540);
+      expect(res.totalKgCo2).toBe(1515);
+      expect(res.totalMetricTons).toBe(1.515);
+      expect(res.offsetCostUsd).toBe(22.73);
+      expect(res.ecoStayDiscountApplied).toBe(false);
+    });
+
+    it('applies discount factor for eco-friendly stay', () => {
+      const res = calculateNomadCarbonOffsetEstimate({ flightHours: 0, busTrainHours: 10, stayDurationDays: 30, isEcoStay: true });
+      expect(res.valid).toBe(true);
+      expect(res.stayEmissionsKg).toBe(351);
+      expect(res.ecoStayDiscountApplied).toBe(true);
+    });
+
+    it('handles zero or invalid travel duration gracefully', () => {
+      const res = calculateNomadCarbonOffsetEstimate({ flightHours: 0, busTrainHours: 0, stayDurationDays: 0 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Travel duration and hours must be positive numbers');
     });
   });
 });

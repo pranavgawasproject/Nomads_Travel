@@ -388,12 +388,36 @@ export function calculateNomadSimDataBudget({ durationDays = 30, workHoursPerDay
   };
 }
 
+export function calculateNomadCarbonOffsetEstimate({ flightHours = 0, busTrainHours = 0, stayDurationDays = 30, isEcoStay = false } = {}) {
+  const flights = typeof flightHours === 'number' && flightHours > 0 ? flightHours : 0;
+  const transit = typeof busTrainHours === 'number' && busTrainHours > 0 ? busTrainHours : 0;
+  const days = typeof stayDurationDays === 'number' && stayDurationDays > 0 ? stayDurationDays : 0;
 
+  if (flights === 0 && transit === 0 && days === 0) {
+    return { valid: false, error: 'Travel duration and hours must be positive numbers' };
+  }
 
+  // Emission factors (kg CO2e per unit)
+  // Flight: ~90 kg/hr; Bus/Train: ~15 kg/hr; Daily Stay: ~18 kg/day (reduced by 35% if EcoStay)
+  const flightEmissions = flights * 90;
+  const transitEmissions = transit * 15;
+  const stayFactor = isEcoStay ? 11.7 : 18;
+  const stayEmissions = days * stayFactor;
 
+  const totalKgCo2 = Math.round((flightEmissions + transitEmissions + stayEmissions) * 100) / 100;
+  const totalMetricTons = Math.round((totalKgCo2 / 1000) * 1000) / 1000;
+  
+  // Standard market offset cost: ~$15.00 per metric ton CO2
+  const offsetCostUsd = Math.max(1.00, Math.round(totalMetricTons * 15.0 * 100) / 100);
 
-
-
-
-
-
+  return {
+    valid: true,
+    flightEmissionsKg: flightEmissions,
+    transitEmissionsKg: transitEmissions,
+    stayEmissionsKg: Math.round(stayEmissions * 100) / 100,
+    totalKgCo2,
+    totalMetricTons,
+    offsetCostUsd,
+    ecoStayDiscountApplied: isEcoStay
+  };
+}
