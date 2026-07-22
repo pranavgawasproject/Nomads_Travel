@@ -357,6 +357,38 @@ export function calculateDigitalNomadSubletRoi({ homeRentUsd = 2000, subletPrice
   };
 }
 
+export function calculateNomadSimDataBudget({ durationDays = 30, workHoursPerDay = 8, videoHoursPerDay = 2, isHeavyUsage = false } = {}) {
+  if (typeof durationDays !== 'number' || durationDays <= 0 || isNaN(durationDays)) {
+    return { valid: false, error: 'Duration days must be a positive number' };
+  }
+
+  const safeWorkHours = typeof workHoursPerDay === 'number' && workHoursPerDay >= 0 ? workHoursPerDay : 8;
+  const safeVideoHours = typeof videoHoursPerDay === 'number' && videoHoursPerDay >= 0 ? videoHoursPerDay : 2;
+
+  // Base daily data consumption: 0.15 GB/work hour + 1.2 GB/video hour
+  const workGbPerDay = safeWorkHours * 0.15;
+  const videoGbPerDay = safeVideoHours * 1.2;
+  const multiplier = isHeavyUsage ? 1.5 : 1.0;
+
+  const estimatedDailyGb = Math.round((workGbPerDay + videoGbPerDay) * multiplier * 100) / 100;
+  const totalGbRequired = Math.round(estimatedDailyGb * durationDays * 100) / 100;
+
+  // Average market rate estimates: eSIM ($4.50/GB) vs Local Physical SIM ($1.80/GB)
+  const esimEstimatedCostUsd = Math.round(totalGbRequired * 4.5 * 100) / 100;
+  const localSimEstimatedCostUsd = Math.round(totalGbRequired * 1.8 * 100) / 100;
+
+  return {
+    valid: true,
+    durationDays,
+    estimatedDailyGb,
+    totalGbRequired,
+    esimEstimatedCostUsd,
+    localSimEstimatedCostUsd,
+    recommendedOption: totalGbRequired > 20 ? 'Local Physical SIM' : 'eSIM'
+  };
+}
+
+
 
 
 

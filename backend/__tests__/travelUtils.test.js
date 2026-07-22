@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget } from '../utils/travelUtils.js';
+
 
 
 describe('Travel Utilities — Living Cost & Currency', () => {
@@ -275,7 +276,33 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Home rent must be a positive number');
     });
   });
+
+  describe('calculateNomadSimDataBudget', () => {
+    it('calculates daily data burn, total GB, and cost estimates', () => {
+      const res = calculateNomadSimDataBudget({ durationDays: 30, workHoursPerDay: 8, videoHoursPerDay: 2, isHeavyUsage: false });
+      expect(res.valid).toBe(true);
+      expect(res.durationDays).toBe(30);
+      expect(res.estimatedDailyGb).toBe(3.6);
+      expect(res.totalGbRequired).toBe(108);
+      expect(res.esimEstimatedCostUsd).toBe(486);
+      expect(res.localSimEstimatedCostUsd).toBe(194.4);
+      expect(res.recommendedOption).toBe('Local Physical SIM');
+    });
+
+    it('recommends eSIM for low data consumption', () => {
+      const res = calculateNomadSimDataBudget({ durationDays: 5, workHoursPerDay: 2, videoHoursPerDay: 0 });
+      expect(res.valid).toBe(true);
+      expect(res.recommendedOption).toBe('eSIM');
+    });
+
+    it('returns error for invalid durationDays', () => {
+      const res = calculateNomadSimDataBudget({ durationDays: -10 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Duration days must be a positive number');
+    });
+  });
 });
+
 
 
 
