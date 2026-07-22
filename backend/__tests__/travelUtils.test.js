@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi } from '../utils/travelUtils.js';
 
 
 describe('Travel Utilities — Living Cost & Currency', () => {
@@ -253,6 +253,26 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const res = calculateNomadEmergencyFundRequirement({ monthlyLivingExpense: 0, durationMonths: 6 });
       expect(res.valid).toBe(false);
       expect(res.error).toBe('Monthly living expense must be a positive number');
+    });
+  });
+
+  describe('calculateDigitalNomadSubletRoi', () => {
+    it('calculates sublet income, fees, net profit, and rent coverage percentage', () => {
+      const res = calculateDigitalNomadSubletRoi({ homeRentUsd: 2000, subletPriceUsd: 2500, platformFeePercentage: 3, utilityBufferUsd: 100, durationMonths: 2 });
+      expect(res.valid).toBe(true);
+      expect(res.grossSubletIncome).toBe(5000);
+      expect(res.platformFeesTotal).toBe(150);
+      expect(res.netSubletIncome).toBe(4650);
+      expect(res.totalRentCost).toBe(4000);
+      expect(res.netProfitUsd).toBe(650);
+      expect(res.rentCoveragePercentage).toBe(116);
+      expect(res.isProfitable).toBe(true);
+    });
+
+    it('returns error for non-positive home rent or sublet price', () => {
+      const res = calculateDigitalNomadSubletRoi({ homeRentUsd: 0 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Home rent must be a positive number');
     });
   });
 });

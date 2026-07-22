@@ -4,6 +4,7 @@ import { config } from "dotenv";
 import { corsConfig } from "./config/corsConfig.js";
 import cors from "cors";
 import multer from "multer";
+import helmet from "helmet";
 import errorHandler from "./middlewares/errorHandler.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import pocRoutes from "./routes/pocRoutes.js";
@@ -36,6 +37,7 @@ const app = express();
 config({ override: true });
 connectDb(process.env.MONGO_URL);
 
+app.use(helmet());
 app.use(credentials);
 app.use(cors(corsConfig));
 app.use(cookieParser());
@@ -131,10 +133,41 @@ app.use((err, req, res, next) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
 
 mongoose.connection.once("open", () => {
   console.log("✅ Connected to MongoDB");
+});
+
+// Graceful shutdown handling
+const gracefulShutdown = () => {
+  console.log('Received kill signal, shutting down gracefully');
+  server.close(() => {
+    console.log('Closed out remaining connections');
+    mongoose.connection.close(false, () => {
+      console.log('MongoDb connection closed.');
+      process.exit(0);
+    });
+  });
+
+  setTimeout(() => {
+    console.error('Could not close connections in time, forcefully shutting down');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Promise Rejection:', err);
+  // Optionally: gracefulShutdown();
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  // It's considered best practice to restart the server on uncaught exceptions
+  process.exit(1);
 });

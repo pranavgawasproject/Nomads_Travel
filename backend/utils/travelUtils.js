@@ -323,6 +323,40 @@ export function calculateNomadEmergencyFundRequirement({ monthlyLivingExpense = 
   };
 }
 
+export function calculateDigitalNomadSubletRoi({ homeRentUsd = 2000, subletPriceUsd = 2200, platformFeePercentage = 3, utilityBufferUsd = 150, durationMonths = 1 } = {}) {
+  if (typeof homeRentUsd !== 'number' || homeRentUsd <= 0 || isNaN(homeRentUsd)) {
+    return { valid: false, error: 'Home rent must be a positive number' };
+  }
+  if (typeof subletPriceUsd !== 'number' || subletPriceUsd <= 0 || isNaN(subletPriceUsd)) {
+    return { valid: false, error: 'Sublet price must be a positive number' };
+  }
+
+  const months = typeof durationMonths === 'number' && durationMonths > 0 ? durationMonths : 1;
+  const feeRate = typeof platformFeePercentage === 'number' && platformFeePercentage >= 0 ? platformFeePercentage / 100 : 0.03;
+  const utilBuffer = typeof utilityBufferUsd === 'number' && utilityBufferUsd >= 0 ? utilityBufferUsd : 0;
+
+  const grossSubletIncome = subletPriceUsd * months;
+  const platformFeesTotal = Math.round(grossSubletIncome * feeRate * 100) / 100;
+  const netSubletIncome = Math.round((grossSubletIncome - platformFeesTotal - (utilBuffer * months)) * 100) / 100;
+
+  const totalRentCost = homeRentUsd * months;
+  const netOutofPocketHomeExpense = Math.max(0, Math.round((totalRentCost - netSubletIncome) * 100) / 100);
+  const netProfitUsd = Math.round((netSubletIncome - totalRentCost) * 100) / 100;
+  const rentCoveragePercentage = Math.round((netSubletIncome / totalRentCost) * 100);
+
+  return {
+    valid: true,
+    grossSubletIncome,
+    platformFeesTotal,
+    netSubletIncome,
+    totalRentCost,
+    netOutofPocketHomeExpense,
+    netProfitUsd,
+    rentCoveragePercentage,
+    isProfitable: netProfitUsd > 0
+  };
+}
+
 
 
 
