@@ -421,3 +421,44 @@ export function calculateNomadCarbonOffsetEstimate({ flightHours = 0, busTrainHo
     ecoStayDiscountApplied: isEcoStay
   };
 }
+
+export function calculateNomadVisaIncomeQualification({ monthlyIncomeUsd = 0, targetCountry = 'Spain', dependentsCount = 0 } = {}) {
+  if (typeof monthlyIncomeUsd !== 'number' || monthlyIncomeUsd <= 0 || isNaN(monthlyIncomeUsd)) {
+    return { valid: false, error: 'Monthly income must be a positive number' };
+  }
+
+  const country = (targetCountry || 'Spain').trim();
+  const countryThresholds = {
+    Spain: 2400,
+    Portugal: 3200,
+    Greece: 3800,
+    Colombia: 1500,
+    Thailand: 2000,
+    Japan: 6400,
+    Croatia: 2700,
+    Italy: 2900
+  };
+
+  const baseRequirement = countryThresholds[country] || 2500;
+  const deps = typeof dependentsCount === 'number' && dependentsCount > 0 ? Math.floor(dependentsCount) : 0;
+  const dependentSurcharge = deps * (baseRequirement * 0.20);
+  const totalRequiredIncomeUsd = Math.round((baseRequirement + dependentSurcharge) * 100) / 100;
+
+  const incomeMarginUsd = Math.round((monthlyIncomeUsd - totalRequiredIncomeUsd) * 100) / 100;
+  const qualifies = incomeMarginUsd >= 0;
+
+  return {
+    valid: true,
+    country,
+    monthlyIncomeUsd,
+    dependentsCount: deps,
+    baseRequirementUsd: baseRequirement,
+    totalRequiredIncomeUsd,
+    incomeMarginUsd,
+    qualifies,
+    statusMessage: qualifies
+      ? `Qualifies for ${country} Digital Nomad Visa with a $${incomeMarginUsd.toFixed(2)} monthly surplus buffer.`
+      : `Short by $${Math.abs(incomeMarginUsd).toFixed(2)}/month for ${country} Digital Nomad Visa requirements.`
+  };
+}
+

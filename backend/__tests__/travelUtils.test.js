@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification } from '../utils/travelUtils.js';
 
 
 
@@ -328,7 +328,35 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Travel duration and hours must be positive numbers');
     });
   });
+
+  describe('calculateNomadVisaIncomeQualification', () => {
+    it('calculates visa qualification and surplus margin for qualifying income', () => {
+      const res = calculateNomadVisaIncomeQualification({ monthlyIncomeUsd: 3500, targetCountry: 'Spain', dependentsCount: 1 });
+      expect(res.valid).toBe(true);
+      expect(res.country).toBe('Spain');
+      expect(res.baseRequirementUsd).toBe(2400);
+      expect(res.totalRequiredIncomeUsd).toBe(2880);
+      expect(res.incomeMarginUsd).toBe(620);
+      expect(res.qualifies).toBe(true);
+    });
+
+    it('identifies shortfall when income is below requirement', () => {
+      const res = calculateNomadVisaIncomeQualification({ monthlyIncomeUsd: 2000, targetCountry: 'Portugal', dependentsCount: 0 });
+      expect(res.valid).toBe(true);
+      expect(res.country).toBe('Portugal');
+      expect(res.totalRequiredIncomeUsd).toBe(3200);
+      expect(res.qualifies).toBe(false);
+      expect(res.incomeMarginUsd).toBe(-1200);
+    });
+
+    it('returns error for invalid income input', () => {
+      const res = calculateNomadVisaIncomeQualification({ monthlyIncomeUsd: 0 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Monthly income must be a positive number');
+    });
+  });
 });
+
 
 
 
