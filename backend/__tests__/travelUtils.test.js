@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization } from '../utils/travelUtils.js';
+
 
 
 
@@ -431,7 +432,31 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(hub.breakdown.speedScore).toBe(10);
     });
   });
+
+  describe('calculateNomadFlightLayoverOptimization', () => {
+    it('calculates layover extra costs, friction score, and workable status correctly', () => {
+      const res = calculateNomadFlightLayoverOptimization({
+        layoverDurationHours: 5,
+        overnightHotelRequired: false,
+        transitVisaRequired: true,
+        transitVisaCostUsd: 50,
+        coworkingLoungeAccess: true,
+        loungeFeeUsd: 40
+      });
+      expect(res.valid).toBe(true);
+      expect(res.layoverDurationHours).toBe(5);
+      expect(res.totalExtraCostUsd).toBe(90);
+      expect(res.isWorkableLayover).toBe(true);
+    });
+
+    it('returns error for negative layover duration input', () => {
+      const res = calculateNomadFlightLayoverOptimization({ layoverDurationHours: -2 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Layover duration must be a non-negative number');
+    });
+  });
 });
+
 
 
 

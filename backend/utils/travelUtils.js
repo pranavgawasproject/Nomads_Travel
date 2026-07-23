@@ -600,6 +600,50 @@ export function calculateNomadCommunityHubScore({
   };
 }
 
+export function calculateNomadFlightLayoverOptimization({
+  layoverDurationHours = 4,
+  overnightHotelRequired = false,
+  transitVisaRequired = false,
+  transitVisaCostUsd = 0,
+  hotelCostUsd = 0,
+  coworkingLoungeAccess = true,
+  loungeFeeUsd = 35
+} = {}) {
+  if (typeof layoverDurationHours !== 'number' || layoverDurationHours < 0 || isNaN(layoverDurationHours)) {
+    return { valid: false, error: 'Layover duration must be a non-negative number' };
+  }
+
+  const layover = Math.round(layoverDurationHours * 10) / 10;
+  const visaCost = transitVisaRequired && typeof transitVisaCostUsd === 'number' && transitVisaCostUsd > 0 ? transitVisaCostUsd : 0;
+  const hotelCost = overnightHotelRequired && typeof hotelCostUsd === 'number' && hotelCostUsd > 0 ? hotelCostUsd : 0;
+  const loungeCost = coworkingLoungeAccess && typeof loungeFeeUsd === 'number' && loungeFeeUsd > 0 ? loungeFeeUsd : 0;
+
+  const totalExtraCostUsd = Math.round((visaCost + hotelCost + loungeCost) * 100) / 100;
+
+  let frictionScore = 2.0;
+  if (layover < 2) frictionScore += 3.0;
+  else if (layover > 8) frictionScore += 4.5;
+  else if (layover > 4) frictionScore += 2.0;
+
+  if (overnightHotelRequired) frictionScore += 2.0;
+  if (transitVisaRequired) frictionScore += 1.5;
+  if (coworkingLoungeAccess) frictionScore = Math.max(1.0, frictionScore - 1.5);
+
+  frictionScore = Math.min(10.0, Math.round(frictionScore * 10) / 10);
+
+  return {
+    valid: true,
+    layoverDurationHours: layover,
+    totalExtraCostUsd,
+    frictionScore,
+    isWorkableLayover: layover >= 3 && coworkingLoungeAccess,
+    recommendation: layover > 8 && !overnightHotelRequired
+      ? 'Recommend booking a transit hotel or lounge pass for extended layovers.'
+      : 'Layover parameters are within optimal comfort thresholds.'
+  };
+}
+
+
 
 
 
