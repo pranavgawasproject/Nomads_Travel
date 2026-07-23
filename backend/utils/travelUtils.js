@@ -531,4 +531,35 @@ export function calculateNomadColivingVsApartmentCost({
   };
 }
 
+export function calculateNomadVisaProcessingTimeEstimate({ country = 'General', processingType = 'standard', hasExpeditedFee = false } = {}) {
+  const targetCountry = typeof country === 'string' && country.trim() ? country.trim() : 'General';
+  const mode = typeof processingType === 'string' ? processingType.toLowerCase().trim() : 'standard';
+  
+  let baseDays = 30;
+  if (targetCountry.toLowerCase() === 'portugal' || targetCountry.toLowerCase() === 'spain') baseDays = 45;
+  if (targetCountry.toLowerCase() === 'estonia' || targetCountry.toLowerCase() === 'croatia') baseDays = 20;
+
+  let estimatedDays = baseDays;
+  if (mode === 'express' || hasExpeditedFee) {
+    estimatedDays = Math.max(5, Math.round(baseDays * 0.4));
+  } else if (mode === 'priority') {
+    estimatedDays = Math.max(10, Math.round(baseDays * 0.65));
+  }
+
+  const estimatedWeeks = Math.round((estimatedDays / 7) * 10) / 10;
+
+  return {
+    valid: true,
+    country: targetCountry,
+    processingType: mode,
+    hasExpeditedFee: Boolean(hasExpeditedFee),
+    estimatedBusinessDays: estimatedDays,
+    estimatedWeeks,
+    statusMessage: `Estimated visa processing for ${targetCountry} (${mode}): approx ${estimatedDays} business days (~${estimatedWeeks} weeks).`
+  };
+}
+
+
+
+
 

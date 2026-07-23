@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate } from '../utils/travelUtils.js';
 
 
 
@@ -403,7 +403,20 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Monthly apartment rent must be a positive number');
     });
   });
+
+  describe('calculateNomadVisaProcessingTimeEstimate', () => {
+    it('estimates standard and express processing times correctly', () => {
+      const standard = calculateNomadVisaProcessingTimeEstimate({ country: 'Portugal', processingType: 'standard' });
+      expect(standard.valid).toBe(true);
+      expect(standard.estimatedBusinessDays).toBe(45);
+
+      const express = calculateNomadVisaProcessingTimeEstimate({ country: 'Portugal', processingType: 'express' });
+      expect(express.valid).toBe(true);
+      expect(express.estimatedBusinessDays).toBe(18);
+    });
+  });
 });
+
 
 
 
