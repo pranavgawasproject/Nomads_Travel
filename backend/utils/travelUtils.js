@@ -686,6 +686,51 @@ export function calculateNomadHealthInsuranceCoverageScore({
   };
 }
 
+export function calculateNomadLuggageWeightAndFee({
+  carryOnBaggageKg = 7,
+  checkedBaggageKg = 20,
+  airlineLimitKg = 23,
+  excessFeePerKgUsd = 15,
+  includesTechEquipment = true
+} = {}) {
+  if (typeof checkedBaggageKg !== 'number' || checkedBaggageKg < 0 || isNaN(checkedBaggageKg)) {
+    return { valid: false, error: 'Checked baggage weight must be a non-negative number' };
+  }
+  if (typeof carryOnBaggageKg !== 'number' || carryOnBaggageKg < 0 || isNaN(carryOnBaggageKg)) {
+    return { valid: false, error: 'Carry-on baggage weight must be a non-negative number' };
+  }
+
+  const carryOn = Math.round(carryOnBaggageKg * 10) / 10;
+  const checked = Math.round(checkedBaggageKg * 10) / 10;
+  const limit = typeof airlineLimitKg === 'number' && airlineLimitKg > 0 ? airlineLimitKg : 23;
+  const feePerKg = typeof excessFeePerKgUsd === 'number' && excessFeePerKgUsd >= 0 ? excessFeePerKgUsd : 15;
+
+  const totalWeightKg = Math.round((carryOn + checked) * 10) / 10;
+  const excessKg = Math.max(0, Math.round((checked - limit) * 10) / 10);
+  const excessFeeUsd = Math.round(excessKg * feePerKg * 100) / 100;
+  const isOverweight = excessKg > 0;
+
+  let recommendation = 'Baggage weight is within airline free limits.';
+  if (isOverweight) {
+    recommendation = `Checked bag exceeds free limit by ${excessKg} kg. Estimated excess fee is $${excessFeeUsd.toFixed(2)}.`;
+  } else if (includesTechEquipment && carryOn > 10) {
+    recommendation = 'Carry-on with tech equipment exceeds typical 10kg cabin threshold; distribute items to personal item.';
+  }
+
+  return {
+    valid: true,
+    carryOnBaggageKg: carryOn,
+    checkedBaggageKg: checked,
+    totalWeightKg,
+    airlineLimitKg: limit,
+    excessKg,
+    excessFeeUsd,
+    isOverweight,
+    recommendation
+  };
+}
+
+
 
 
 

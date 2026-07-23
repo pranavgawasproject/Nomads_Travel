@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee } from '../utils/travelUtils.js';
 
 
 
@@ -478,7 +478,42 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Monthly premium must be a positive number');
     });
   });
+
+  describe('calculateNomadLuggageWeightAndFee', () => {
+    it('calculates luggage total weight and handles fee-free baggage correctly', () => {
+      const res = calculateNomadLuggageWeightAndFee({
+        carryOnBaggageKg: 7,
+        checkedBaggageKg: 20,
+        airlineLimitKg: 23
+      });
+      expect(res.valid).toBe(true);
+      expect(res.totalWeightKg).toBe(27);
+      expect(res.excessKg).toBe(0);
+      expect(res.excessFeeUsd).toBe(0);
+      expect(res.isOverweight).toBe(false);
+    });
+
+    it('calculates excess baggage fees accurately when weight exceeds limit', () => {
+      const res = calculateNomadLuggageWeightAndFee({
+        carryOnBaggageKg: 8,
+        checkedBaggageKg: 27,
+        airlineLimitKg: 23,
+        excessFeePerKgUsd: 15
+      });
+      expect(res.valid).toBe(true);
+      expect(res.excessKg).toBe(4);
+      expect(res.excessFeeUsd).toBe(60);
+      expect(res.isOverweight).toBe(true);
+    });
+
+    it('returns error for invalid negative baggage weights', () => {
+      const res = calculateNomadLuggageWeightAndFee({ checkedBaggageKg: -5 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Checked baggage weight must be a non-negative number');
+    });
+  });
 });
+
 
 
 
