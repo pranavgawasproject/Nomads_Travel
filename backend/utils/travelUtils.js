@@ -559,6 +559,48 @@ export function calculateNomadVisaProcessingTimeEstimate({ country = 'General', 
   };
 }
 
+export function calculateNomadCommunityHubScore({
+  internetSpeedMbps = 50,
+  coworkingSpacesCount = 5,
+  monthlyEventsCount = 10,
+  safetyScore = 4.0,
+  costOfLivingIndex = 50
+} = {}) {
+  const speed = typeof internetSpeedMbps === 'number' && internetSpeedMbps > 0 ? internetSpeedMbps : 0;
+  const cowork = typeof coworkingSpacesCount === 'number' && coworkingSpacesCount >= 0 ? coworkingSpacesCount : 0;
+  const events = typeof monthlyEventsCount === 'number' && monthlyEventsCount >= 0 ? monthlyEventsCount : 0;
+  const safety = typeof safetyScore === 'number' && safetyScore >= 1 && safetyScore <= 5 ? safetyScore : 3.0;
+  const colIndex = typeof costOfLivingIndex === 'number' && costOfLivingIndex > 0 ? costOfLivingIndex : 50;
+
+  const speedScore = Math.min(10, (speed / 100) * 10);
+  const coworkScore = Math.min(10, cowork * 1.5);
+  const eventScore = Math.min(10, events * 0.8);
+  const safetyScoreWeighted = safety * 2;
+  const colScore = Math.max(1, 10 - (colIndex / 15));
+
+  const compositeScore = Math.round(((speedScore * 0.25) + (coworkScore * 0.2) + (eventScore * 0.2) + (safetyScoreWeighted * 0.2) + (colScore * 0.15)) * 10) / 10;
+  
+  let grade = 'B';
+  if (compositeScore >= 8.5) grade = 'A+';
+  else if (compositeScore >= 7.5) grade = 'A';
+  else if (compositeScore >= 6.0) grade = 'B';
+  else grade = 'C';
+
+  return {
+    valid: true,
+    compositeScore,
+    grade,
+    breakdown: {
+      speedScore: Math.round(speedScore * 10) / 10,
+      coworkScore: Math.round(coworkScore * 10) / 10,
+      eventScore: Math.round(eventScore * 10) / 10,
+      safetyScore: Math.round(safetyScoreWeighted * 10) / 10,
+      affordabilityScore: Math.round(colScore * 10) / 10
+    }
+  };
+}
+
+
 
 
 

@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore } from '../utils/travelUtils.js';
 
 
 
@@ -413,6 +413,22 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const express = calculateNomadVisaProcessingTimeEstimate({ country: 'Portugal', processingType: 'express' });
       expect(express.valid).toBe(true);
       expect(express.estimatedBusinessDays).toBe(18);
+    });
+  });
+
+  describe('calculateNomadCommunityHubScore', () => {
+    it('calculates hub composite score, grade, and breakdown correctly', () => {
+      const hub = calculateNomadCommunityHubScore({
+        internetSpeedMbps: 100,
+        coworkingSpacesCount: 8,
+        monthlyEventsCount: 15,
+        safetyScore: 4.5,
+        costOfLivingIndex: 40
+      });
+      expect(hub.valid).toBe(true);
+      expect(hub.compositeScore).toBeGreaterThanOrEqual(8.0);
+      expect(hub.grade).toBe('A+');
+      expect(hub.breakdown.speedScore).toBe(10);
     });
   });
 });
