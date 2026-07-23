@@ -643,6 +643,50 @@ export function calculateNomadFlightLayoverOptimization({
   };
 }
 
+export function calculateNomadHealthInsuranceCoverageScore({
+  age = 30,
+  monthlyPremiumUsd = 120,
+  maxDeductibleUsd = 1000,
+  includesMedicalEvacuation = true,
+  includesAdventureSports = false,
+  hasPreExistingConditionCoverage = false
+} = {}) {
+  if (typeof monthlyPremiumUsd !== 'number' || monthlyPremiumUsd <= 0 || isNaN(monthlyPremiumUsd)) {
+    return { valid: false, error: 'Monthly premium must be a positive number' };
+  }
+
+  const validAge = typeof age === 'number' && age > 0 ? age : 30;
+  const validDeductible = typeof maxDeductibleUsd === 'number' && maxDeductibleUsd >= 0 ? maxDeductibleUsd : 1000;
+
+  let score = 50;
+  if (includesMedicalEvacuation) score += 20;
+  if (includesAdventureSports) score += 15;
+  if (hasPreExistingConditionCoverage) score += 15;
+  if (validDeductible <= 500) score += 10;
+  else if (validDeductible > 2500) score -= 15;
+
+  score = Math.min(100, Math.max(0, score));
+
+  let riskTier = 'MODERATE';
+  if (score >= 80) riskTier = 'EXCELLENT';
+  else if (score >= 60) riskTier = 'GOOD';
+  else if (score < 40) riskTier = 'HIGH_RISK';
+
+  return {
+    valid: true,
+    age: validAge,
+    monthlyPremiumUsd,
+    maxDeductibleUsd: validDeductible,
+    coverageScore: score,
+    riskTier,
+    isEvacuationCovered: Boolean(includesMedicalEvacuation),
+    recommendation: score >= 75
+      ? 'Comprehensive digital nomad medical insurance plan.'
+      : 'Consider upgrading emergency evacuation and adventure sports riders.'
+  };
+}
+
+
 
 
 

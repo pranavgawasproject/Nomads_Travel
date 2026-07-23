@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore } from '../utils/travelUtils.js';
 
 
 
@@ -453,6 +453,29 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const res = calculateNomadFlightLayoverOptimization({ layoverDurationHours: -2 });
       expect(res.valid).toBe(false);
       expect(res.error).toBe('Layover duration must be a non-negative number');
+    });
+  });
+
+  describe('calculateNomadHealthInsuranceCoverageScore', () => {
+    it('calculates health insurance coverage score and risk tier correctly', () => {
+      const res = calculateNomadHealthInsuranceCoverageScore({
+        age: 32,
+        monthlyPremiumUsd: 150,
+        maxDeductibleUsd: 500,
+        includesMedicalEvacuation: true,
+        includesAdventureSports: true,
+        hasPreExistingConditionCoverage: true
+      });
+      expect(res.valid).toBe(true);
+      expect(res.coverageScore).toBe(100);
+      expect(res.riskTier).toBe('EXCELLENT');
+      expect(res.isEvacuationCovered).toBe(true);
+    });
+
+    it('returns error for non-positive monthly premium', () => {
+      const res = calculateNomadHealthInsuranceCoverageScore({ monthlyPremiumUsd: 0 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Monthly premium must be a positive number');
     });
   });
 });
