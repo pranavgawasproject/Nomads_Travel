@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost } from '../utils/travelUtils.js';
 
 
 
@@ -355,7 +355,56 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Monthly income must be a positive number');
     });
   });
+
+  describe('calculateNomadSchengen90180Limit', () => {
+    it('calculates safe remaining days within Schengen 90/180 window', () => {
+      const res = calculateNomadSchengen90180Limit({ stayDaysPast180: 45, plannedStayDays: 30 });
+      expect(res.valid).toBe(true);
+      expect(res.remainingAllowedDays).toBe(45);
+      expect(res.isOverstayRisk).toBe(false);
+      expect(res.allowablePlannedDays).toBe(30);
+    });
+
+    it('identifies overstay risk when planned days exceed remaining limit', () => {
+      const res = calculateNomadSchengen90180Limit({ stayDaysPast180: 70, plannedStayDays: 30 });
+      expect(res.valid).toBe(true);
+      expect(res.remainingAllowedDays).toBe(20);
+      expect(res.isOverstayRisk).toBe(true);
+      expect(res.allowablePlannedDays).toBe(20);
+    });
+
+    it('returns error for invalid stay inputs', () => {
+      const res = calculateNomadSchengen90180Limit({ stayDaysPast180: -10 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Stay days in past 180 days must be a non-negative number');
+    });
+  });
+
+  describe('calculateNomadColivingVsApartmentCost', () => {
+    it('calculates cost breakdown and identifies coliving savings', () => {
+      const res = calculateNomadColivingVsApartmentCost({
+        monthlyApartmentRent: 1600,
+        coworkingPassCost: 250,
+        utilityCost: 150,
+        setupCostOneTime: 400,
+        monthlyColivingCost: 1800,
+        stayDurationMonths: 3
+      });
+      expect(res.valid).toBe(true);
+      expect(res.totalApartmentCost).toBe(6400); // (1600+250+150)*3 + 400 = 6400
+      expect(res.totalColivingCost).toBe(5400);  // 1800*3 = 5400
+      expect(res.netSavingsWithColiving).toBe(1000);
+      expect(res.colivingCheaper).toBe(true);
+    });
+
+    it('returns error for non-positive rent or coliving parameters', () => {
+      const res = calculateNomadColivingVsApartmentCost({ monthlyApartmentRent: 0 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Monthly apartment rent must be a positive number');
+    });
+  });
 });
+
 
 
 

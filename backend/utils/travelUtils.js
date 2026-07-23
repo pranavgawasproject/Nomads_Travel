@@ -462,3 +462,73 @@ export function calculateNomadVisaIncomeQualification({ monthlyIncomeUsd = 0, ta
   };
 }
 
+export function calculateNomadSchengen90180Limit({ stayDaysPast180 = 0, plannedStayDays = 30 } = {}) {
+  if (typeof stayDaysPast180 !== 'number' || stayDaysPast180 < 0 || isNaN(stayDaysPast180)) {
+    return { valid: false, error: 'Stay days in past 180 days must be a non-negative number' };
+  }
+  if (typeof plannedStayDays !== 'number' || plannedStayDays <= 0 || isNaN(plannedStayDays)) {
+    return { valid: false, error: 'Planned stay days must be a positive number' };
+  }
+
+  const daysUsed = Math.floor(stayDaysPast180);
+  const planned = Math.floor(plannedStayDays);
+  const remainingAllowedDays = Math.max(0, 90 - daysUsed);
+  const isOverstayRisk = (daysUsed + planned) > 90;
+  const allowablePlannedDays = Math.min(planned, remainingAllowedDays);
+
+  return {
+    valid: true,
+    stayDaysPast180: daysUsed,
+    plannedStayDays: planned,
+    remainingAllowedDays,
+    isOverstayRisk,
+    allowablePlannedDays,
+    statusMessage: isOverstayRisk
+      ? `Warning: Planned ${planned} days will exceed 90-day Schengen limit by ${(daysUsed + planned) - 90} day(s).`
+      : `Safe: ${remainingAllowedDays} day(s) remaining in 180-day window.`
+  };
+}
+
+export function calculateNomadColivingVsApartmentCost({
+  monthlyApartmentRent = 1500,
+  coworkingPassCost = 250,
+  utilityCost = 150,
+  setupCostOneTime = 300,
+  monthlyColivingCost = 1800,
+  stayDurationMonths = 3
+} = {}) {
+  if (typeof monthlyApartmentRent !== 'number' || monthlyApartmentRent <= 0 || isNaN(monthlyApartmentRent)) {
+    return { valid: false, error: 'Monthly apartment rent must be a positive number' };
+  }
+  if (typeof monthlyColivingCost !== 'number' || monthlyColivingCost <= 0 || isNaN(monthlyColivingCost)) {
+    return { valid: false, error: 'Monthly coliving cost must be a positive number' };
+  }
+  if (typeof stayDurationMonths !== 'number' || stayDurationMonths <= 0 || isNaN(stayDurationMonths)) {
+    return { valid: false, error: 'Stay duration months must be a positive number' };
+  }
+
+  const months = stayDurationMonths;
+  const coworking = typeof coworkingPassCost === 'number' && coworkingPassCost >= 0 ? coworkingPassCost : 0;
+  const utils = typeof utilityCost === 'number' && utilityCost >= 0 ? utilityCost : 0;
+  const setup = typeof setupCostOneTime === 'number' && setupCostOneTime >= 0 ? setupCostOneTime : 0;
+
+  const totalApartmentCost = (monthlyApartmentRent + coworking + utils) * months + setup;
+  const totalColivingCost = monthlyColivingCost * months;
+
+  const netSavingsWithColiving = Math.round((totalApartmentCost - totalColivingCost) * 100) / 100;
+  const colivingCheaper = netSavingsWithColiving > 0;
+
+  return {
+    valid: true,
+    stayDurationMonths: months,
+    totalApartmentCost: Math.round(totalApartmentCost * 100) / 100,
+    totalColivingCost: Math.round(totalColivingCost * 100) / 100,
+    netSavingsWithColiving,
+    colivingCheaper,
+    recommendation: colivingCheaper
+      ? `Coliving saves $${Math.abs(netSavingsWithColiving).toFixed(2)} overall compared to apartment + coworking.`
+      : `Apartment setup saves $${Math.abs(netSavingsWithColiving).toFixed(2)} overall for a ${months}-month stay.`
+  };
+}
+
+

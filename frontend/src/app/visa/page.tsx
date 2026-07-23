@@ -77,7 +77,7 @@ export default async function VisaPage({
                 <p className="text-muted-foreground">No countries match that search.</p>
               </div>
             ) : (
-              <div className="overflow-hidden rounded-3xl border border-border bg-card">
+              <div className="overflow-x-auto rounded-3xl border border-border bg-card">
                 <table className="w-full text-left text-sm">
                   <thead className="border-b border-border bg-secondary/50 text-xs uppercase tracking-wider text-muted-foreground">
                     <tr>
