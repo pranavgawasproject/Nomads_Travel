@@ -1,226 +1,72 @@
-# 🌍 RoamIQ — The Operating System for Digital Nomads
+# 🌍 Nomads Travel
 
-> 🎨 **Redesigned frontend has been merged into main.**
-> A modern Next.js 16 + Tailwind 4 + shadcn/ui stack.
-> The original Vite + MUI frontend is preserved in the main branch history.
+**A full-stack platform built for digital nomads — plan your next workation with visa rules, jobs, events, and expert consultations in one place.**
 
-<div align="center">
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://nomads-travel-indol.vercel.app)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Stack](https://img.shields.io/badge/stack-MERN%20%2B%20AWS%20S3-informational)
 
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
-![Node.js](https://img.shields.io/badge/Node.js-Express-green?logo=node.js)
-![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb)
-![Supabase](https://img.shields.io/badge/Supabase-Auth%2BRealtime-3ECF8E?logo=supabase)
-![YC W25](https://img.shields.io/badge/YC-W25%20Applicant-black?logo=ycombinator)
-![Stars](https://img.shields.io/github/stars/pranavgawasproject/Nomads_Travel?style=social)
-![Contributors](https://img.shields.io/github/contributors/pranavgawasproject/Nomads_Travel)
-![Last Commit](https://img.shields.io/github/last-commit/pranavgawasproject/Nomads_Travel)
-
-**One platform for digital nomads to live, work, and thrive anywhere.**
-
-[🌐 Live Demo](https://roamiq.io) · [📄 YC Application](PITCH.md) · [🗺️ Roadmap](ROADMAP.md) · [🐛 Report Bug](https://github.com/pranavgawasproject/Nomads_Travel/issues)
-
-</div>
+🔗 **Live app:** [nomads-travel-indol.vercel.app](https://nomads-travel-indol.vercel.app)
 
 ---
 
-## 🎯 The Problem
+## ✨ What is this?
 
-**35 million digital nomads** face a fragmented experience with no single tool that works:
+Being a digital nomad means juggling visa paperwork, finding remote-friendly jobs, staying on top of local events, and figuring out where to go next — usually across five different tabs and a dozen bookmarked articles.
 
-| Pain Point | Impact |
-|---|---|
-| ❌ Visa rules scattered across 100+ government sites | Weeks of research per trip |
-| ❌ Generic job boards not built for remote work | Wasted applications, wrong roles |
-| ❌ No tool tracks visas + trips + expenses together | Manual spreadsheets, missed deadlines |
-| ❌ Finding nomad-friendly cities is manual research | 10–20 hours/month navigating fragmented tools |
-| ❌ Loneliness — hard to find community in new cities | Isolation, fewer connections |
+**Nomads Travel** brings all of that into one platform:
 
-> **We estimate digital nomads waste 10–20 hours/month navigating fragmented tools. RoamIQ is the OS that fixes this.**
+- 🛂 **Visa rules** — look up entry requirements and stay-duration limits by destination
+- 🗺️ **Workation planning** — plan and organize remote-work trips
+- 💼 **Job board** — browse remote-friendly opportunities for location-independent work
+- 📝 **Blog** — travel and remote-work content
+- 📅 **Events** — discover nomad meetups and community events
+- 🧑‍💻 **Consultations** — book expert advice for relocation and visa questions
 
----
+## 🖼️ Screenshots
 
-## 💡 Our Solution
+> _Add 2–3 screenshots or a short GIF of the app here — this is the single biggest thing that gets a repo starred. People star what they can see working._
 
-**RoamIQ** is the operating system for digital nomads — one platform for everything nomads need:
+## 🛠️ Tech Stack
 
-| Feature | What It Does |
-|---|---|
-| 🛂 **AI Visa Intelligence** | Personalized visa recommendations by passport, skills & goals |
-| 💼 **Remote Job Board** | Curated 100% remote positions, updated daily |
-| 🗺️ **Global Listings** | 500+ cities with cost-of-living, WiFi, weather, safety data |
-| 💰 **Savings Calculator** | Compare real costs across 500+ cities side-by-side |
-| 🏢 **Company Directory** | Verified remote-first companies hiring globally |
-| 📅 **Workation Planner** | Plan and book workations with co-living/co-working partners |
-| 📞 **Expert Consultations** | Book 1:1 with visa agents, tax experts, relocation specialists |
-| 🎉 **Events & Community** | Discover nomad meetups, find nearby digital nomads |
-| 📝 **Trip Tracker** | Track all your trips, visas, and workations in one place |
-| ⭐ **World Rankings** | Community-driven rankings of best cities for remote work |
-| 💬 **Forum** | Q&A with nomads — visas, taxes, destinations, gear |
-
----
-
-## 🏗️ Tech Stack
-
-```
-Frontend (Next.js 16 + React 19)
-├── Tailwind CSS 4 + shadcn/ui (design system)
-├── Supabase (auth, listings, forum, trips)
-├── Google Maps API (location features)
-└── Motion / Framer Motion 12 (animations)
-
-Backend (Node.js + Express)
-├── MongoDB Atlas + Mongoose ODM
-├── JWT + Refresh Tokens (auth)
-├── AWS S3 (file uploads)
-├── Nodemailer (email)
-├── Multer + Sharp (image processing)
-└── Yup (validation)
-```
-
----
+- **Frontend:** React
+- **Backend:** Node.js / Express (MERN)
+- **Database:** MongoDB
+- **Storage:** AWS S3 (media/file uploads)
+- **Deployment:** Vercel
 
 ## 🚀 Getting Started
 
-### Prerequisites
-
-- Node.js ≥ 18
-- MongoDB (local or [MongoDB Atlas](https://mongodb.com/atlas))
-- Supabase project ([create free](https://supabase.com))
-- AWS S3 bucket (for media uploads)
-- Google Maps API key
-
-### 1. Clone & Install
-
 ```bash
+# clone the repo
 git clone https://github.com/pranavgawasproject/Nomads_Travel.git
 cd Nomads_Travel
-```
 
-### 2. Backend
-
-```bash
-cd backend
-cp .env.example .env    # Fill in your credentials
+# install dependencies
 npm install
-npm run dev             # → http://localhost:3000
+
+# set up environment variables
+cp .env.example .env
+# fill in your MongoDB URI, AWS S3 credentials, etc.
+
+# run locally
+npm run dev
 ```
 
-### 3. Frontend
+> _Fill in exact install/run commands if they differ (e.g. separate client/server folders, specific env variable names)._
 
-```bash
-cd ../frontend
-cp .env.example .env    # Fill in your API keys
-npm install
-npm run dev             # → http://localhost:3000
-```
+## 🗺️ Roadmap
 
-### 4. Supabase Setup
-
-Run the schema in your Supabase SQL editor:
-
-```bash
-# In Supabase SQL editor (Project → SQL Editor)
-# Paste contents of supabase_schema.sql and run
-# Then seed sample data:
-psql -h <host> -U postgres -d postgres < supabase_seed_data.sql
-```
-
-### 5. Docker (optional)
-
-```bash
-docker-compose up -d
-```
-
----
-
-## 📁 Project Structure
-
-```
-Nomads_Travel/
-├── frontend/                    # Next.js 16 application
-│   └── src/
-│       ├── app/                 # Next.js pages & layouts
-│       ├── components/          # Reusable UI & shadcn components
-│       ├── hooks/               # Custom React hooks
-│       └── utils/               # Helpers, validators
-│
-├── backend/                     # Express.js API
-│   ├── controllers/             # Business logic (30+ controllers)
-│   ├── models/                  # Mongoose schemas (20+ models)
-│   ├── routes/                  # Express route definitions
-│   ├── middlewares/             # JWT auth, error handling
-│   ├── config/                  # DB, S3, Mailer, CORS
-│   ├── __tests__/               # Unit tests
-│   └── server.js                # Express server entry
-│
-├── supabase_schema.sql          # Supabase schema + RLS policies
-├── supabase_seed_data.sql       # Sample data
-├── docker-compose.yml           # Local development
-├── docker-compose.prod.yml      # Production deployment
-├── Makefile                     # Dev shortcuts
-├── PITCH.md                     # YC pitch deck
-├── ROADMAP.md                   # Feature roadmap
-└── CONTRIBUTING.md              # Contributor guidelines
-```
-
----
-
-## 💼 Business Model
-
-| Tier | Price | Features |
-|---|---|---|
-| **Free** | $0 | Browse listings, job board, basic search, forum |
-| **Pro** | $9/mo | AI recommendations, trip tracker, priority support |
-| **Business** | $29/mo | Company listings, recruitment tools, analytics |
-
-> **Unit Economics**: CAC ~$15 (organic + content), LTV ~$280 (18-mo Pro), LTV/CAC = **18.7x**
-
----
-
-## 📈 Traction & Milestones
-
-| Metric | Value |
-|---|---|
-| GitHub repositories | 17+ across the org |
-| Features built | 55+ pages, 30+ API endpoints |
-| Remote job listings | Daily updated |
-| City data coverage | 500+ cities worldwide |
-| Forum posts | Community-driven Q&A |
-
----
+- [ ] _Add your next 3–5 planned features here — sponsors fund direction, not just what exists today_
 
 ## 🤝 Contributing
 
-We welcome contributors! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting PRs.
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/pranavgawasproject/Nomads_Travel/issues).
 
-```bash
-# Fork → Clone → Branch → Code → Test → PR
-git checkout -b feature/your-feature-name
-npm test   # Run tests
-git push origin feature/your-feature-name
-```
+## 💛 Support this project
 
-Good first issues are tagged [`good first issue`](https://github.com/pranavgawasproject/Nomads_Travel/labels/good%20first%20issue).
+If Nomads Travel is useful to you, consider [sponsoring on GitHub](https://github.com/sponsors/pranavgawasproject) — it directly funds continued development.
 
----
+## 📄 License
 
-## 📞 Contact
-
-- **GitHub**: [@pranavgawasproject](https://github.com/pranavgawasproject)
-- **Email**: hello@roamiq.io
-- **YC Application**: [PITCH.md](PITCH.md)
-
----
-
-## 📜 License
-
-[MIT](LICENSE) © 2024–2026 Pranav Gawas
-
----
-
-<p align="center">
-  <strong>Built for the 35 million digital nomads who deserve better tools.</strong>
-  <br>
-  🌍 Remote work. Any country. One platform.
-</p>
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
