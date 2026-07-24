@@ -807,3 +807,52 @@ export function calculateNomadSalaryParity({
   };
 }
 
+export function calculateNomadInternetBackupRedundancyScore({
+  primarySpeedMbps = 100,
+  backupSpeedMbps = 0,
+  hasMobileHotspot = false,
+  hasUPSPowerBackup = false,
+  requiredUptimePercent = 99.0
+} = {}) {
+  if (typeof primarySpeedMbps !== 'number' || primarySpeedMbps < 0 || isNaN(primarySpeedMbps)) {
+    return { valid: false, error: 'Primary internet speed must be a non-negative number' };
+  }
+  if (typeof backupSpeedMbps !== 'number' || backupSpeedMbps < 0 || isNaN(backupSpeedMbps)) {
+    return { valid: false, error: 'Backup internet speed must be a non-negative number' };
+  }
+
+  let score = Math.min(50, (primarySpeedMbps / 100) * 50);
+  if (backupSpeedMbps > 0) {
+    score += Math.min(25, (backupSpeedMbps / 50) * 25);
+  }
+  if (hasMobileHotspot) {
+    score += 15;
+  }
+  if (hasUPSPowerBackup) {
+    score += 10;
+  }
+
+  const redundancyScore = Math.round(Math.min(100, score) * 10) / 10;
+  const riskTier = redundancyScore >= 80 ? 'Low Risk' : redundancyScore >= 50 ? 'Moderate Risk' : 'High Risk';
+
+  let recommendation = 'Excellent redundancy: Dual connections with power & mobile backup ensure enterprise reliability.';
+  if (redundancyScore < 50) {
+    recommendation = 'High outage risk: Secure a secondary internet line or high-speed mobile hotspot before critical remote work.';
+  } else if (!hasUPSPowerBackup) {
+    recommendation = 'Good connectivity, but adding a portable power bank/UPS will prevent drops during local power surges.';
+  }
+
+  return {
+    valid: true,
+    primarySpeedMbps,
+    backupSpeedMbps,
+    hasMobileHotspot,
+    hasUPSPowerBackup,
+    requiredUptimePercent,
+    redundancyScore,
+    riskTier,
+    recommendation
+  };
+}
+
+

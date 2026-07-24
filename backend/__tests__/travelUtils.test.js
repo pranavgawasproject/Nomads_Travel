@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore } from '../utils/travelUtils.js';
+
 
 
 
@@ -568,7 +569,42 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Home annual salary must be a positive number');
     });
   });
+
+  describe('calculateNomadInternetBackupRedundancyScore', () => {
+    it('calculates internet backup redundancy score and risk tier accurately', () => {
+      const res = calculateNomadInternetBackupRedundancyScore({
+        primarySpeedMbps: 100,
+        backupSpeedMbps: 50,
+        hasMobileHotspot: true,
+        hasUPSPowerBackup: true
+      });
+      expect(res.valid).toBe(true);
+      expect(res.redundancyScore).toBe(100);
+      expect(res.riskTier).toBe('Low Risk');
+      expect(res.recommendation).toContain('Dual connections with power & mobile backup');
+    });
+
+    it('returns high risk tier when backup and UPS are missing', () => {
+      const res = calculateNomadInternetBackupRedundancyScore({
+        primarySpeedMbps: 30,
+        backupSpeedMbps: 0,
+        hasMobileHotspot: false,
+        hasUPSPowerBackup: false
+      });
+      expect(res.valid).toBe(true);
+      expect(res.redundancyScore).toBe(15);
+      expect(res.riskTier).toBe('High Risk');
+      expect(res.recommendation).toContain('High outage risk');
+    });
+
+    it('returns error for invalid negative primary speed input', () => {
+      const res = calculateNomadInternetBackupRedundancyScore({ primarySpeedMbps: -20 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Primary internet speed must be a non-negative number');
+    });
+  });
 });
+
 
 
 
