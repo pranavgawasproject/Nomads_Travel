@@ -987,6 +987,56 @@ export function calculateNomadTimezoneOverlapAndConnectivity({
   };
 }
 
+export function calculateNomadCoworkingConnectivityScore({
+  internetSpeedMbps = 100,
+  deskErgonomicsRating = 4,
+  backupPowerAvailable = true,
+  quietCallBoothsAvailable = true,
+  monthlyPassUsd = 150
+} = {}) {
+  if (typeof internetSpeedMbps !== 'number' || internetSpeedMbps < 0 || isNaN(internetSpeedMbps)) {
+    return { valid: false, error: 'Internet speed must be a non-negative number' };
+  }
+
+  let score = 0;
+  if (internetSpeedMbps >= 200) score += 35;
+  else if (internetSpeedMbps >= 100) score += 28;
+  else if (internetSpeedMbps >= 50) score += 20;
+  else if (internetSpeedMbps >= 25) score += 10;
+
+  const ergo = typeof deskErgonomicsRating === 'number' ? Math.min(5, Math.max(1, deskErgonomicsRating)) : 3;
+  score += ergo * 5;
+
+  if (backupPowerAvailable) score += 20;
+  if (quietCallBoothsAvailable) score += 20;
+
+  const finalScore = Math.min(100, Math.round(score));
+
+  let suitabilityTier = 'HIGHLY_RECOMMENDED';
+  if (finalScore < 50) suitabilityTier = 'BASIC_WIFI_ONLY';
+  else if (finalScore < 75) suitabilityTier = 'SUITABLE_FOR_ASYNC';
+
+  let recommendation = 'Excellent coworking hub for video calls & intensive remote work.';
+  if (suitabilityTier === 'BASIC_WIFI_ONLY') {
+    recommendation = 'Basic connectivity. Not recommended for video calls or power users without backup power.';
+  } else if (suitabilityTier === 'SUITABLE_FOR_ASYNC') {
+    recommendation = 'Good for async work; confirm backup generator status for critical calls.';
+  }
+
+  return {
+    valid: true,
+    internetSpeedMbps,
+    deskErgonomicsRating: ergo,
+    backupPowerAvailable: Boolean(backupPowerAvailable),
+    quietCallBoothsAvailable: Boolean(quietCallBoothsAvailable),
+    monthlyPassUsd: typeof monthlyPassUsd === 'number' && monthlyPassUsd > 0 ? monthlyPassUsd : 0,
+    coworkingScore: finalScore,
+    suitabilityTier,
+    recommendation
+  };
+}
+
+
 
 
 

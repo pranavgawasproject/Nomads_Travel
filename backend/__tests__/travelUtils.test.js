@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore } from '../utils/travelUtils.js';
+
 
 
 
@@ -711,7 +712,29 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Team timezone offset must be between -12 and +14 hours');
     });
   });
+
+  describe('calculateNomadCoworkingConnectivityScore', () => {
+    it('calculates high suitability score for fast internet and full amenities', () => {
+      const res = calculateNomadCoworkingConnectivityScore({
+        internetSpeedMbps: 200,
+        deskErgonomicsRating: 5,
+        backupPowerAvailable: true,
+        quietCallBoothsAvailable: true,
+        monthlyPassUsd: 200
+      });
+      expect(res.valid).toBe(true);
+      expect(res.coworkingScore).toBe(100);
+      expect(res.suitabilityTier).toBe('HIGHLY_RECOMMENDED');
+    });
+
+    it('returns error for negative internet speed', () => {
+      const res = calculateNomadCoworkingConnectivityScore({ internetSpeedMbps: -50 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Internet speed must be a non-negative number');
+    });
+  });
 });
+
 
 
 
