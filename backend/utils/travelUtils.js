@@ -936,5 +936,57 @@ export function calculateNomadRemoteWorkStipendRoi({
   };
 }
 
+export function calculateNomadTimezoneOverlapAndConnectivity({
+  teamTimezoneOffsetHours = -5,
+  localTimezoneOffsetHours = 7,
+  workStartHourLocal = 9,
+  workEndHourLocal = 17,
+  minOverlapHoursRequired = 3
+} = {}) {
+  if (typeof teamTimezoneOffsetHours !== 'number' || isNaN(teamTimezoneOffsetHours) || teamTimezoneOffsetHours < -12 || teamTimezoneOffsetHours > 14) {
+    return { valid: false, error: 'Team timezone offset must be between -12 and +14 hours' };
+  }
+  if (typeof localTimezoneOffsetHours !== 'number' || isNaN(localTimezoneOffsetHours) || localTimezoneOffsetHours < -12 || localTimezoneOffsetHours > 14) {
+    return { valid: false, error: 'Local timezone offset must be between -12 and +14 hours' };
+  }
+
+  const startHour = typeof workStartHourLocal === 'number' && workStartHourLocal >= 0 && workStartHourLocal < 24 ? workStartHourLocal : 9;
+  const endHour = typeof workEndHourLocal === 'number' && workEndHourLocal > startHour && workEndHourLocal <= 24 ? workEndHourLocal : 17;
+  const reqOverlap = typeof minOverlapHoursRequired === 'number' && minOverlapHoursRequired >= 0 ? minOverlapHoursRequired : 3;
+
+  const localWorkDuration = endHour - startHour;
+  const offsetDiff = localTimezoneOffsetHours - teamTimezoneOffsetHours;
+  
+  // Calculate overlap between local work hours converted to UTC and team work hours (09:00 - 17:00 team time converted to UTC)
+  // Local work hours in UTC: [startHour - localOffset, endHour - localOffset]
+  // Team work hours in UTC: [9 - teamOffset, 17 - teamOffset]
+  const localStartUtc = startHour - localTimezoneOffsetHours;
+  const localEndUtc = endHour - localTimezoneOffsetHours;
+  const teamStartUtc = 9 - teamTimezoneOffsetHours;
+  const teamEndUtc = 17 - teamTimezoneOffsetHours;
+
+  const overlapStart = Math.max(localStartUtc, teamStartUtc);
+  const overlapEnd = Math.min(localEndUtc, teamEndUtc);
+  const overlapHours = Math.max(0, Math.round((overlapEnd - overlapStart) * 10) / 10);
+  const meetsRequirement = overlapHours >= reqOverlap;
+
+  let recommendation = `Sufficient team overlap of ${overlapHours} hours/day between UTC${localTimezoneOffsetHours >= 0 ? '+' : ''}${localTimezoneOffsetHours} and UTC${teamTimezoneOffsetHours >= 0 ? '+' : ''}${teamTimezoneOffsetHours}.`;
+  if (!meetsRequirement) {
+    recommendation = `Only ${overlapHours} hours of overlap with HQ (UTC${teamTimezoneOffsetHours >= 0 ? '+' : ''}${teamTimezoneOffsetHours}). Consider adjusting local working hours to meet the ${reqOverlap}-hour requirement.`;
+  }
+
+  return {
+    valid: true,
+    teamTimezoneOffsetHours,
+    localTimezoneOffsetHours,
+    localWorkDurationHours: localWorkDuration,
+    overlapHours,
+    minOverlapHoursRequired: reqOverlap,
+    meetsRequirement,
+    recommendation
+  };
+}
+
+
 
 

@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity } from '../utils/travelUtils.js';
 
 
 
@@ -676,6 +676,39 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const res = calculateNomadRemoteWorkStipendRoi({ monthlyStipendUsd: 0 });
       expect(res.valid).toBe(false);
       expect(res.error).toBe('Monthly stipend must be a positive number');
+    });
+  });
+
+  describe('calculateNomadTimezoneOverlapAndConnectivity', () => {
+    it('calculates team overlap hours correctly for given timezones', () => {
+      const res = calculateNomadTimezoneOverlapAndConnectivity({
+        teamTimezoneOffsetHours: -5,
+        localTimezoneOffsetHours: 1,
+        workStartHourLocal: 9,
+        workEndHourLocal: 17,
+        minOverlapHoursRequired: 2
+      });
+      expect(res.valid).toBe(true);
+      expect(res.overlapHours).toBe(2);
+      expect(res.meetsRequirement).toBe(true);
+      expect(res.recommendation).toContain('Sufficient team overlap of 2 hours/day');
+    });
+
+    it('identifies when overlap hours fall below minimum requirement', () => {
+      const res = calculateNomadTimezoneOverlapAndConnectivity({
+        teamTimezoneOffsetHours: -8,
+        localTimezoneOffsetHours: 8,
+        minOverlapHoursRequired: 4
+      });
+      expect(res.valid).toBe(true);
+      expect(res.meetsRequirement).toBe(false);
+      expect(res.recommendation).toContain('Only 0 hours of overlap');
+    });
+
+    it('returns error for invalid timezone offset parameters', () => {
+      const res = calculateNomadTimezoneOverlapAndConnectivity({ teamTimezoneOffsetHours: 20 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Team timezone offset must be between -12 and +14 hours');
     });
   });
 });
