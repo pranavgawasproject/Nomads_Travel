@@ -730,11 +730,42 @@ export function calculateNomadLuggageWeightAndFee({
   };
 }
 
+export function calculateNomadCoworkingPassOptimization({
+  monthlyPassCostUsd = 250,
+  dayPassCostUsd = 25,
+  workingDaysPerMonth = 15,
+  requiresDedicatedDesk = false,
+  requires247Access = true
+} = {}) {
+  if (typeof monthlyPassCostUsd !== 'number' || monthlyPassCostUsd <= 0 || isNaN(monthlyPassCostUsd)) {
+    return { valid: false, error: 'Monthly pass cost must be a positive number' };
+  }
+  if (typeof dayPassCostUsd !== 'number' || dayPassCostUsd <= 0 || isNaN(dayPassCostUsd)) {
+    return { valid: false, error: 'Day pass cost must be a positive number' };
+  }
 
+  const days = typeof workingDaysPerMonth === 'number' && workingDaysPerMonth > 0 ? workingDaysPerMonth : 15;
+  const dedicatedMultiplier = requiresDedicatedDesk ? 1.35 : 1.0;
+  const adjustedMonthlyCost = Math.round(monthlyPassCostUsd * dedicatedMultiplier * 100) / 100;
+  const totalDayPassCost = Math.round(dayPassCostUsd * days * 100) / 100;
 
+  const costDifference = Math.round(Math.abs(adjustedMonthlyCost - totalDayPassCost) * 100) / 100;
+  const preferMonthly = adjustedMonthlyCost <= totalDayPassCost || requires247Access;
 
+  let recommendation = `Monthly pass saves $${costDifference.toFixed(2)} based on ${days} working days.`;
+  if (!preferMonthly) {
+    recommendation = `Day passes save $${costDifference.toFixed(2)} for ${days} working days compared to monthly membership.`;
+  } else if (requires247Access) {
+    recommendation = `Monthly pass recommended for 24/7 access requirement.`;
+  }
 
-
-
-
-
+  return {
+    valid: true,
+    workingDaysPerMonth: days,
+    adjustedMonthlyCost,
+    totalDayPassCost,
+    preferMonthly,
+    costDifference,
+    recommendation
+  };
+}

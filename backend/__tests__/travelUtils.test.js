@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization } from '../utils/travelUtils.js';
 
 
 
@@ -510,6 +510,40 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const res = calculateNomadLuggageWeightAndFee({ checkedBaggageKg: -5 });
       expect(res.valid).toBe(false);
       expect(res.error).toBe('Checked baggage weight must be a non-negative number');
+    });
+  });
+
+  describe('calculateNomadCoworkingPassOptimization', () => {
+    it('calculates monthly vs day pass optimization correctly', () => {
+      const res = calculateNomadCoworkingPassOptimization({
+        monthlyPassCostUsd: 250,
+        dayPassCostUsd: 25,
+        workingDaysPerMonth: 15
+      });
+      expect(res.valid).toBe(true);
+      expect(res.adjustedMonthlyCost).toBe(250);
+      expect(res.totalDayPassCost).toBe(375);
+      expect(res.preferMonthly).toBe(true);
+      expect(res.costDifference).toBe(125);
+    });
+
+    it('recommends day passes when working days are few', () => {
+      const res = calculateNomadCoworkingPassOptimization({
+        monthlyPassCostUsd: 300,
+        dayPassCostUsd: 25,
+        workingDaysPerMonth: 5,
+        requires247Access: false
+      });
+      expect(res.valid).toBe(true);
+      expect(res.totalDayPassCost).toBe(125);
+      expect(res.preferMonthly).toBe(false);
+      expect(res.recommendation).toContain('Day passes save $175.00');
+    });
+
+    it('returns error for invalid non-positive cost parameters', () => {
+      const res = calculateNomadCoworkingPassOptimization({ monthlyPassCostUsd: 0 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Monthly pass cost must be a positive number');
     });
   });
 });
