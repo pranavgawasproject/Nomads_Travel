@@ -896,4 +896,45 @@ export function calculateNomadTaxResidencyRiskScore({
   };
 }
 
+export function calculateNomadRemoteWorkStipendRoi({
+  monthlyStipendUsd = 500,
+  monthlyCoworkingExpenseUsd = 300,
+  monthlyEquipmentExpenseUsd = 100,
+  durationMonths = 12
+} = {}) {
+  if (typeof monthlyStipendUsd !== 'number' || monthlyStipendUsd <= 0 || isNaN(monthlyStipendUsd)) {
+    return { valid: false, error: 'Monthly stipend must be a positive number' };
+  }
+  if (typeof durationMonths !== 'number' || durationMonths <= 0 || isNaN(durationMonths)) {
+    return { valid: false, error: 'Duration months must be a positive number' };
+  }
+
+  const coworking = typeof monthlyCoworkingExpenseUsd === 'number' && monthlyCoworkingExpenseUsd >= 0 ? monthlyCoworkingExpenseUsd : 0;
+  const equipment = typeof monthlyEquipmentExpenseUsd === 'number' && monthlyEquipmentExpenseUsd >= 0 ? monthlyEquipmentExpenseUsd : 0;
+
+  const totalMonthlyExpenses = coworking + equipment;
+  const totalStipendProvided = Math.round(monthlyStipendUsd * durationMonths * 100) / 100;
+  const totalExpensesIncurred = Math.round(totalMonthlyExpenses * durationMonths * 100) / 100;
+  const netSurplusUsd = Math.round((totalStipendProvided - totalExpensesIncurred) * 100) / 100;
+  const coveragePercentage = totalExpensesIncurred > 0 ? Math.round((totalStipendProvided / totalExpensesIncurred) * 100) : 100;
+
+  const isFullyCovered = netSurplusUsd >= 0;
+
+  return {
+    valid: true,
+    monthlyStipendUsd,
+    totalMonthlyExpenses,
+    durationMonths,
+    totalStipendProvided,
+    totalExpensesIncurred,
+    netSurplusUsd,
+    coveragePercentage,
+    isFullyCovered,
+    recommendation: isFullyCovered
+      ? `Stipend fully covers expenses with a $${netSurplusUsd.toFixed(2)} surplus over ${durationMonths} months.`
+      : `Expenses exceed stipend by $${Math.abs(netSurplusUsd).toFixed(2)} over ${durationMonths} months.`
+  };
+}
+
+
 

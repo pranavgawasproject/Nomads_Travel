@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi } from '../utils/travelUtils.js';
 
 
 
@@ -638,6 +638,44 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const res = calculateNomadTaxResidencyRiskScore({ daysInCountry: -10 });
       expect(res.valid).toBe(false);
       expect(res.error).toBe('Days in country must be a non-negative number');
+    });
+  });
+
+  describe('calculateNomadRemoteWorkStipendRoi', () => {
+    it('calculates stipend coverage and net surplus accurately', () => {
+      const res = calculateNomadRemoteWorkStipendRoi({
+        monthlyStipendUsd: 500,
+        monthlyCoworkingExpenseUsd: 300,
+        monthlyEquipmentExpenseUsd: 100,
+        durationMonths: 12
+      });
+      expect(res.valid).toBe(true);
+      expect(res.totalStipendProvided).toBe(6000);
+      expect(res.totalExpensesIncurred).toBe(4800);
+      expect(res.netSurplusUsd).toBe(1200);
+      expect(res.coveragePercentage).toBe(125);
+      expect(res.isFullyCovered).toBe(true);
+      expect(res.recommendation).toContain('Stipend fully covers expenses with a $1200.00 surplus');
+    });
+
+    it('identifies shortfall when expenses exceed stipend', () => {
+      const res = calculateNomadRemoteWorkStipendRoi({
+        monthlyStipendUsd: 300,
+        monthlyCoworkingExpenseUsd: 350,
+        monthlyEquipmentExpenseUsd: 100,
+        durationMonths: 6
+      });
+      expect(res.valid).toBe(true);
+      expect(res.isFullyCovered).toBe(false);
+      expect(res.netSurplusUsd).toBe(-900);
+      expect(res.coveragePercentage).toBe(67);
+      expect(res.recommendation).toContain('Expenses exceed stipend by $900.00');
+    });
+
+    it('returns error for invalid non-positive stipend or duration inputs', () => {
+      const res = calculateNomadRemoteWorkStipendRoi({ monthlyStipendUsd: 0 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Monthly stipend must be a positive number');
     });
   });
 });
