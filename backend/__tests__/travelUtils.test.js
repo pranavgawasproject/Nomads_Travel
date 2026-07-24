@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore } from '../utils/travelUtils.js';
 
 
 
@@ -601,6 +601,43 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const res = calculateNomadInternetBackupRedundancyScore({ primarySpeedMbps: -20 });
       expect(res.valid).toBe(false);
       expect(res.error).toBe('Primary internet speed must be a non-negative number');
+    });
+  });
+
+  describe('calculateNomadTaxResidencyRiskScore', () => {
+    it('calculates tax residency risk score and remaining days correctly', () => {
+      const res = calculateNomadTaxResidencyRiskScore({
+        daysInCountry: 140,
+        taxResidencyThresholdDays: 183,
+        hasPermanentHome: true,
+        hasLocalBankOrBusiness: false
+      });
+      expect(res.valid).toBe(true);
+      expect(res.daysInCountry).toBe(140);
+      expect(res.taxResidencyThresholdDays).toBe(183);
+      expect(res.remainingDaysBeforeThreshold).toBe(43);
+      expect(res.totalRiskScore).toBe(65);
+      expect(res.riskTier).toBe('MODERATE');
+      expect(res.isResidencyTriggered).toBe(false);
+    });
+
+    it('triggers HIGH risk tier when residency threshold is exceeded', () => {
+      const res = calculateNomadTaxResidencyRiskScore({
+        daysInCountry: 190,
+        taxResidencyThresholdDays: 183,
+        hasPermanentHome: true,
+        hasLocalBankOrBusiness: true
+      });
+      expect(res.valid).toBe(true);
+      expect(res.isResidencyTriggered).toBe(true);
+      expect(res.riskTier).toBe('HIGH');
+      expect(res.totalRiskScore).toBe(100);
+    });
+
+    it('returns error for invalid negative days input', () => {
+      const res = calculateNomadTaxResidencyRiskScore({ daysInCountry: -10 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Days in country must be a non-negative number');
     });
   });
 });

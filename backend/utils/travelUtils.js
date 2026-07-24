@@ -855,4 +855,45 @@ export function calculateNomadInternetBackupRedundancyScore({
   };
 }
 
+export function calculateNomadTaxResidencyRiskScore({
+  daysInCountry = 120,
+  taxResidencyThresholdDays = 183,
+  hasPermanentHome = false,
+  hasLocalBankOrBusiness = false
+} = {}) {
+  if (typeof daysInCountry !== 'number' || daysInCountry < 0 || isNaN(daysInCountry)) {
+    return { valid: false, error: 'Days in country must be a non-negative number' };
+  }
+  const days = Math.floor(daysInCountry);
+  const threshold = typeof taxResidencyThresholdDays === 'number' && taxResidencyThresholdDays > 0 ? taxResidencyThresholdDays : 183;
+  const remainingDays = Math.max(0, threshold - days);
+  
+  let riskPoints = 0;
+  const dayRatio = days / threshold;
+  if (dayRatio >= 1.0) riskPoints += 60;
+  else if (dayRatio >= 0.75) riskPoints += 45;
+  else if (dayRatio >= 0.50) riskPoints += 30;
+  else riskPoints += 15;
+
+  if (hasPermanentHome) riskPoints += 20;
+  if (hasLocalBankOrBusiness) riskPoints += 20;
+
+  const totalRiskScore = Math.min(100, riskPoints);
+  const riskTier = totalRiskScore >= 75 ? 'HIGH' : totalRiskScore >= 45 ? 'MODERATE' : 'LOW';
+  const isResidencyTriggered = days >= threshold;
+
+  return {
+    valid: true,
+    daysInCountry: days,
+    taxResidencyThresholdDays: threshold,
+    remainingDaysBeforeThreshold: remainingDays,
+    totalRiskScore,
+    riskTier,
+    isResidencyTriggered,
+    recommendation: isResidencyTriggered
+      ? `Tax residency threshold (${threshold} days) reached or exceeded. Consult an international tax professional.`
+      : `Safe: ${remainingDays} days remaining before triggering the ${threshold}-day tax residency threshold.`
+  };
+}
+
 
