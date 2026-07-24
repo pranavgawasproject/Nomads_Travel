@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity } from '../utils/travelUtils.js';
+
 
 
 
@@ -546,7 +547,29 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Monthly pass cost must be a positive number');
     });
   });
+
+  describe('calculateNomadSalaryParity', () => {
+    it('calculates salary parity and purchasing power gain correctly', () => {
+      const res = calculateNomadSalaryParity({
+        homeAnnualSalaryUsd: 100000,
+        homeCostIndex: 100,
+        targetCostIndex: 60,
+        hasLocalTaxExemption: true
+      });
+      expect(res.valid).toBe(true);
+      expect(res.paritySalaryUsd).toBe(60000);
+      expect(res.purchasingPowerGainPercent).toBe(91.7);
+      expect(res.recommendation).toContain('yields a 91.7% gain');
+    });
+
+    it('returns error for invalid salary parameters', () => {
+      const res = calculateNomadSalaryParity({ homeAnnualSalaryUsd: -1000 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Home annual salary must be a positive number');
+    });
+  });
 });
+
 
 
 

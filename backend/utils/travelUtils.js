@@ -769,3 +769,41 @@ export function calculateNomadCoworkingPassOptimization({
     recommendation
   };
 }
+
+export function calculateNomadSalaryParity({
+  homeAnnualSalaryUsd = 100000,
+  homeCostIndex = 100,
+  targetCostIndex = 65,
+  hasLocalTaxExemption = false
+} = {}) {
+  if (typeof homeAnnualSalaryUsd !== 'number' || homeAnnualSalaryUsd <= 0 || isNaN(homeAnnualSalaryUsd)) {
+    return { valid: false, error: 'Home annual salary must be a positive number' };
+  }
+  if (typeof homeCostIndex !== 'number' || homeCostIndex <= 0 || isNaN(homeCostIndex)) {
+    return { valid: false, error: 'Home cost index must be a positive number' };
+  }
+  if (typeof targetCostIndex !== 'number' || targetCostIndex <= 0 || isNaN(targetCostIndex)) {
+    return { valid: false, error: 'Target cost index must be a positive number' };
+  }
+
+  const costRatio = targetCostIndex / homeCostIndex;
+  const paritySalaryUsd = Math.round(homeAnnualSalaryUsd * costRatio * 100) / 100;
+  const taxMultiplier = hasLocalTaxExemption ? 1.15 : 1.0;
+  const effectiveDisposableSalaryUsd = Math.round(homeAnnualSalaryUsd * (1 / costRatio) * taxMultiplier * 100) / 100;
+  const purchasingPowerGainPercent = Math.round(((1 / costRatio) * taxMultiplier - 1) * 100 * 10) / 10;
+
+  let recommendation = `Moving to target destination yields a ${purchasingPowerGainPercent}% gain in real purchasing power.`;
+  if (purchasingPowerGainPercent < 0) {
+    recommendation = `Target location has higher living cost; requires salary of $${paritySalaryUsd.toLocaleString()} USD for parity.`;
+  }
+
+  return {
+    valid: true,
+    homeAnnualSalaryUsd,
+    paritySalaryUsd,
+    effectiveDisposableSalaryUsd,
+    purchasingPowerGainPercent,
+    recommendation
+  };
+}
+
