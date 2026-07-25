@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore } from '../utils/travelUtils.js';
 
 
 
@@ -890,7 +890,39 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.recommendation).toContain('poor');
     });
   });
+
+  describe('calculateNomadCoworkingCommunityDensityScore', () => {
+    it('calculates high density score correctly for dense coworking hub', () => {
+      const res = calculateNomadCoworkingCommunityDensityScore({
+        coworkingCount: 25,
+        totalNomadPopulation: 500,
+        cityAreaSqKm: 50
+      });
+      expect(res.valid).toBe(true);
+      expect(res.coworkingPer100Nomads).toBe(5);
+      expect(res.densityTier).toBe('HIGH_DENSITY');
+      expect(res.recommendation).toContain('Thriving digital nomad hub');
+    });
+
+    it('identifies emerging destination with low density', () => {
+      const res = calculateNomadCoworkingCommunityDensityScore({
+        coworkingCount: 2,
+        totalNomadPopulation: 1000,
+        cityAreaSqKm: 200
+      });
+      expect(res.valid).toBe(true);
+      expect(res.densityTier).toBe('LOW_DENSITY');
+      expect(res.recommendation).toContain('Emerging destination');
+    });
+
+    it('returns error for invalid negative counts or zero population', () => {
+      const res = calculateNomadCoworkingCommunityDensityScore({ coworkingCount: -1 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Coworking space count must be a non-negative number');
+    });
+  });
 });
+
 
 
 

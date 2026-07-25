@@ -1255,6 +1255,48 @@ export function calculateNomadWorkspaceErgonomicsIndex({
   };
 }
 
+export function calculateNomadCoworkingCommunityDensityScore({
+  coworkingCount = 10,
+  totalNomadPopulation = 500,
+  cityAreaSqKm = 100
+} = {}) {
+  if (typeof coworkingCount !== 'number' || coworkingCount < 0 || isNaN(coworkingCount)) {
+    return { valid: false, error: 'Coworking space count must be a non-negative number' };
+  }
+  if (typeof totalNomadPopulation !== 'number' || totalNomadPopulation <= 0 || isNaN(totalNomadPopulation)) {
+    return { valid: false, error: 'Total nomad population must be a positive number' };
+  }
+  if (typeof cityAreaSqKm !== 'number' || cityAreaSqKm <= 0 || isNaN(cityAreaSqKm)) {
+    return { valid: false, error: 'City area sq km must be a positive number' };
+  }
+
+  const coworkingPer100Nomads = Math.round((coworkingCount / totalNomadPopulation) * 100 * 100) / 100;
+  const coworkingPer10SqKm = Math.round((coworkingCount / cityAreaSqKm) * 10 * 100) / 100;
+
+  let densityScore = Math.min(100, Math.round((coworkingPer100Nomads * 35) + (coworkingPer10SqKm * 15)));
+  densityScore = Math.max(0, densityScore);
+
+  let densityTier = 'MODERATE_DENSITY';
+  if (densityScore >= 75) densityTier = 'HIGH_DENSITY';
+  else if (densityScore < 40) densityTier = 'LOW_DENSITY';
+
+  return {
+    valid: true,
+    coworkingCount,
+    totalNomadPopulation,
+    cityAreaSqKm,
+    coworkingPer100Nomads,
+    coworkingPer10SqKm,
+    densityScore,
+    densityTier,
+    recommendation: densityTier === 'HIGH_DENSITY'
+      ? `Thriving digital nomad hub with high coworking density (${coworkingPer100Nomads} per 100 nomads).`
+      : densityTier === 'MODERATE_DENSITY'
+      ? `Balanced coworking coverage (${coworkingPer100Nomads} per 100 nomads).`
+      : `Emerging destination with limited coworking infrastructure (${coworkingPer100Nomads} per 100 nomads).`
+  };
+}
+
 
 
 
