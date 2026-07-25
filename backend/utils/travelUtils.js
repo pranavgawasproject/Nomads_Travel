@@ -1165,6 +1165,51 @@ export function calculateNomadCoworkingPassVsWorkspaceCost({
   };
 }
 
+export function calculateNomadTravelInsuranceCoverageScore({
+  monthlyPremiumUsd = 45,
+  medicalCoverageCapUsd = 100000,
+  emergencyEvacuationCapUsd = 250000,
+  includesAdventureSports = true,
+  destinationRiskTier = 'LOW'
+} = {}) {
+  const premium = typeof monthlyPremiumUsd === 'number' && monthlyPremiumUsd > 0 ? monthlyPremiumUsd : 45;
+  const medical = typeof medicalCoverageCapUsd === 'number' && medicalCoverageCapUsd > 0 ? medicalCoverageCapUsd : 100000;
+  const evacuation = typeof emergencyEvacuationCapUsd === 'number' && emergencyEvacuationCapUsd > 0 ? emergencyEvacuationCapUsd : 250000;
+  const sports = Boolean(includesAdventureSports);
+  const tier = (destinationRiskTier || 'LOW').toUpperCase();
+
+  let coverageScore = 50;
+  if (medical >= 250000) coverageScore += 20;
+  else if (medical >= 100000) coverageScore += 10;
+
+  if (evacuation >= 500000) coverageScore += 20;
+  else if (evacuation >= 250000) coverageScore += 10;
+
+  if (sports) coverageScore += 10;
+
+  let riskMultiplier = 1.0;
+  if (tier === 'HIGH' || tier === 'CRITICAL') riskMultiplier = 1.5;
+  else if (tier === 'MEDIUM') riskMultiplier = 1.2;
+
+  const finalScore = Math.min(100, Math.round(coverageScore / riskMultiplier));
+  const isAdequate = finalScore >= 65;
+
+  return {
+    valid: true,
+    monthlyPremiumUsd: premium,
+    medicalCoverageCapUsd: medical,
+    emergencyEvacuationCapUsd: evacuation,
+    includesAdventureSports: sports,
+    destinationRiskTier: tier,
+    coverageScore: finalScore,
+    isAdequate,
+    recommendation: isAdequate
+      ? `Insurance policy provides robust coverage (${finalScore}/100) for digital nomads in ${tier} risk destinations.`
+      : `Coverage score (${finalScore}/100) is sub-optimal for ${tier} risk destination. Upgrade medical or evacuation limits.`
+  };
+}
+
+
 
 
 
