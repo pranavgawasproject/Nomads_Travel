@@ -1209,6 +1209,53 @@ export function calculateNomadTravelInsuranceCoverageScore({
   };
 }
 
+export function calculateNomadWorkspaceErgonomicsIndex({
+  dualMonitorAvailable = false,
+  standingDeskAvailable = false,
+  chairErgonomicRating = 3,
+  naturalLightRating = 3,
+  noiseDecibels = 45
+} = {}) {
+  const chair = typeof chairErgonomicRating === 'number' ? Math.max(1, Math.min(5, chairErgonomicRating)) : 3;
+  const light = typeof naturalLightRating === 'number' ? Math.max(1, Math.min(5, naturalLightRating)) : 3;
+  const noise = typeof noiseDecibels === 'number' && noiseDecibels >= 0 ? noiseDecibels : 45;
+
+  let score = 30;
+  if (chair >= 4) score += 25;
+  else if (chair === 3) score += 15;
+
+  if (light >= 4) score += 15;
+  else if (light === 3) score += 10;
+
+  if (dualMonitorAvailable) score += 15;
+  if (standingDeskAvailable) score += 15;
+
+  if (noise <= 40) score += 15;
+  else if (noise <= 55) score += 10;
+  else if (noise > 70) score -= 15;
+
+  const finalScore = Math.max(0, Math.min(100, score));
+  let tier = 'MODERATE';
+  if (finalScore >= 80) tier = 'EXCELLENT';
+  else if (finalScore < 50) tier = 'POOR';
+
+  return {
+    valid: true,
+    ergonomicsScore: finalScore,
+    tier,
+    chairErgonomicRating: chair,
+    naturalLightRating: light,
+    noiseDecibels: noise,
+    dualMonitorAvailable: Boolean(dualMonitorAvailable),
+    standingDeskAvailable: Boolean(standingDeskAvailable),
+    recommendation: tier === 'EXCELLENT'
+      ? `Workspace is highly ergonomic (${finalScore}/100) and well-suited for long-term productivity.`
+      : tier === 'MODERATE'
+      ? `Workspace has adequate ergonomics (${finalScore}/100). Consider improving seating or lighting for full-day work.`
+      : `Workspace ergonomics are poor (${finalScore}/100). Upgrade chair, desk configuration, or reduce ambient noise.`
+  };
+}
+
 
 
 
