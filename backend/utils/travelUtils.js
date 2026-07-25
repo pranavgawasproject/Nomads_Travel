@@ -1036,6 +1036,58 @@ export function calculateNomadCoworkingConnectivityScore({
   };
 }
 
+export function calculateNomadDestinationSafetyAndHealthcareScore({
+  safetyScore = 3.5,
+  healthcareQualityRating = 4.0,
+  hospitalAccessMinutes = 25,
+  emergencyServicesAvailable = true,
+  speaksEnglishStaff = true
+} = {}) {
+  if (
+    typeof safetyScore !== 'number' || isNaN(safetyScore) || safetyScore < 1 || safetyScore > 5 ||
+    typeof healthcareQualityRating !== 'number' || isNaN(healthcareQualityRating) || healthcareQualityRating < 1 || healthcareQualityRating > 5
+  ) {
+    return { valid: false, error: 'Safety and healthcare ratings must be numbers between 1 and 5' };
+  }
+
+  if (typeof hospitalAccessMinutes !== 'number' || hospitalAccessMinutes < 0 || isNaN(hospitalAccessMinutes)) {
+    return { valid: false, error: 'Hospital access minutes must be a non-negative number' };
+  }
+
+  let score = (safetyScore / 5) * 40 + (healthcareQualityRating / 5) * 35;
+  if (emergencyServicesAvailable) score += 15;
+  if (speaksEnglishStaff) score += 10;
+
+  if (hospitalAccessMinutes > 45) score -= 10;
+  else if (hospitalAccessMinutes <= 15) score += 5;
+
+  const finalScore = Math.min(100, Math.max(0, Math.round(score)));
+
+  let safetyTier = 'HIGH_SAFETY';
+  if (finalScore < 60) safetyTier = 'HIGH_RISK_EVALUATION_NEEDED';
+  else if (finalScore < 80) safetyTier = 'MODERATE_SAFETY';
+
+  let recommendation = 'Destination meets top safety & emergency care standards for digital nomads.';
+  if (safetyTier === 'HIGH_RISK_EVALUATION_NEEDED') {
+    recommendation = 'Ensure full medical evacuation insurance and local emergency contacts before traveling.';
+  } else if (safetyTier === 'MODERATE_SAFETY') {
+    recommendation = 'Good baseline safety; register with local embassy and keep emergency contacts handy.';
+  }
+
+  return {
+    valid: true,
+    safetyScore,
+    healthcareQualityRating,
+    hospitalAccessMinutes,
+    emergencyServicesAvailable: Boolean(emergencyServicesAvailable),
+    speaksEnglishStaff: Boolean(speaksEnglishStaff),
+    compositeSafetyScore: finalScore,
+    safetyTier,
+    recommendation
+  };
+}
+
+
 
 
 
