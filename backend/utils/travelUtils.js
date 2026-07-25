@@ -1297,6 +1297,52 @@ export function calculateNomadCoworkingCommunityDensityScore({
   };
 }
 
+export function calculateNomadColivingBudgetOptimization({
+  baseMonthlyColivingCost = 1200,
+  durationDays = 30,
+  includeCoworkingPass = true,
+  communityRating = 4.5,
+  highSpeedWifiMbps = 150
+} = {}) {
+  if (typeof baseMonthlyColivingCost !== 'number' || baseMonthlyColivingCost <= 0 || isNaN(baseMonthlyColivingCost)) {
+    return { valid: false, error: 'Base monthly coliving cost must be a positive number' };
+  }
+  if (typeof durationDays !== 'number' || durationDays <= 0 || isNaN(durationDays)) {
+    return { valid: false, error: 'Duration days must be a positive number' };
+  }
+
+  const dailyRate = baseMonthlyColivingCost / 30;
+  const coworkingPerkValue = includeCoworkingPass ? 150 : 0;
+  const wifiBonus = highSpeedWifiMbps >= 100 ? 1.1 : highSpeedWifiMbps >= 50 ? 1.0 : 0.9;
+  
+  const grossCost = dailyRate * durationDays;
+  const netEffectiveMonthlyCost = Math.max(0, baseMonthlyColivingCost - coworkingPerkValue);
+  const dailyEffectiveCost = Math.round((grossCost / durationDays) * 100) / 100;
+  
+  const communityValueScore = Math.min(100, Math.round((communityRating / 5.0) * 80 + (wifiBonus * 20)));
+
+  let optimizationTier = 'BALANCED_COLIVING';
+  if (dailyEffectiveCost <= 35 && communityValueScore >= 80) optimizationTier = 'PRIME_VALUE_COLIVING';
+  else if (dailyEffectiveCost > 70) optimizationTier = 'PREMIUM_COLIVING';
+
+  return {
+    valid: true,
+    baseMonthlyColivingCost,
+    durationDays,
+    dailyEffectiveCost,
+    netEffectiveMonthlyCost,
+    totalGrossCost: Math.round(grossCost * 100) / 100,
+    communityValueScore,
+    optimizationTier,
+    recommendation: optimizationTier === 'PRIME_VALUE_COLIVING'
+      ? `High-value coliving setup ($${dailyEffectiveCost}/day) with top community score (${communityValueScore}/100).`
+      : optimizationTier === 'PREMIUM_COLIVING'
+      ? `Premium coliving option ($${dailyEffectiveCost}/day). Consider shared passes or longer stay for discounts.`
+      : `Standard coliving choice ($${dailyEffectiveCost}/day) offering balanced workspace amenities.`
+  };
+}
+
+
 
 
 
