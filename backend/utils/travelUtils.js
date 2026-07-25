@@ -955,7 +955,6 @@ export function calculateNomadTimezoneOverlapAndConnectivity({
   const reqOverlap = typeof minOverlapHoursRequired === 'number' && minOverlapHoursRequired >= 0 ? minOverlapHoursRequired : 3;
 
   const localWorkDuration = endHour - startHour;
-  const offsetDiff = localTimezoneOffsetHours - teamTimezoneOffsetHours;
   
   // Calculate overlap between local work hours converted to UTC and team work hours (09:00 - 17:00 team time converted to UTC)
   // Local work hours in UTC: [startHour - localOffset, endHour - localOffset]
