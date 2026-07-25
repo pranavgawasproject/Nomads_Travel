@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost } from '../utils/travelUtils.js';
+
 
 
 
@@ -796,7 +797,43 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(invalid.valid).toBe(false);
     });
   });
+
+  describe('calculateNomadCoworkingPassVsWorkspaceCost', () => {
+    it('calculates hot desk vs private office cost breakdown correctly', () => {
+      const desk = calculateNomadCoworkingPassVsWorkspaceCost({
+        monthlyDeskPriceUsd: 200,
+        privateOfficePriceUsd: 500,
+        stayMonths: 4,
+        needsPrivateOffice: false
+      });
+      expect(desk.valid).toBe(true);
+      expect(desk.totalDeskCost).toBe(800);
+      expect(desk.totalOfficeCost).toBe(2000);
+      expect(desk.chosenCost).toBe(800);
+      expect(desk.priceDifference).toBe(1200);
+      expect(desk.recommendation).toContain('Hot desk chosen ($800.00 total over 4 months)');
+    });
+
+    it('calculates chosen cost when private office is selected', () => {
+      const office = calculateNomadCoworkingPassVsWorkspaceCost({
+        monthlyDeskPriceUsd: 250,
+        privateOfficePriceUsd: 600,
+        stayMonths: 2,
+        needsPrivateOffice: true
+      });
+      expect(office.valid).toBe(true);
+      expect(office.chosenCost).toBe(1200);
+      expect(office.recommendation).toContain('Private office chosen ($1200.00 total over 2 months)');
+    });
+
+    it('returns error for non-positive desk price or stay duration', () => {
+      const invalid = calculateNomadCoworkingPassVsWorkspaceCost({ monthlyDeskPriceUsd: 0 });
+      expect(invalid.valid).toBe(false);
+      expect(invalid.error).toBe('Monthly desk price must be a positive number');
+    });
+  });
 });
+
 
 
 

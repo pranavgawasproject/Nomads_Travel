@@ -1129,6 +1129,43 @@ export function calculateNomadCommunityEventEngagementIndex({
   };
 }
 
+export function calculateNomadCoworkingPassVsWorkspaceCost({
+  monthlyDeskPriceUsd = 200,
+  privateOfficePriceUsd = 450,
+  stayMonths = 3,
+  needsPrivateOffice = false
+} = {}) {
+  if (typeof monthlyDeskPriceUsd !== 'number' || monthlyDeskPriceUsd <= 0 || isNaN(monthlyDeskPriceUsd)) {
+    return { valid: false, error: 'Monthly desk price must be a positive number' };
+  }
+  if (typeof stayMonths !== 'number' || stayMonths <= 0 || isNaN(stayMonths)) {
+    return { valid: false, error: 'Stay months must be a positive number' };
+  }
+
+  const officePrice = typeof privateOfficePriceUsd === 'number' && privateOfficePriceUsd > 0 ? privateOfficePriceUsd : monthlyDeskPriceUsd * 2;
+  const totalDeskCost = Math.round(monthlyDeskPriceUsd * stayMonths * 100) / 100;
+  const totalOfficeCost = Math.round(officePrice * stayMonths * 100) / 100;
+
+  const chosenCost = needsPrivateOffice ? totalOfficeCost : totalDeskCost;
+  const priceDifference = Math.abs(totalOfficeCost - totalDeskCost);
+
+  return {
+    valid: true,
+    monthlyDeskPriceUsd,
+    privateOfficePriceUsd: officePrice,
+    stayMonths,
+    needsPrivateOffice,
+    totalDeskCost,
+    totalOfficeCost,
+    chosenCost,
+    priceDifference,
+    recommendation: needsPrivateOffice
+      ? `Private office chosen ($${totalOfficeCost.toFixed(2)} total over ${stayMonths} months). Premium focus & meeting privacy.`
+      : `Hot desk chosen ($${totalDeskCost.toFixed(2)} total over ${stayMonths} months). Saves $${priceDifference.toFixed(2)} compared to private office.`
+  };
+}
+
+
 
 
 
