@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex } from '../utils/travelUtils.js';
 
 
 
@@ -766,7 +766,38 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Safety and healthcare ratings must be numbers between 1 and 5');
     });
   });
+
+  describe('calculateNomadCommunityEventEngagementIndex', () => {
+    it('calculates vibrant community score correctly', () => {
+      const vibrant = calculateNomadCommunityEventEngagementIndex({
+        upcomingEventsCount: 8,
+        activeMeetupGroups: 4,
+        monthlyActiveNomads: 200,
+        meetupHostRating: 4.8
+      });
+      expect(vibrant.valid).toBe(true);
+      expect(vibrant.engagementScore).toBeGreaterThanOrEqual(80);
+      expect(vibrant.communityTier).toBe('VIBRANT_COMMUNITY');
+    });
+
+    it('identifies quiet spot when event density is minimal', () => {
+      const quiet = calculateNomadCommunityEventEngagementIndex({
+        upcomingEventsCount: 1,
+        activeMeetupGroups: 0,
+        monthlyActiveNomads: 15,
+        meetupHostRating: 3.5
+      });
+      expect(quiet.valid).toBe(true);
+      expect(quiet.communityTier).toBe('QUIET_SPOT');
+    });
+
+    it('returns error for invalid negative counts', () => {
+      const invalid = calculateNomadCommunityEventEngagementIndex({ upcomingEventsCount: -5 });
+      expect(invalid.valid).toBe(false);
+    });
+  });
 });
+
 
 
 

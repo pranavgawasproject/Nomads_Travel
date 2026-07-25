@@ -1087,6 +1087,49 @@ export function calculateNomadDestinationSafetyAndHealthcareScore({
   };
 }
 
+export function calculateNomadCommunityEventEngagementIndex({
+  upcomingEventsCount = 5,
+  activeMeetupGroups = 3,
+  monthlyActiveNomads = 120,
+  meetupHostRating = 4.5
+} = {}) {
+  if (typeof upcomingEventsCount !== 'number' || upcomingEventsCount < 0 || isNaN(upcomingEventsCount)) {
+    return { valid: false, error: 'Upcoming events count must be a non-negative number' };
+  }
+  if (typeof monthlyActiveNomads !== 'number' || monthlyActiveNomads < 0 || isNaN(monthlyActiveNomads)) {
+    return { valid: false, error: 'Monthly active nomads must be a non-negative number' };
+  }
+
+  const groups = typeof activeMeetupGroups === 'number' && activeMeetupGroups >= 0 ? activeMeetupGroups : 0;
+  const rating = typeof meetupHostRating === 'number' ? Math.min(5, Math.max(1, meetupHostRating)) : 4.0;
+
+  let score = (upcomingEventsCount * 6) + (groups * 10) + Math.min(40, (monthlyActiveNomads / 5)) + (rating * 4);
+  score = Math.min(100, Math.max(0, Math.round(score)));
+
+  let communityTier = 'VIBRANT_COMMUNITY';
+  if (score < 45) communityTier = 'QUIET_SPOT';
+  else if (score < 75) communityTier = 'EMERGING_HUB';
+
+  let recommendation = 'Vibrant nomad community with frequent meetups, workshops, and networking.';
+  if (communityTier === 'QUIET_SPOT') {
+    recommendation = 'Quiet destination: Limited formal nomad meetups. Great for focused deep work.';
+  } else if (communityTier === 'EMERGING_HUB') {
+    recommendation = 'Emerging nomad community: Moderate event density and social group activity.';
+  }
+
+  return {
+    valid: true,
+    upcomingEventsCount,
+    activeMeetupGroups: groups,
+    monthlyActiveNomads,
+    meetupHostRating: rating,
+    engagementScore: score,
+    communityTier,
+    recommendation
+  };
+}
+
+
 
 
 
