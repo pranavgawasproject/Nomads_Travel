@@ -1342,6 +1342,49 @@ export function calculateNomadColivingBudgetOptimization({
   };
 }
 
+export function calculateNomadColivingWorkstationHealthScore({
+  wifiSpeedMbps = 150,
+  chairErgonomicsRating = 4,
+  quietEnvironment = true,
+  backupPowerAvailable = true,
+  monitorAvailable = false
+} = {}) {
+  const wifi = Math.max(0, typeof wifiSpeedMbps === 'number' ? wifiSpeedMbps : 0);
+  const chair = typeof chairErgonomicsRating === 'number' ? Math.max(1, Math.min(5, chairErgonomicsRating)) : 3;
+
+  let score = (chair / 5) * 40;
+  if (wifi >= 200) score += 30;
+  else if (wifi >= 100) score += 25;
+  else if (wifi >= 50) score += 15;
+
+  if (quietEnvironment) score += 15;
+  if (backupPowerAvailable) score += 10;
+  if (monitorAvailable) score += 5;
+
+  const finalScore = Math.min(100, Math.round(score));
+  const isWorkstationHealthy = finalScore >= 75;
+
+  let healthTier = 'EXCELLENT_WORKSTATION';
+  if (finalScore < 50) healthTier = 'SUB_OPTIMAL_WORKSTATION';
+  else if (finalScore < 75) healthTier = 'GOOD_WORKSTATION';
+
+  return {
+    valid: true,
+    wifiSpeedMbps: wifi,
+    chairErgonomicsRating: chair,
+    quietEnvironment: Boolean(quietEnvironment),
+    backupPowerAvailable: Boolean(backupPowerAvailable),
+    monitorAvailable: Boolean(monitorAvailable),
+    workstationHealthScore: finalScore,
+    isWorkstationHealthy,
+    healthTier,
+    recommendation: isWorkstationHealthy
+      ? `Workstation health score (${finalScore}/100) meets top remote work productivity standards.`
+      : 'Upgrade chair ergonomics or secure backup Wi-Fi/power for optimal remote work.'
+  };
+}
+
+
 
 
 

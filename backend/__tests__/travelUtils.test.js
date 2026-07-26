@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore } from '../utils/travelUtils.js';
+
 
 
 
@@ -943,7 +944,36 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Base monthly coliving cost must be a positive number');
     });
   });
+
+  describe('calculateNomadColivingWorkstationHealthScore', () => {
+    it('calculates excellent workstation health score for high-speed Wi-Fi and ergonomic setup', () => {
+      const res = calculateNomadColivingWorkstationHealthScore({
+        wifiSpeedMbps: 200,
+        chairErgonomicsRating: 5,
+        quietEnvironment: true,
+        backupPowerAvailable: true,
+        monitorAvailable: true
+      });
+      expect(res.valid).toBe(true);
+      expect(res.workstationHealthScore).toBe(100);
+      expect(res.isWorkstationHealthy).toBe(true);
+      expect(res.healthTier).toBe('EXCELLENT_WORKSTATION');
+    });
+
+    it('identifies sub-optimal workstation for low Wi-Fi and poor chair', () => {
+      const res = calculateNomadColivingWorkstationHealthScore({
+        wifiSpeedMbps: 20,
+        chairErgonomicsRating: 1,
+        quietEnvironment: false,
+        backupPowerAvailable: false
+      });
+      expect(res.valid).toBe(true);
+      expect(res.isWorkstationHealthy).toBe(false);
+      expect(res.healthTier).toBe('SUB_OPTIMAL_WORKSTATION');
+    });
+  });
 });
+
 
 
 
