@@ -1384,6 +1384,49 @@ export function calculateNomadColivingWorkstationHealthScore({
   };
 }
 
+export function calculateNomadRemoteWorkstationPowerBackupScore({
+  gridReliabilityRating = 4,
+  outageFrequencyMonthly = 2,
+  hasGeneratorOrUps = true,
+  laptopBatteryHours = 6,
+  powerStationCapacityWattHours = 250
+} = {}) {
+  const rating = typeof gridReliabilityRating === 'number' ? Math.min(5, Math.max(1, gridReliabilityRating)) : 3;
+  const outages = Math.max(0, typeof outageFrequencyMonthly === 'number' ? outageFrequencyMonthly : 0);
+  const batteryHours = Math.max(1, typeof laptopBatteryHours === 'number' ? laptopBatteryHours : 4);
+  const powerStationWh = Math.max(0, typeof powerStationCapacityWattHours === 'number' ? powerStationCapacityWattHours : 0);
+
+  let gridScore = rating * 12;
+  let outagePenalty = Math.min(30, outages * 5);
+  let backupBonus = hasGeneratorOrUps ? 25 : 0;
+  let powerStationBonus = Math.min(15, Math.round(powerStationWh / 50) * 3);
+
+  const powerScore = Math.min(100, Math.max(0, Math.round(gridScore - outagePenalty + backupBonus + powerStationBonus)));
+  const totalBackupHoursAvailable = Math.round((batteryHours + (powerStationWh / 45)) * 10) / 10;
+
+  let riskTier = 'EXCELLENT_POWER_STABILITY';
+  if (powerScore < 45) riskTier = 'HIGH_OUTAGE_RISK';
+  else if (powerScore < 70) riskTier = 'MODERATE_OUTAGE_RISK';
+
+  return {
+    valid: true,
+    gridReliabilityRating: rating,
+    outageFrequencyMonthly: outages,
+    hasGeneratorOrUps: Boolean(hasGeneratorOrUps),
+    laptopBatteryHours: batteryHours,
+    powerStationCapacityWattHours: powerStationWh,
+    totalBackupHoursAvailable,
+    powerScore,
+    riskTier,
+    recommendation: riskTier === 'EXCELLENT_POWER_STABILITY'
+      ? `Workstation has high power resilience (${powerScore}/100) with ~${totalBackupHoursAvailable}h uptime capacity.`
+      : riskTier === 'MODERATE_OUTAGE_RISK'
+      ? `Moderate outage risk (${powerScore}/100). Keep laptop charged and carry a portable power bank.`
+      : `High outage risk (${powerScore}/100). Dedicated UPS or coliving relocation strongly recommended.`
+  };
+}
+
+
 
 
 

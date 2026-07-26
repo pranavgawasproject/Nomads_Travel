@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore } from '../utils/travelUtils.js';
 
 
 
@@ -972,7 +972,37 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.healthTier).toBe('SUB_OPTIMAL_WORKSTATION');
     });
   });
+
+  describe('calculateNomadRemoteWorkstationPowerBackupScore', () => {
+    it('calculates excellent power stability for high rating and full backup', () => {
+      const res = calculateNomadRemoteWorkstationPowerBackupScore({
+        gridReliabilityRating: 5,
+        outageFrequencyMonthly: 0,
+        hasGeneratorOrUps: true,
+        laptopBatteryHours: 8,
+        powerStationCapacityWattHours: 300
+      });
+      expect(res.valid).toBe(true);
+      expect(res.powerScore).toBe(100);
+      expect(res.riskTier).toBe('EXCELLENT_POWER_STABILITY');
+      expect(res.totalBackupHoursAvailable).toBe(14.7);
+    });
+
+    it('identifies high outage risk for low grid rating and no generator', () => {
+      const res = calculateNomadRemoteWorkstationPowerBackupScore({
+        gridReliabilityRating: 1,
+        outageFrequencyMonthly: 8,
+        hasGeneratorOrUps: false,
+        laptopBatteryHours: 3,
+        powerStationCapacityWattHours: 0
+      });
+      expect(res.valid).toBe(true);
+      expect(res.powerScore).toBe(0);
+      expect(res.riskTier).toBe('HIGH_OUTAGE_RISK');
+    });
+  });
 });
+
 
 
 
