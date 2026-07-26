@@ -1426,6 +1426,50 @@ export function calculateNomadRemoteWorkstationPowerBackupScore({
   };
 }
 
+export function calculateNomadEsimRoamingDataPackageRoi({
+  durationDays = 30,
+  estimatedGbNeeded = 15,
+  esimPackagePriceUsd = 35.0,
+  localSimPriceUsd = 15.0,
+  airportSimMarkupPct = 25
+} = {}) {
+  if (typeof durationDays !== 'number' || durationDays <= 0 || !Number.isInteger(durationDays)) {
+    return { valid: false, error: 'Duration days must be a positive integer' };
+  }
+  if (typeof estimatedGbNeeded !== 'number' || estimatedGbNeeded <= 0) {
+    return { valid: false, error: 'Estimated GB needed must be a positive number' };
+  }
+  if (typeof esimPackagePriceUsd !== 'number' || esimPackagePriceUsd <= 0 || typeof localSimPriceUsd !== 'number' || localSimPriceUsd <= 0) {
+    return { valid: false, error: 'SIM package prices must be positive numbers' };
+  }
+
+  const esimCostPerGb = Math.round((esimPackagePriceUsd / estimatedGbNeeded) * 100) / 100;
+  const localSimCostPerGb = Math.round((localSimPriceUsd / estimatedGbNeeded) * 100) / 100;
+  const priceDifferenceUsd = Math.round((esimPackagePriceUsd - localSimPriceUsd) * 100) / 100;
+  const isEsimCostEffective = priceDifferenceUsd <= 15.0;
+
+  let recommendation = 'Local SIM card offers lower total cost.';
+  if (isEsimCostEffective) {
+    recommendation = `eSIM recommended: premium of \$${priceDifferenceUsd.toFixed(2)} is worth airport arrival convenience and zero physical SIM swap.`;
+  } else {
+    recommendation = `Local SIM recommended: save \$${priceDifferenceUsd.toFixed(2)} compared to global eSIM package.`;
+  }
+
+  return {
+    valid: true,
+    durationDays,
+    estimatedGbNeeded,
+    esimPackagePriceUsd,
+    localSimPriceUsd,
+    esimCostPerGb,
+    localSimCostPerGb,
+    priceDifferenceUsd,
+    isEsimCostEffective,
+    recommendation
+  };
+}
+
+
 
 
 
