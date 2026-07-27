@@ -1576,3 +1576,47 @@ export function calculateNomadRemoteWorkConnectivityScore({
   };
 }
 
+export function calculateNomadColivingCommunitySafetyRating({
+  verifiedCommunityMembersCount = 20,
+  hasKeycardAccess = true,
+  has24SevenSecurity = false,
+  verifiedReviewsScore = 4.5,
+  neighborhoodSafetyIndex = 80
+} = {}) {
+  if (typeof verifiedReviewsScore !== 'number' || verifiedReviewsScore < 1 || verifiedReviewsScore > 5) {
+    return { valid: false, error: 'Verified reviews score must be a number between 1 and 5' };
+  }
+  if (typeof neighborhoodSafetyIndex !== 'number' || neighborhoodSafetyIndex < 0 || neighborhoodSafetyIndex > 100) {
+    return { valid: false, error: 'Neighborhood safety index must be a number between 0 and 100' };
+  }
+
+  let baseScore = (verifiedReviewsScore / 5) * 40 + (neighborhoodSafetyIndex / 100) * 30;
+  if (hasKeycardAccess) baseScore += 15;
+  if (has24SevenSecurity) baseScore += 15;
+  if (verifiedCommunityMembersCount >= 10) baseScore += 5;
+
+  const safetyScore = Math.min(100, Math.max(0, Math.round(baseScore)));
+
+  let safetyTier = 'HIGHLY_SAFE_COLIVING';
+  if (safetyScore < 50) safetyTier = 'ELEVATED_SAFETY_RISK';
+  else if (safetyScore < 75) safetyTier = 'MODERATE_SAFETY';
+
+  return {
+    valid: true,
+    verifiedCommunityMembersCount,
+    hasKeycardAccess: Boolean(hasKeycardAccess),
+    has24SevenSecurity: Boolean(has24SevenSecurity),
+    verifiedReviewsScore,
+    neighborhoodSafetyIndex,
+    safetyScore,
+    safetyTier,
+    recommendation: safetyTier === 'HIGHLY_SAFE_COLIVING'
+      ? `Coliving space demonstrates top-tier security and community safety (${safetyScore}/100 score).`
+      : safetyTier === 'MODERATE_SAFETY'
+      ? `Moderate coliving safety rating (${safetyScore}/100). Verify lock status and emergency contact procedures.`
+      : `Elevated safety risk (${safetyScore}/100). Recommend verified alternative space or extra security precautions.`
+  };
+}
+
+
+

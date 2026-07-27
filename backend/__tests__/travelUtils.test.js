@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating } from '../utils/travelUtils.js';
 
 
 
@@ -1090,7 +1090,41 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.error).toBe('Speed and ping parameters must be non-negative numbers');
     });
   });
+
+  describe('calculateNomadColivingCommunitySafetyRating', () => {
+    it('calculates highly safe coliving score for secure location and verified community', () => {
+      const res = calculateNomadColivingCommunitySafetyRating({
+        verifiedCommunityMembersCount: 25,
+        hasKeycardAccess: true,
+        has24SevenSecurity: true,
+        verifiedReviewsScore: 4.8,
+        neighborhoodSafetyIndex: 90
+      });
+      expect(res.valid).toBe(true);
+      expect(res.safetyScore).toBe(100);
+      expect(res.safetyTier).toBe('HIGHLY_SAFE_COLIVING');
+    });
+
+    it('identifies elevated safety risk when security features and review scores are low', () => {
+      const res = calculateNomadColivingCommunitySafetyRating({
+        verifiedCommunityMembersCount: 2,
+        hasKeycardAccess: false,
+        has24SevenSecurity: false,
+        verifiedReviewsScore: 2.0,
+        neighborhoodSafetyIndex: 40
+      });
+      expect(res.valid).toBe(true);
+      expect(res.safetyTier).toBe('ELEVATED_SAFETY_RISK');
+    });
+
+    it('returns error for out-of-range verified review scores', () => {
+      const res = calculateNomadColivingCommunitySafetyRating({ verifiedReviewsScore: 6.0 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Verified reviews score must be a number between 1 and 5');
+    });
+  });
 });
+
 
 
 
