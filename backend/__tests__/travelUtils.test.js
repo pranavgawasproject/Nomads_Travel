@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore } from '../utils/travelUtils.js';
+
 
 
 
@@ -1053,7 +1054,44 @@ describe('Travel Utilities — Living Cost & Currency', () => {
         .toThrow('Invalid city parameters');
     });
   });
+
+  describe('calculateNomadRemoteWorkConnectivityScore', () => {
+    it('calculates optimal nomad hub connectivity score for high-speed Wi-Fi and low ping', () => {
+      const res = calculateNomadRemoteWorkConnectivityScore({
+        wifiDownloadMbps: 150,
+        wifiUploadMbps: 50,
+        pingLatencyMs: 20,
+        coworkingSpacesCount: 10,
+        powerOutageFrequencyMonthly: 0,
+        timeZoneOverlapHoursWithHQ: 8
+      });
+      expect(res.valid).toBe(true);
+      expect(res.connectivityScore).toBe(100);
+      expect(res.connectivityTier).toBe('OPTIMAL_NOMAD_HUB');
+    });
+
+    it('identifies risky infrastructure for slow internet and frequent power outages', () => {
+      const res = calculateNomadRemoteWorkConnectivityScore({
+        wifiDownloadMbps: 10,
+        wifiUploadMbps: 2,
+        pingLatencyMs: 200,
+        coworkingSpacesCount: 0,
+        powerOutageFrequencyMonthly: 5,
+        timeZoneOverlapHoursWithHQ: 2
+      });
+      expect(res.valid).toBe(true);
+      expect(res.connectivityScore).toBe(0);
+      expect(res.connectivityTier).toBe('RISKY_INFRASTRUCTURE');
+    });
+
+    it('returns error for negative internet speed inputs', () => {
+      const res = calculateNomadRemoteWorkConnectivityScore({ wifiDownloadMbps: -50 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Speed and ping parameters must be non-negative numbers');
+    });
+  });
 });
+
 
 
 

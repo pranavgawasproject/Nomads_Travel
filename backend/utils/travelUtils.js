@@ -1529,3 +1529,50 @@ export function calculateNomadMultiCityItineraryBudget({
     mostAffordableCity
   };
 }
+
+export function calculateNomadRemoteWorkConnectivityScore({
+  wifiDownloadMbps = 50,
+  wifiUploadMbps = 20,
+  pingLatencyMs = 25,
+  coworkingSpacesCount = 5,
+  powerOutageFrequencyMonthly = 0,
+  timeZoneOverlapHoursWithHQ = 6
+} = {}) {
+  if (typeof wifiDownloadMbps !== 'number' || wifiDownloadMbps < 0 ||
+      typeof wifiUploadMbps !== 'number' || wifiUploadMbps < 0 ||
+      typeof pingLatencyMs !== 'number' || pingLatencyMs < 0) {
+    return { valid: false, error: 'Speed and ping parameters must be non-negative numbers' };
+  }
+
+  let downloadScore = Math.min(35, Math.round((wifiDownloadMbps / 100) * 35));
+  let uploadScore = Math.min(25, Math.round((wifiUploadMbps / 50) * 25));
+  let latencyScore = pingLatencyMs <= 30 ? 20 : pingLatencyMs <= 80 ? 12 : pingLatencyMs <= 150 ? 5 : 0;
+  let coworkingScore = Math.min(10, (coworkingSpacesCount || 0) * 2);
+  let timeZoneScore = Math.min(10, (timeZoneOverlapHoursWithHQ || 0) * 1.5);
+  let outagePenalty = Math.min(30, (powerOutageFrequencyMonthly || 0) * 6);
+
+  const rawScore = downloadScore + uploadScore + latencyScore + coworkingScore + timeZoneScore - outagePenalty;
+  const connectivityScore = Math.min(100, Math.max(0, Math.round(rawScore)));
+
+  let connectivityTier = 'OPTIMAL_NOMAD_HUB';
+  if (connectivityScore < 40) connectivityTier = 'RISKY_INFRASTRUCTURE';
+  else if (connectivityScore < 70) connectivityTier = 'VIABLE_WITH_BACKUP';
+
+  return {
+    valid: true,
+    wifiDownloadMbps,
+    wifiUploadMbps,
+    pingLatencyMs,
+    coworkingSpacesCount,
+    powerOutageFrequencyMonthly,
+    timeZoneOverlapHoursWithHQ,
+    connectivityScore,
+    connectivityTier,
+    recommendation: connectivityTier === 'OPTIMAL_NOMAD_HUB'
+      ? `Destination has excellent remote work infrastructure (${connectivityScore}/100 score).`
+      : connectivityTier === 'VIABLE_WITH_BACKUP'
+      ? `Viable connectivity (${connectivityScore}/100). Backup mobile hotspot or SIM recommended.`
+      : `High infrastructure risk (${connectivityScore}/100). Coliving workspace or power/wifi backup required.`
+  };
+}
+
