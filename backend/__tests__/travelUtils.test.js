@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget } from '../utils/travelUtils.js';
 
 
 
@@ -1023,6 +1023,34 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const res = calculateNomadEsimRoamingDataPackageRoi({ durationDays: -5 });
       expect(res.valid).toBe(false);
       expect(res.error).toBe('Duration days must be a positive integer');
+    });
+  });
+
+  describe('calculateNomadMultiCityItineraryBudget', () => {
+    it('calculates multi-city itinerary budget breakdown and metrics correctly', () => {
+      const cities = [
+        { city: 'Lisbon', durationDays: 30, estimatedMonthlyCost: 2000, flightToNextCost: 300 },
+        { city: 'Bali', durationDays: 60, estimatedMonthlyCost: 1200, flightToNextCost: 500 },
+        { city: 'Bansko', durationDays: 30, estimatedMonthlyCost: 1000, flightToNextCost: 0 }
+      ];
+      const res = calculateNomadMultiCityItineraryBudget({ cities, contingencyPercentage: 10 });
+      expect(res.valid).toBe(true);
+      expect(res.totalCities).toBe(3);
+      expect(res.totalDurationDays).toBe(120);
+      expect(res.totalAccommodationAndLivingCost).toBe(5400);
+      expect(res.totalTransitFlightCost).toBe(800);
+      expect(res.contingencyAmount).toBe(620);
+      expect(res.grandTotalCost).toBe(6820);
+      expect(res.averageDailyExpense).toBe(56.83);
+      expect(res.mostExpensiveCity).toBe('Lisbon');
+      expect(res.mostAffordableCity).toBe('Bansko');
+    });
+
+    it('throws error for empty or invalid city list', () => {
+      expect(() => calculateNomadMultiCityItineraryBudget({ cities: [] }))
+        .toThrow('Cities array must contain at least one destination.');
+      expect(() => calculateNomadMultiCityItineraryBudget({ cities: [{ city: 'Invalid', durationDays: -10, estimatedMonthlyCost: 1000 }] }))
+        .toThrow('Invalid city parameters');
     });
   });
 });

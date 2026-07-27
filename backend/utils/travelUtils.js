@@ -1469,15 +1469,63 @@ export function calculateNomadEsimRoamingDataPackageRoi({
   };
 }
 
+export function calculateNomadMultiCityItineraryBudget({
+  cities = [],
+  contingencyPercentage = 10
+} = {}) {
+  if (!Array.isArray(cities) || cities.length === 0) {
+    throw new Error('Cities array must contain at least one destination.');
+  }
 
+  let totalDurationDays = 0;
+  let totalAccommodationAndLivingCost = 0;
+  let totalTransitFlightCost = 0;
+  let mostExpensiveCity = null;
+  let maxCityMonthlyCost = -1;
+  let mostAffordableCity = null;
+  let minCityMonthlyCost = Infinity;
 
+  for (const item of cities) {
+    const { city, durationDays, estimatedMonthlyCost, flightToNextCost = 0 } = item;
+    if (!city || typeof durationDays !== 'number' || durationDays <= 0 || typeof estimatedMonthlyCost !== 'number' || estimatedMonthlyCost < 0) {
+      throw new Error('Invalid city parameters. Each city must have a valid name, positive durationDays, and non-negative estimatedMonthlyCost.');
+    }
+    const durationMonths = durationDays / 30;
+    const livingCost = estimatedMonthlyCost * durationMonths;
 
+    totalDurationDays += durationDays;
+    totalAccommodationAndLivingCost += livingCost;
+    totalTransitFlightCost += (typeof flightToNextCost === 'number' && flightToNextCost > 0) ? flightToNextCost : 0;
 
+    if (estimatedMonthlyCost > maxCityMonthlyCost) {
+      maxCityMonthlyCost = estimatedMonthlyCost;
+      mostExpensiveCity = city;
+    }
+    if (estimatedMonthlyCost < minCityMonthlyCost) {
+      minCityMonthlyCost = estimatedMonthlyCost;
+      mostAffordableCity = city;
+    }
+  }
 
+  totalAccommodationAndLivingCost = Math.round(totalAccommodationAndLivingCost * 100) / 100;
+  totalTransitFlightCost = Math.round(totalTransitFlightCost * 100) / 100;
 
+  const baseCost = totalAccommodationAndLivingCost + totalTransitFlightCost;
+  const safeContingencyPct = Math.max(0, contingencyPercentage);
+  const contingencyAmount = Math.round((baseCost * (safeContingencyPct / 100)) * 100) / 100;
+  const grandTotalCost = Math.round((baseCost + contingencyAmount) * 100) / 100;
+  const averageDailyExpense = totalDurationDays > 0 ? Math.round((grandTotalCost / totalDurationDays) * 100) / 100 : 0;
 
-
-
-
-
-
+  return {
+    valid: true,
+    totalCities: cities.length,
+    totalDurationDays,
+    totalAccommodationAndLivingCost,
+    totalTransitFlightCost,
+    contingencyAmount,
+    grandTotalCost,
+    averageDailyExpense,
+    mostExpensiveCity,
+    mostAffordableCity
+  };
+}
