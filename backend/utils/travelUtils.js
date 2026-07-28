@@ -1618,5 +1618,57 @@ export function calculateNomadColivingCommunitySafetyRating({
   };
 }
 
+export function calculateNomadDestinationQualityOfLifeIndex({
+  internetSpeedMbps = 50,
+  safetyRating = 4.0,
+  healthcareRating = 4.0,
+  monthlyCostUsd = 2000,
+  communityHubScore = 75
+} = {}) {
+  if (typeof internetSpeedMbps !== 'number' || internetSpeedMbps < 0) {
+    return { valid: false, error: 'Internet speed must be a non-negative number' };
+  }
+  if (typeof safetyRating !== 'number' || safetyRating < 1 || safetyRating > 5) {
+    return { valid: false, error: 'Safety rating must be a number between 1 and 5' };
+  }
+
+  const internetSubScore = Math.min(100, Math.round((internetSpeedMbps / 100) * 100));
+  const safetySubScore = Math.min(100, Math.round((safetyRating / 5) * 100));
+  const healthcareSubScore = Math.min(100, Math.round((Math.min(5, Math.max(1, healthcareRating)) / 5) * 100));
+  const affordabilitySubScore = Math.min(100, Math.max(20, Math.round(100 - Math.max(0, monthlyCostUsd - 1500) / 25)));
+  const communitySubScore = Math.min(100, Math.max(0, Math.round(communityHubScore)));
+
+  const compositeQualityOfLifeScore = Math.round(
+    internetSubScore * 0.25 +
+    safetySubScore * 0.25 +
+    affordabilitySubScore * 0.20 +
+    healthcareSubScore * 0.15 +
+    communitySubScore * 0.15
+  );
+
+  let qolTier = 'MODERATE_QUALITY_OF_LIFE';
+  if (compositeQualityOfLifeScore >= 80) qolTier = 'PRIME_NOMAD_DESTINATION';
+  else if (compositeQualityOfLifeScore < 60) qolTier = 'CHALLENGING_INFRASTRUCTURE';
+
+  return {
+    valid: true,
+    compositeQualityOfLifeScore,
+    qolTier,
+    breakdown: {
+      internetSubScore,
+      safetySubScore,
+      affordabilitySubScore,
+      healthcareSubScore,
+      communitySubScore
+    },
+    recommendation: qolTier === 'PRIME_NOMAD_DESTINATION'
+      ? `Top-tier digital nomad location (${compositeQualityOfLifeScore}/100 QoL score). Excellent connectivity, safety, and community.`
+      : qolTier === 'CHALLENGING_INFRASTRUCTURE'
+      ? `Location score (${compositeQualityOfLifeScore}/100) highlights potential connectivity, safety, or cost constraints.`
+      : `Balanced nomad destination with solid infrastructure (${compositeQualityOfLifeScore}/100 QoL score).`
+  };
+}
+
+
 
 
