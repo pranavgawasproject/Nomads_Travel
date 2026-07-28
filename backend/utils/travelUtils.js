@@ -1669,6 +1669,48 @@ export function calculateNomadDestinationQualityOfLifeIndex({
   };
 }
 
+export function calculateNomadHealthcareAccessAndEvacuationIndex({
+  hospitalDensityPer100k = 5.0,
+  englishDoctorRatio = 0.8,
+  evacuationInsuranceCovered = true,
+  emergencyResponseTimeMins = 15
+} = {}) {
+  if (typeof hospitalDensityPer100k !== 'number' || hospitalDensityPer100k < 0) {
+    return { valid: false, error: 'Hospital density per 100k must be a non-negative number' };
+  }
+
+  const densityScore = Math.min(40, Math.round((hospitalDensityPer100k / 10) * 40));
+  const englishScore = Math.min(30, Math.round(Math.max(0, Math.min(1, englishDoctorRatio)) * 30));
+  const responseScore = emergencyResponseTimeMins <= 10 ? 30 : emergencyResponseTimeMins <= 25 ? 20 : 10;
+
+  let totalScore = densityScore + englishScore + responseScore;
+  if (!evacuationInsuranceCovered) {
+    totalScore = Math.max(0, totalScore - 25);
+  }
+
+  const medicalAccessScore = Math.min(100, Math.max(0, Math.round(totalScore)));
+
+  let medicalTier = 'MODERATE_MEDICAL_RESILIENCE';
+  if (medicalAccessScore >= 80) medicalTier = 'PREMIUM_MEDICAL_ACCESS';
+  else if (medicalAccessScore < 50) medicalTier = 'HIGH_EVACUATION_RISK';
+
+  return {
+    valid: true,
+    hospitalDensityPer100k,
+    englishDoctorRatio,
+    evacuationInsuranceCovered: Boolean(evacuationInsuranceCovered),
+    emergencyResponseTimeMins,
+    medicalAccessScore,
+    medicalTier,
+    recommendation: medicalTier === 'PREMIUM_MEDICAL_ACCESS'
+      ? `Top-tier medical infrastructure (${medicalAccessScore}/100 score) with rapid emergency response.`
+      : medicalTier === 'MODERATE_MEDICAL_RESILIENCE'
+      ? `Adequate healthcare access (${medicalAccessScore}/100 score). Medical evacuation insurance recommended.`
+      : `High medical risk area (${medicalAccessScore}/100 score). Dedicated medical evacuation coverage required.`
+  };
+}
+
+
 
 
 
