@@ -1710,6 +1710,53 @@ export function calculateNomadHealthcareAccessAndEvacuationIndex({
   };
 }
 
+export function calculateNomadDigitalNomadVisaEligibilityScore({
+  monthlyIncomeUsd = 3000,
+  minRequiredIncomeUsd = 2500,
+  bankSavingsBalanceUsd = 10000,
+  hasRemoteProof = true,
+  hasHealthInsurance = true
+} = {}) {
+  if (typeof monthlyIncomeUsd !== 'number' || monthlyIncomeUsd < 0) {
+    return { valid: false, error: 'Monthly income must be a non-negative number' };
+  }
+  if (typeof minRequiredIncomeUsd !== 'number' || minRequiredIncomeUsd <= 0) {
+    return { valid: false, error: 'Minimum required income must be a positive number' };
+  }
+
+  const incomeRatio = monthlyIncomeUsd / minRequiredIncomeUsd;
+  const incomePoints = Math.min(45, Math.round(incomeRatio * 35));
+  const proofPoints = hasRemoteProof ? 25 : 0;
+  const insurancePoints = hasHealthInsurance ? 15 : 0;
+  const savingsPoints = bankSavingsBalanceUsd >= 5000 ? 15 : bankSavingsBalanceUsd >= 2500 ? 10 : 0;
+
+  const eligibilityScore = Math.min(100, Math.max(0, incomePoints + proofPoints + insurancePoints + savingsPoints));
+
+  let eligibilityTier = 'QUALIFIED_FOR_VISA';
+  if (eligibilityScore < 50 || monthlyIncomeUsd < minRequiredIncomeUsd || !hasRemoteProof) {
+    eligibilityTier = 'INELIGIBLE_FOR_VISA';
+  } else if (eligibilityScore < 75) {
+    eligibilityTier = 'BORDERLINE_ELIGIBILITY';
+  }
+
+  return {
+    valid: true,
+    monthlyIncomeUsd,
+    minRequiredIncomeUsd,
+    incomeCoverageRatio: Math.round(incomeRatio * 100) / 100,
+    hasRemoteProof: Boolean(hasRemoteProof),
+    hasHealthInsurance: Boolean(hasHealthInsurance),
+    eligibilityScore,
+    eligibilityTier,
+    recommendation: eligibilityTier === 'QUALIFIED_FOR_VISA'
+      ? `Strong visa application profile (${eligibilityScore}/100 eligibility score). Income exceeds threshold by ${Math.round((incomeRatio - 1) * 100)}%.`
+      : eligibilityTier === 'BORDERLINE_ELIGIBILITY'
+      ? `Borderline visa eligibility (${eligibilityScore}/100 score). Boost bank savings or secure comprehensive health coverage before applying.`
+      : `Ineligible for digital nomad visa (${eligibilityScore}/100 score). Income must meet minimum threshold of $${minRequiredIncomeUsd} with remote work proof.`
+  };
+}
+
+
 
 
 
