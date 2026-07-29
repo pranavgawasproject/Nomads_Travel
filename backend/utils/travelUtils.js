@@ -1807,6 +1807,62 @@ export function calculateNomadColivingMonthlyLivingCostIndex({
   };
 }
 
+export function calculateNomadColivingSpaceReviewAuthenticityScore({
+  verifiedStayReviewsCount = 15,
+  unverifiedReviewsCount = 3,
+  averageRating = 4.7,
+  ratingStandardDeviation = 0.4,
+  accountAgeDaysAverage = 180
+} = {}) {
+  if (typeof verifiedStayReviewsCount !== 'number' || verifiedStayReviewsCount < 0) {
+    return { valid: false, error: 'Verified stay reviews count must be a non-negative number' };
+  }
+  if (typeof unverifiedReviewsCount !== 'number' || unverifiedReviewsCount < 0) {
+    return { valid: false, error: 'Unverified reviews count must be a non-negative number' };
+  }
+
+  const totalReviews = verifiedStayReviewsCount + unverifiedReviewsCount;
+  if (totalReviews === 0) {
+    return { valid: false, error: 'Total reviews count cannot be zero' };
+  }
+
+  const verifiedRatio = verifiedStayReviewsCount / totalReviews;
+  const rating = typeof averageRating === 'number' ? Math.min(5, Math.max(1, averageRating)) : 4.5;
+  const stdDev = typeof ratingStandardDeviation === 'number' && ratingStandardDeviation >= 0 ? ratingStandardDeviation : 0.4;
+  const avgAge = typeof accountAgeDaysAverage === 'number' && accountAgeDaysAverage >= 0 ? accountAgeDaysAverage : 100;
+
+  let verifiedPoints = verifiedRatio * 45;
+  let agePoints = Math.min(25, (avgAge / 180) * 25);
+  let variancePoints = stdDev > 0.1 && stdDev < 1.5 ? 20 : 5; // extreme low/high stdDev suspicious
+  let ratingPoints = rating >= 4.9 && verifiedRatio < 0.3 ? 5 : 10;
+
+  const authenticityScore = Math.min(100, Math.max(0, Math.round(verifiedPoints + agePoints + variancePoints + ratingPoints)));
+
+  let trustTier = 'VERIFIED_HIGH_AUTHENTICITY';
+  if (authenticityScore < 50 || verifiedRatio < 0.4) {
+    trustTier = 'SUSPICIOUS_REVIEW_PATTERN';
+  } else if (authenticityScore < 75) {
+    trustTier = 'MODERATE_REVIEW_TRUST';
+  }
+
+  return {
+    valid: true,
+    totalReviews,
+    verifiedStayReviewsCount,
+    unverifiedReviewsCount,
+    verifiedRatio: Math.round(verifiedRatio * 100) / 100,
+    averageRating: rating,
+    authenticityScore,
+    trustTier,
+    recommendation: trustTier === 'VERIFIED_HIGH_AUTHENTICITY'
+      ? `High review authenticity (${authenticityScore}/100 score, ${Math.round(verifiedRatio * 100)}% verified stay proof).`
+      : trustTier === 'SUSPICIOUS_REVIEW_PATTERN'
+      ? `Suspicious review pattern (${authenticityScore}/100 score). Low proportion of verified stay receipts.`
+      : `Moderate review trust level (${authenticityScore}/100 score). Check individual nomad stay feedback.`
+  };
+}
+
+
 
 
 
