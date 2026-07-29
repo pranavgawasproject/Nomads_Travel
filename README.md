@@ -29,10 +29,11 @@ Being a digital nomad means juggling visa paperwork, finding remote-friendly job
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React
-- **Backend:** Node.js / Express (MERN)
-- **Database:** MongoDB
+- **Frontend:** Next.js 16 (React 19, Turbopack, Tailwind CSS)
+- **Backend:** Node.js / Express REST API
+- **Database:** Supabase (PostgreSQL)
 - **Storage:** AWS S3 (media/file uploads)
+- **Testing:** Jest + VM Modules
 - **Deployment:** Vercel
 
 ## 🚀 Getting Started
@@ -45,19 +46,19 @@ cd Nomads_Travel
 # install dependencies
 npm install
 
-# set up environment variables
-cp .env.example .env
-# fill in your MongoDB URI, AWS S3 credentials, etc.
+# run test suite
+npm test
 
-# run locally
-npm run dev
+# build for production
+npm run build
 ```
 
-> _Fill in exact install/run commands if they differ (e.g. separate client/server folders, specific env variable names)._
+## 🗺️ Feature Highlights & Roadmap
 
-## 🗺️ Roadmap
-
-- [ ] _Add your next 3–5 planned features here — sponsors fund direction, not just what exists today_
+- [x] **Nomad Living Cost Calculator & Currency Exchange** — Calculate monthly budget by lifestyle tier (budget, standard, luxury) with live FX conversion
+- [x] **Nomad Score Engine & Timezone Overlap Matrix** — Calculate remote compatibility & overlapping work hours across global destinations
+- [x] **Visa Requirements Database** — Look up stay durations, tax policies, and remote work visa rules
+- [x] **Community Events & Remote Job Board** — Connect with nearby digital nomads and browse vetted remote work listings
 
 ## 🤝 Contributing
 
