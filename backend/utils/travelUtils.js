@@ -1756,6 +1756,58 @@ export function calculateNomadDigitalNomadVisaEligibilityScore({
   };
 }
 
+export function calculateNomadColivingMonthlyLivingCostIndex({
+  monthlyRentUsd = 1200,
+  coworkingPassUsd = 200,
+  estimatedDailyFoodUsd = 25,
+  transitPassUsd = 50,
+  durationMonths = 1,
+  securityDepositMonths = 1
+} = {}) {
+  if (typeof monthlyRentUsd !== 'number' || monthlyRentUsd <= 0 || isNaN(monthlyRentUsd)) {
+    return { valid: false, error: 'Monthly rent must be a positive number' };
+  }
+  if (typeof durationMonths !== 'number' || durationMonths <= 0 || !Number.isInteger(durationMonths)) {
+    return { valid: false, error: 'Duration months must be a positive integer' };
+  }
+
+  const rent = Math.round(monthlyRentUsd * 100) / 100;
+  const coworking = typeof coworkingPassUsd === 'number' && coworkingPassUsd > 0 ? coworkingPassUsd : 0;
+  const food = typeof estimatedDailyFoodUsd === 'number' && estimatedDailyFoodUsd > 0 ? estimatedDailyFoodUsd * 30 : 0;
+  const transit = typeof transitPassUsd === 'number' && transitPassUsd > 0 ? transitPassUsd : 0;
+
+  const totalMonthlyLivingCostUsd = Math.round((rent + coworking + food + transit) * 100) / 100;
+  const totalStayCostUsd = Math.round(totalMonthlyLivingCostUsd * durationMonths * 100) / 100;
+  const depositAmountUsd = Math.round(rent * (securityDepositMonths || 0) * 100) / 100;
+  const upfrontCapitalRequiredUsd = Math.round((rent + depositAmountUsd + coworking + transit) * 100) / 100;
+  const dailyBurnRateUsd = Math.round((totalMonthlyLivingCostUsd / 30) * 100) / 100;
+
+  let hubCostTier = 'MODERATE_HUB';
+  if (totalMonthlyLivingCostUsd > 2500) hubCostTier = 'PREMIUM_EXPENSIVE_HUB';
+  else if (totalMonthlyLivingCostUsd < 1200) hubCostTier = 'AFFORDABLE_NOMAD_HUB';
+
+  return {
+    valid: true,
+    monthlyRentUsd: rent,
+    coworkingPassUsd: coworking,
+    monthlyFoodEstimateUsd: Math.round(food * 100) / 100,
+    transitPassUsd: transit,
+    totalMonthlyLivingCostUsd,
+    durationMonths,
+    totalStayCostUsd,
+    depositAmountUsd,
+    upfrontCapitalRequiredUsd,
+    dailyBurnRateUsd,
+    hubCostTier,
+    recommendation: hubCostTier === 'AFFORDABLE_NOMAD_HUB'
+      ? `Affordable nomad hub! Estimated monthly living cost is $${totalMonthlyLivingCostUsd.toFixed(2)} ($${dailyBurnRateUsd.toFixed(2)}/day).`
+      : hubCostTier === 'MODERATE_HUB'
+      ? `Balanced nomad destination ($${totalMonthlyLivingCostUsd.toFixed(2)}/month). Upfront capital needed: $${upfrontCapitalRequiredUsd.toFixed(2)}.`
+      : `Premium expensive hub ($${totalMonthlyLivingCostUsd.toFixed(2)}/month). High daily burn rate ($${dailyBurnRateUsd.toFixed(2)}/day).`
+  };
+}
+
+
 
 
 
