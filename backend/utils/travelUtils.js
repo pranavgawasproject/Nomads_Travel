@@ -1862,6 +1862,54 @@ export function calculateNomadColivingSpaceReviewAuthenticityScore({
   };
 }
 
+export function calculateNomadColivingReservationDepositRefundAudit({
+  securityDepositUsd = 500,
+  daysNoticeGivenBeforeCheckin = 14,
+  requiredNoticeDaysForFullRefund = 30,
+  damageOrCleaningDeductionUsd = 0,
+  cancellationFeePercent = 10
+} = {}) {
+  if (typeof securityDepositUsd !== 'number' || securityDepositUsd <= 0 || isNaN(securityDepositUsd)) {
+    return { valid: false, error: 'Security deposit must be a positive number' };
+  }
+  if (typeof daysNoticeGivenBeforeCheckin !== 'number' || daysNoticeGivenBeforeCheckin < 0 || isNaN(daysNoticeGivenBeforeCheckin)) {
+    return { valid: false, error: 'Days notice given must be a non-negative number' };
+  }
+
+  const reqNotice = typeof requiredNoticeDaysForFullRefund === 'number' && requiredNoticeDaysForFullRefund > 0 ? requiredNoticeDaysForFullRefund : 30;
+  const damageFee = typeof damageOrCleaningDeductionUsd === 'number' && damageOrCleaningDeductionUsd >= 0 ? damageOrCleaningDeductionUsd : 0;
+  const feePct = typeof cancellationFeePercent === 'number' && cancellationFeePercent >= 0 && cancellationFeePercent <= 100 ? cancellationFeePercent : 10;
+
+  const meetsFullNotice = daysNoticeGivenBeforeCheckin >= reqNotice;
+  
+  let noticePenaltyUsd = 0;
+  if (!meetsFullNotice) {
+    const noticeShortfallRatio = (reqNotice - daysNoticeGivenBeforeCheckin) / reqNotice;
+    noticePenaltyUsd = Math.round((securityDepositUsd * (feePct / 100) * noticeShortfallRatio) * 100) / 100;
+  }
+
+  const totalDeductionsUsd = Math.min(securityDepositUsd, Math.round((noticePenaltyUsd + damageFee) * 100) / 100);
+  const netRefundUsd = Math.max(0, Math.round((securityDepositUsd - totalDeductionsUsd) * 100) / 100);
+  const refundPercentage = Math.round((netRefundUsd / securityDepositUsd) * 100);
+
+  return {
+    valid: true,
+    securityDepositUsd,
+    daysNoticeGivenBeforeCheckin,
+    requiredNoticeDaysForFullRefund: reqNotice,
+    noticePenaltyUsd,
+    damageOrCleaningDeductionUsd: damageFee,
+    totalDeductionsUsd,
+    netRefundUsd,
+    refundPercentage,
+    meetsFullNotice,
+    recommendation: meetsFullNotice && damageFee === 0
+      ? `Full deposit refund of $${netRefundUsd.toFixed(2)} (${refundPercentage}%) approved.`
+      : `Net deposit refund: $${netRefundUsd.toFixed(2)} after $${totalDeductionsUsd.toFixed(2)} in total deductions.`
+  };
+}
+
+
 
 
 

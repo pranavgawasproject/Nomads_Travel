@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit } from '../utils/travelUtils.js';
+
 
 
 
@@ -1265,6 +1266,43 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const invalid = calculateNomadColivingSpaceReviewAuthenticityScore({ verifiedStayReviewsCount: 0, unverifiedReviewsCount: 0 });
       expect(invalid.valid).toBe(false);
       expect(invalid.error).toBe('Total reviews count cannot be zero');
+    });
+  });
+
+  describe('calculateNomadColivingReservationDepositRefundAudit', () => {
+    it('calculates full deposit refund when notice requirement is met', () => {
+      const res = calculateNomadColivingReservationDepositRefundAudit({
+        securityDepositUsd: 600,
+        daysNoticeGivenBeforeCheckin: 30,
+        requiredNoticeDaysForFullRefund: 30,
+        damageOrCleaningDeductionUsd: 0
+      });
+      expect(res.valid).toBe(true);
+      expect(res.netRefundUsd).toBe(600);
+      expect(res.refundPercentage).toBe(100);
+      expect(res.meetsFullNotice).toBe(true);
+    });
+
+    it('calculates pro-rated deduction when notice is shorter than required', () => {
+      const res = calculateNomadColivingReservationDepositRefundAudit({
+        securityDepositUsd: 500,
+        daysNoticeGivenBeforeCheckin: 15,
+        requiredNoticeDaysForFullRefund: 30,
+        cancellationFeePercent: 20
+      });
+      expect(res.valid).toBe(true);
+      expect(res.noticePenaltyUsd).toBe(50);
+      expect(res.netRefundUsd).toBe(450);
+    });
+
+    it('returns error for invalid non-positive deposit or negative notice days', () => {
+      const inv1 = calculateNomadColivingReservationDepositRefundAudit({ securityDepositUsd: -100 });
+      expect(inv1.valid).toBe(false);
+      expect(inv1.error).toBe('Security deposit must be a positive number');
+
+      const inv2 = calculateNomadColivingReservationDepositRefundAudit({ daysNoticeGivenBeforeCheckin: -5 });
+      expect(inv2.valid).toBe(false);
+      expect(inv2.error).toBe('Days notice given must be a non-negative number');
     });
   });
 });
