@@ -1909,6 +1909,62 @@ export function calculateNomadColivingReservationDepositRefundAudit({
   };
 }
 
+export function calculateNomadTaxResidencyPhysicalPresenceAudit({
+  daysInCountry = 120,
+  taxThresholdDays = 183,
+  isSchengenZone = false,
+  schengenDays180Window = 45
+} = {}) {
+  if (typeof daysInCountry !== 'number' || daysInCountry < 0 || isNaN(daysInCountry)) {
+    return { valid: false, error: 'Days in country must be a non-negative number' };
+  }
+  if (typeof taxThresholdDays !== 'number' || taxThresholdDays <= 0 || isNaN(taxThresholdDays)) {
+    return { valid: false, error: 'Tax threshold days must be a positive number' };
+  }
+
+  const daysRemainingUntilTaxResidency = Math.max(0, taxThresholdDays - daysInCountry);
+  const taxResidencyRatio = Math.min(1.0, Math.round((daysInCountry / taxThresholdDays) * 100) / 100);
+  const isTaxResidencyTriggered = daysInCountry >= taxThresholdDays;
+
+  let schengenStatus = { isApplicable: false };
+  if (isSchengenZone) {
+    const sDays = typeof schengenDays180Window === 'number' && schengenDays180Window >= 0 ? schengenDays180Window : 0;
+    const remainingSchengenDays = Math.max(0, 90 - sDays);
+    schengenStatus = {
+      isApplicable: true,
+      schengenDaysUsed180Window: sDays,
+      remainingSchengenDays,
+      isSchengenLimitExceeded: sDays > 90
+    };
+  }
+
+  let taxRiskTier = 'LOW_TAX_EXPOSURE';
+  if (isTaxResidencyTriggered) {
+    taxRiskTier = 'TAX_RESIDENCY_TRIGGERED';
+  } else if (daysInCountry >= taxThresholdDays - 30) {
+    taxRiskTier = 'APPROACHING_TAX_RESIDENCY';
+  } else if (daysInCountry >= Math.round(taxThresholdDays / 2)) {
+    taxRiskTier = 'MODERATE_TAX_MONITORING';
+  }
+
+  return {
+    valid: true,
+    daysInCountry,
+    taxThresholdDays,
+    daysRemainingUntilTaxResidency,
+    taxResidencyRatio,
+    isTaxResidencyTriggered,
+    schengenStatus,
+    taxRiskTier,
+    recommendation: isTaxResidencyTriggered
+      ? `Tax residency threshold triggered (${daysInCountry}/${taxThresholdDays} days). Consult local tax advisor for physical presence liabilities.`
+      : taxRiskTier === 'APPROACHING_TAX_RESIDENCY'
+      ? `Approaching tax residency limit! Only ${daysRemainingUntilTaxResidency} days remaining before 183-day tax threshold.`
+      : `Low tax exposure (${daysInCountry}/${taxThresholdDays} days). ${daysRemainingUntilTaxResidency} safe days remaining.`
+  };
+}
+
+
 
 
 
