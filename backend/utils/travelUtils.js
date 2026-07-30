@@ -1964,6 +1964,55 @@ export function calculateNomadTaxResidencyPhysicalPresenceAudit({
   };
 }
 
+export function calculateNomadVisaExemptTravelWindow({
+  allowedDaysInWindow = 90,
+  rollingWindowDays = 180,
+  daysUsedInCurrentWindow = 45,
+  plannedStayDays = 30
+} = {}) {
+  if (typeof allowedDaysInWindow !== 'number' || allowedDaysInWindow <= 0 || !Number.isInteger(allowedDaysInWindow)) {
+    return { valid: false, error: 'Allowed days in window must be a positive integer' };
+  }
+  if (typeof rollingWindowDays !== 'number' || rollingWindowDays <= 0 || !Number.isInteger(rollingWindowDays)) {
+    return { valid: false, error: 'Rolling window days must be a positive integer' };
+  }
+  if (typeof daysUsedInCurrentWindow !== 'number' || daysUsedInCurrentWindow < 0 || !Number.isInteger(daysUsedInCurrentWindow)) {
+    return { valid: false, error: 'Days used in current window must be a non-negative integer' };
+  }
+  if (typeof plannedStayDays !== 'number' || plannedStayDays <= 0 || !Number.isInteger(plannedStayDays)) {
+    return { valid: false, error: 'Planned stay days must be a positive integer' };
+  }
+
+  const daysRemaining = Math.max(0, allowedDaysInWindow - daysUsedInCurrentWindow);
+  const isPlannedStayCompliant = plannedStayDays <= daysRemaining;
+  const daysOverstay = isPlannedStayCompliant ? 0 : plannedStayDays - daysRemaining;
+  const cooldownRequiredDays = isPlannedStayCompliant ? 0 : rollingWindowDays - allowedDaysInWindow;
+
+  let complianceStatus = 'FULL_VISA_EXEMPT_COMPLIANT';
+  if (!isPlannedStayCompliant) {
+    complianceStatus = 'OVERSTAY_RISK_EXCEEDED';
+  } else if (daysRemaining <= 15) {
+    complianceStatus = 'WARNING_LOW_DAYS_REMAINING';
+  }
+
+  return {
+    valid: true,
+    allowedDaysInWindow,
+    rollingWindowDays,
+    daysUsedInCurrentWindow,
+    plannedStayDays,
+    daysRemaining,
+    isPlannedStayCompliant,
+    daysOverstay,
+    cooldownRequiredDays,
+    complianceStatus,
+    recommendation: isPlannedStayCompliant
+      ? `Visa-exempt stay compliant: ${daysRemaining} days remaining in current ${rollingWindowDays}-day rolling window.`
+      : `Overstay risk detected! Planned stay exceeds limit by ${daysOverstay} days. Cooldown or visa application required.`
+  };
+}
+
+
 
 
 
