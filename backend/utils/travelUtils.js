@@ -2071,6 +2071,61 @@ export function calculateNomadRemoteWorkTaxTieBreakerScore({
   };
 }
 
+export function calculateNomadEmergencyMedicalEvacuationCoverageScore({
+  medicalEvacuationLimitUsd = 100000,
+  inpatientMedicalLimitUsd = 250000,
+  deductibleUsd = 250,
+  includesAdventureSports = false,
+  isPreExistingConditionsCovered = false
+} = {}) {
+  if (typeof medicalEvacuationLimitUsd !== 'number' || medicalEvacuationLimitUsd <= 0 || isNaN(medicalEvacuationLimitUsd)) {
+    return { valid: false, error: 'Medical evacuation limit must be a positive number' };
+  }
+  if (typeof inpatientMedicalLimitUsd !== 'number' || inpatientMedicalLimitUsd <= 0 || isNaN(inpatientMedicalLimitUsd)) {
+    return { valid: false, error: 'Inpatient medical limit must be a positive number' };
+  }
+
+  const deductible = typeof deductibleUsd === 'number' && deductibleUsd >= 0 ? deductibleUsd : 250;
+  
+  let score = 0;
+  if (medicalEvacuationLimitUsd >= 250000) score += 35;
+  else if (medicalEvacuationLimitUsd >= 100000) score += 25;
+  else score += 10;
+
+  if (inpatientMedicalLimitUsd >= 500000) score += 35;
+  else if (inpatientMedicalLimitUsd >= 250000) score += 25;
+  else score += 15;
+
+  if (deductible <= 100) score += 10;
+  else if (deductible <= 250) score += 5;
+
+  if (includesAdventureSports) score += 10;
+  if (isPreExistingConditionsCovered) score += 10;
+
+  const evacuationScore = Math.min(100, Math.max(0, Math.round(score)));
+
+  let riskLevel = 'LOW_RISK';
+  if (evacuationScore < 45) riskLevel = 'HIGH_RISK';
+  else if (evacuationScore < 70) riskLevel = 'MODERATE_RISK';
+
+  return {
+    valid: true,
+    medicalEvacuationLimitUsd,
+    inpatientMedicalLimitUsd,
+    deductibleUsd: deductible,
+    includesAdventureSports: Boolean(includesAdventureSports),
+    isPreExistingConditionsCovered: Boolean(isPreExistingConditionsCovered),
+    evacuationScore,
+    riskLevel,
+    recommendation: riskLevel === 'LOW_RISK'
+      ? `Emergency medical evacuation coverage is robust (${evacuationScore}/100 score).`
+      : riskLevel === 'MODERATE_RISK'
+      ? `Moderate medical coverage (${evacuationScore}/100 score). Consider raising evacuation or inpatient limits.`
+      : `High financial risk (${evacuationScore}/100 score). Medical evacuation limit ($${medicalEvacuationLimitUsd}) is insufficient for overseas emergency air repatriation.`
+  };
+}
+
+
 
 
 
