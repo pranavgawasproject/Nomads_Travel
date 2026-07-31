@@ -2125,6 +2125,51 @@ export function calculateNomadEmergencyMedicalEvacuationCoverageScore({
   };
 }
 
+export function calculateNomadColivingSecurityAndPrivacyScore({
+  hasSmartLockKeylessEntry = true,
+  has247CctvSecurity = true,
+  privateRoomLockLevel = 'digital_pin',
+  wifiEncryptedWpa3 = true,
+  soundproofDbRating = 45
+} = {}) {
+  let score = 0;
+
+  if (hasSmartLockKeylessEntry) score += 20;
+  if (has247CctvSecurity) score += 20;
+
+  const lock = (privateRoomLockLevel || 'standard').toLowerCase();
+  if (lock.includes('digital') || lock.includes('biometric')) score += 25;
+  else if (lock.includes('key')) score += 15;
+
+  if (wifiEncryptedWpa3) score += 20;
+  
+  if (soundproofDbRating >= 45) score += 15;
+  else if (soundproofDbRating >= 35) score += 10;
+
+  const securityScore = Math.min(100, Math.max(0, Math.round(score)));
+
+  let tier = 'PREMIUM_SECURE_COLIVING';
+  if (securityScore < 50) tier = 'ELEVATED_SECURITY_RISK';
+  else if (securityScore < 75) tier = 'STANDARD_SECURITY_COLIVING';
+
+  return {
+    valid: true,
+    hasSmartLockKeylessEntry: Boolean(hasSmartLockKeylessEntry),
+    has247CctvSecurity: Boolean(has247CctvSecurity),
+    privateRoomLockLevel: lock,
+    wifiEncryptedWpa3: Boolean(wifiEncryptedWpa3),
+    soundproofDbRating,
+    securityScore,
+    tier,
+    recommendation: tier === 'PREMIUM_SECURE_COLIVING'
+      ? `High-tier security and privacy (${securityScore}/100 score).`
+      : tier === 'STANDARD_SECURITY_COLIVING'
+      ? `Standard coliving security (${securityScore}/100 score).`
+      : `Elevated security risk (${securityScore}/100 score). Upgrade door lock and Wi-Fi encryption.`
+  };
+}
+
+
 
 
 
