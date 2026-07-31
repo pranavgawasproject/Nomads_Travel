@@ -2169,6 +2169,47 @@ export function calculateNomadColivingSecurityAndPrivacyScore({
   };
 }
 
+export function calculateNomadTravelInsuranceAndEmergencyFund({
+  tripDurationDays = 30,
+  monthlyLivingCostUsd = 2500,
+  destinationRiskTier = 'moderate',
+  hasPreExistingHealthCondition = false
+} = {}) {
+  if (typeof tripDurationDays !== 'number' || tripDurationDays <= 0 || isNaN(tripDurationDays)) {
+    return { valid: false, error: 'Trip duration days must be a positive number' };
+  }
+  if (typeof monthlyLivingCostUsd !== 'number' || monthlyLivingCostUsd <= 0 || isNaN(monthlyLivingCostUsd)) {
+    return { valid: false, error: 'Monthly living cost must be a positive number' };
+  }
+
+  const riskMultiplierMap = { low: 1.0, moderate: 1.25, high: 1.6 };
+  const riskMultiplier = riskMultiplierMap[(destinationRiskTier || 'moderate').toLowerCase()] || 1.25;
+
+  const baseEmergencyFundMonths = 2.0 * riskMultiplier + (hasPreExistingHealthCondition ? 0.5 : 0);
+  const recommendedEmergencyFundUsd = Math.round((monthlyLivingCostUsd * baseEmergencyFundMonths) * 100) / 100;
+
+  const dailyInsuranceBaseUsd = 3.5 * riskMultiplier;
+  const estimatedInsuranceCostUsd = Math.round((dailyInsuranceBaseUsd * tripDurationDays) * 100) / 100;
+
+  let reserveReadinessTier = 'OPTIMAL_RESERVE';
+  if (recommendedEmergencyFundUsd > 10000) {
+    reserveReadinessTier = 'HIGH_BUFFER_RECOMMENDED';
+  }
+
+  return {
+    valid: true,
+    tripDurationDays,
+    monthlyLivingCostUsd,
+    destinationRiskTier,
+    hasPreExistingHealthCondition: Boolean(hasPreExistingHealthCondition),
+    recommendedEmergencyFundUsd,
+    estimatedInsuranceCostUsd,
+    reserveReadinessTier,
+    recommendation: `Recommended emergency reserve: $${recommendedEmergencyFundUsd.toFixed(2)} (Estimated ${tripDurationDays}-day insurance premium: $${estimatedInsuranceCostUsd.toFixed(2)}).`
+  };
+}
+
+
 
 
 
