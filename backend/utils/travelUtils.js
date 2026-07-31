@@ -2012,6 +2012,66 @@ export function calculateNomadVisaExemptTravelWindow({
   };
 }
 
+export function calculateNomadRemoteWorkTaxTieBreakerScore({
+  hasPermanentHomeHomeCountry = true,
+  hasPermanentHomeHostCountry = false,
+  familyAndFinancialCenter = 'home',
+  daysInHostCountryAnnual = 120,
+  daysInHomeCountryAnnual = 245,
+  isHostCountryCitizen = false
+} = {}) {
+  if (typeof daysInHostCountryAnnual !== 'number' || daysInHostCountryAnnual < 0 || isNaN(daysInHostCountryAnnual)) {
+    return { valid: false, error: 'Days in host country must be a non-negative number' };
+  }
+  if (typeof daysInHomeCountryAnnual !== 'number' || daysInHomeCountryAnnual < 0 || isNaN(daysInHomeCountryAnnual)) {
+    return { valid: false, error: 'Days in home country must be a non-negative number' };
+  }
+
+  let tieBreakerScoreHome = 0;
+  let tieBreakerScoreHost = 0;
+
+  if (hasPermanentHomeHomeCountry) tieBreakerScoreHome += 30;
+  if (hasPermanentHomeHostCountry) tieBreakerScoreHost += 30;
+
+  const center = String(familyAndFinancialCenter).toLowerCase().trim();
+  if (center === 'home') tieBreakerScoreHome += 35;
+  else if (center === 'host') tieBreakerScoreHost += 35;
+  else { tieBreakerScoreHome += 15; tieBreakerScoreHost += 15; }
+
+  if (daysInHomeCountryAnnual > daysInHostCountryAnnual) tieBreakerScoreHome += 25;
+  else if (daysInHostCountryHostCountry > daysInHomeCountryAnnual) tieBreakerScoreHost += 25;
+
+  if (isHostCountryCitizen) tieBreakerScoreHost += 10;
+  else tieBreakerScoreHome += 10;
+
+  let primaryTaxResidency = 'HOME_COUNTRY';
+  let taxTreatyTier = 'SAFE_SINGLE_TAX_RESIDENCY';
+
+  if (tieBreakerScoreHost > tieBreakerScoreHome + 15) {
+    primaryTaxResidency = 'HOST_COUNTRY';
+    taxTreatyTier = 'HOST_TAX_RESIDENCY_ESTABLISHED';
+  } else if (Math.abs(tieBreakerScoreHome - tieBreakerScoreHost) <= 15) {
+    primaryTaxResidency = 'DUAL_RESIDENCY_RISK';
+    taxTreatyTier = 'HIGH_DUAL_TAXATION_EXPOSURE';
+  }
+
+  return {
+    valid: true,
+    tieBreakerScoreHome,
+    tieBreakerScoreHost,
+    daysInHomeCountryAnnual,
+    daysInHostCountryAnnual,
+    primaryTaxResidency,
+    taxTreatyTier,
+    recommendation: taxTreatyTier === 'HIGH_DUAL_TAXATION_EXPOSURE'
+      ? `High dual taxation risk! OECD tie-breaker scores are balanced (Home: ${tieBreakerScoreHome}, Host: ${tieBreakerScoreHost}). Consult cross-border tax specialist.`
+      : primaryTaxResidency === 'HOST_COUNTRY'
+      ? `Host country tax residency established under tie-breaker rules (Host score: ${tieBreakerScoreHost}).`
+      : `Home country primary tax residency maintained (Home score: ${tieBreakerScoreHome}).`
+  };
+}
+
+
 
 
 
