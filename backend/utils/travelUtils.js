@@ -2278,6 +2278,56 @@ export function calculateNomadColivingCommunityMatchScore({
   };
 }
 
+export function calculateNomadCoworkingPassSavingsIndex({
+  dailyDeskPassUsd = 25,
+  monthlyMembershipPassUsd = 250,
+  estimatedDaysPerMonth = 15,
+  includesFreeCoffeeAndPerks = true,
+  perkMonthlyValueUsd = 30
+} = {}) {
+  if (typeof dailyDeskPassUsd !== 'number' || dailyDeskPassUsd <= 0 || isNaN(dailyDeskPassUsd)) {
+    return { valid: false, error: 'Daily desk pass price must be a positive number' };
+  }
+  if (typeof monthlyMembershipPassUsd !== 'number' || monthlyMembershipPassUsd <= 0 || isNaN(monthlyMembershipPassUsd)) {
+    return { valid: false, error: 'Monthly membership pass price must be a positive number' };
+  }
+  if (typeof estimatedDaysPerMonth !== 'number' || estimatedDaysPerMonth <= 0 || isNaN(estimatedDaysPerMonth)) {
+    return { valid: false, error: 'Estimated days per month must be a positive number' };
+  }
+
+  const payPerDayTotalUsd = Math.round((dailyDeskPassUsd * estimatedDaysPerMonth) * 100) / 100;
+  const perkBonus = includesFreeCoffeeAndPerks ? Math.max(0, perkMonthlyValueUsd) : 0;
+  const netMonthlyMembershipCostUsd = Math.max(0, Math.round((monthlyMembershipPassUsd - perkBonus) * 100) / 100);
+
+  const monthlySavingsUsd = Math.round((payPerDayTotalUsd - netMonthlyMembershipCostUsd) * 100) / 100;
+  const isMonthlyPassBetter = monthlySavingsUsd > 0;
+  const breakEvenDays = Math.ceil(netMonthlyMembershipCostUsd / dailyDeskPassUsd);
+
+  let recommendationTier = 'MONTHLY_MEMBERSHIP_RECOMMENDED';
+  if (!isMonthlyPassBetter) {
+    recommendationTier = 'DAY_PASS_COST_EFFECTIVE';
+  } else if (monthlySavingsUsd >= 100) {
+    recommendationTier = 'HIGH_SAVINGS_MONTHLY_MEMBERSHIP';
+  }
+
+  return {
+    valid: true,
+    dailyDeskPassUsd,
+    monthlyMembershipPassUsd,
+    estimatedDaysPerMonth,
+    payPerDayTotalUsd,
+    netMonthlyMembershipCostUsd,
+    monthlySavingsUsd,
+    isMonthlyPassBetter,
+    breakEvenDays,
+    recommendationTier,
+    recommendation: isMonthlyPassBetter
+      ? `Monthly pass recommended! Saves $${monthlySavingsUsd.toFixed(2)}/mo compared to day passes (Break-even at ${breakEvenDays} days).`
+      : `Day passes recommended! You save $${Math.abs(monthlySavingsUsd).toFixed(2)}/mo based on ${estimatedDaysPerMonth} working days.`
+  };
+}
+
+
 
 
 
