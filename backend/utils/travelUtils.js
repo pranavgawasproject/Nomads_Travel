@@ -2209,6 +2209,76 @@ export function calculateNomadTravelInsuranceAndEmergencyFund({
   };
 }
 
+export function calculateNomadColivingCommunityMatchScore({
+  userBudgetUsd = 1500,
+  communityMonthlyPriceUsd = 1400,
+  userWorkTimezoneOffset = 0,
+  communityPrimaryTimezoneOffset = 0,
+  sharedInterests = [],
+  communityTags = [],
+  quietHoursRequired = true,
+  communityEnforcesQuietHours = true
+} = {}) {
+  if (typeof userBudgetUsd !== 'number' || userBudgetUsd <= 0 || isNaN(userBudgetUsd)) {
+    return { valid: false, error: 'User budget must be a positive number' };
+  }
+  if (typeof communityMonthlyPriceUsd !== 'number' || communityMonthlyPriceUsd <= 0 || isNaN(communityMonthlyPriceUsd)) {
+    return { valid: false, error: 'Community monthly price must be a positive number' };
+  }
+
+  const budgetRatio = userBudgetUsd / communityMonthlyPriceUsd;
+  let budgetScore = 100;
+  if (budgetRatio < 1.0) {
+    budgetScore = Math.max(0, 100 - (1.0 - budgetRatio) * 200);
+  } else if (budgetRatio > 1.5) {
+    budgetScore = 90;
+  }
+
+  const tzDiff = Math.abs(userWorkTimezoneOffset - communityPrimaryTimezoneOffset);
+  const timezoneScore = Math.max(0, 100 - tzDiff * 12.5);
+
+  const userInterests = Array.isArray(sharedInterests) ? sharedInterests.map(i => String(i).toLowerCase().trim()) : [];
+  const commTags = Array.isArray(communityTags) ? communityTags.map(t => String(t).toLowerCase().trim()) : [];
+
+  let interestScore = 50;
+  if (userInterests.length > 0 && commTags.length > 0) {
+    const common = userInterests.filter(i => commTags.includes(i));
+    interestScore = Math.min(100, Math.round((common.length / userInterests.length) * 100));
+  }
+
+  let quietScore = 100;
+  if (quietHoursRequired && !communityEnforcesQuietHours) {
+    quietScore = 30;
+  }
+
+  const overallMatchScore = Math.round((budgetScore * 0.30) + (timezoneScore * 0.25) + (interestScore * 0.30) + (quietScore * 0.15));
+
+  let matchTier = 'HIGH_COMPATIBILITY';
+  if (overallMatchScore < 50) {
+    matchTier = 'LOW_COMPATIBILITY';
+  } else if (overallMatchScore < 75) {
+    matchTier = 'MODERATE_COMPATIBILITY';
+  }
+
+  return {
+    valid: true,
+    userBudgetUsd,
+    communityMonthlyPriceUsd,
+    overallMatchScore,
+    matchTier,
+    breakdown: {
+      budgetScore: Math.round(budgetScore),
+      timezoneScore: Math.round(timezoneScore),
+      interestScore: Math.round(interestScore),
+      quietScore: Math.round(quietScore)
+    },
+    recommendation: overallMatchScore >= 75
+      ? `Strong community match (${overallMatchScore}%) with price $${communityMonthlyPriceUsd}/mo.`
+      : `Moderate coliving match (${overallMatchScore}%). Check quiet hours or timezone overlap.`
+  };
+}
+
+
 
 
 
