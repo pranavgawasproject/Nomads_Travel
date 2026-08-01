@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit, calculateNomadTaxResidencyPhysicalPresenceAudit, calculateNomadVisaExemptTravelWindow, calculateNomadRemoteWorkTaxTieBreakerScore, calculateNomadEmergencyMedicalEvacuationCoverageScore, calculateNomadColivingSecurityAndPrivacyScore, calculateNomadTravelInsuranceAndEmergencyFund, calculateNomadColivingCommunityMatchScore, calculateNomadCoworkingPassSavingsIndex } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit, calculateNomadTaxResidencyPhysicalPresenceAudit, calculateNomadVisaExemptTravelWindow, calculateNomadRemoteWorkTaxTieBreakerScore, calculateNomadEmergencyMedicalEvacuationCoverageScore, calculateNomadColivingSecurityAndPrivacyScore, calculateNomadTravelInsuranceAndEmergencyFund, calculateNomadColivingCommunityMatchScore, calculateNomadCoworkingPassSavingsIndex, calculateNomadCrossBorderTaxLiabilityIndex } from '../utils/travelUtils.js';
 
 
 
@@ -1501,6 +1501,39 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const inv = calculateNomadCoworkingPassSavingsIndex({ dailyDeskPassUsd: -10 });
       expect(inv.valid).toBe(false);
       expect(inv.error).toBe('Daily desk pass price must be a positive number');
+    });
+  });
+
+  describe('calculateNomadCrossBorderTaxLiabilityIndex', () => {
+    it('calculates tax liability index and flags residency when threshold exceeded', () => {
+      const records = [
+        { countryName: 'Spain', daysStayed: 190, foreignIncomeUsd: 40000, dtaAgreementActive: true },
+        { countryName: 'Portugal', daysStayed: 60, foreignIncomeUsd: 15000, dtaAgreementActive: false }
+      ];
+      const res = calculateNomadCrossBorderTaxLiabilityIndex(records, 183);
+      expect(res.valid).toBe(true);
+      expect(res.totalStayDays).toBe(250);
+      expect(res.isResidencyTriggered).toBe(true);
+      expect(res.flaggedResidencyCountriesCount).toBe(1);
+      expect(res.taxRiskTier).toBe('CRITICAL_TAX_RESIDENCY_TRIGGERED');
+      expect(res.recommendation).toContain('Tax residency threshold (183 days) exceeded in Spain');
+    });
+
+    it('calculates low tax risk tier when all stays are within thresholds', () => {
+      const records = [
+        { countryName: 'Thailand', daysStayed: 80, foreignIncomeUsd: 20000 },
+        { countryName: 'Indonesia', daysStayed: 70, foreignIncomeUsd: 18000 }
+      ];
+      const res = calculateNomadCrossBorderTaxLiabilityIndex(records, 183);
+      expect(res.valid).toBe(true);
+      expect(res.isResidencyTriggered).toBe(false);
+      expect(res.taxRiskTier).toBe('LOW_TAX_RESIDENCY_RISK');
+    });
+
+    it('returns error for invalid empty or non-array records', () => {
+      const res = calculateNomadCrossBorderTaxLiabilityIndex([]);
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Stay records must be a non-empty array');
     });
   });
 });

@@ -2327,6 +2327,82 @@ export function calculateNomadCoworkingPassSavingsIndex({
   };
 }
 
+export function calculateNomadCrossBorderTaxLiabilityIndex(stayRecords, taxResidencyThresholdDays = 183) {
+  if (!Array.isArray(stayRecords) || stayRecords.length === 0) {
+    return {
+      valid: false,
+      error: 'Stay records must be a non-empty array',
+      totalStayDays: 0,
+      taxRiskScore: 0,
+      taxRiskTier: 'INVALID_INPUT'
+    };
+  }
+
+  let totalStayDays = 0;
+  let totalForeignIncomeUsd = 0;
+  const flaggedResidencyCountries = [];
+  let dtaProtectedCount = 0;
+
+  for (const record of stayRecords) {
+    if (!record || typeof record.countryName !== 'string' || typeof record.daysStayed !== 'number' || record.daysStayed < 0) {
+      return {
+        valid: false,
+        error: 'Each stay record must contain valid countryName and non-negative daysStayed',
+        totalStayDays: 0,
+        taxRiskScore: 0,
+        taxRiskTier: 'INVALID_INPUT'
+      };
+    }
+
+    const income = typeof record.foreignIncomeUsd === 'number' && record.foreignIncomeUsd >= 0 ? record.foreignIncomeUsd : 0;
+    totalStayDays += record.daysStayed;
+    totalForeignIncomeUsd += income;
+
+    if (record.daysStayed >= taxResidencyThresholdDays) {
+      flaggedResidencyCountries.push({
+        countryName: record.countryName,
+        daysStayed: record.daysStayed,
+        incomeUsd: income,
+        dtaProtected: Boolean(record.dtaAgreementActive)
+      });
+    }
+
+    if (record.dtaAgreementActive) {
+      dtaProtectedCount++;
+    }
+  }
+
+  const isResidencyTriggered = flaggedResidencyCountries.length > 0;
+  let taxRiskScore = Math.min(100, Math.round((totalStayDays / 365) * 40 + (isResidencyTriggered ? 45 : 10) + (flaggedResidencyCountries.length * 15)));
+
+  if (dtaProtectedCount > 0 && isResidencyTriggered) {
+    taxRiskScore = Math.max(0, taxRiskScore - 15);
+  }
+
+  let taxRiskTier = 'LOW_TAX_RESIDENCY_RISK';
+  if (isResidencyTriggered || taxRiskScore >= 80) {
+    taxRiskTier = 'CRITICAL_TAX_RESIDENCY_TRIGGERED';
+  } else if (taxRiskScore >= 50) {
+    taxRiskTier = 'ELEVATED_TAX_MONITORING_REQUIRED';
+  }
+
+  return {
+    valid: true,
+    totalStayDays,
+    totalForeignIncomeUsd,
+    taxResidencyThresholdDays,
+    flaggedResidencyCountriesCount: flaggedResidencyCountries.length,
+    flaggedResidencyCountries,
+    isResidencyTriggered,
+    taxRiskScore,
+    taxRiskTier,
+    recommendation: isResidencyTriggered
+      ? `Tax residency threshold (${taxResidencyThresholdDays} days) exceeded in ${flaggedResidencyCountries.map(c => c.countryName).join(', ')}. Consult a cross-border tax specialist.`
+      : `Tax residency clear across all visited destinations. ${totalStayDays} total days tracked across ${stayRecords.length} countries.`
+  };
+}
+
+
 
 
 
