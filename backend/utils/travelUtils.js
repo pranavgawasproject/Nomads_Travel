@@ -2504,6 +2504,65 @@ export function calculateNomadVisaDurationAndOverstayRiskScore({
   };
 }
 
+export function calculateNomadMultiCurrencyFxAndAtmFeeAudit({
+  monthlyForeignSpendUsd = 2000,
+  fxMarkupPercentage = 3.0,
+  fixedAtmFeeUsd = 5.0,
+  monthlyAtmWithdrawals = 4,
+  multiCurrencyCardDiscountPercentage = 2.0
+} = {}) {
+  if (typeof monthlyForeignSpendUsd !== 'number' || monthlyForeignSpendUsd <= 0) {
+    return { valid: false, error: 'Monthly foreign spend must be a positive number' };
+  }
+  if (typeof fxMarkupPercentage !== 'number' || fxMarkupPercentage < 0) {
+    return { valid: false, error: 'FX markup percentage must be non-negative' };
+  }
+  if (typeof fixedAtmFeeUsd !== 'number' || fixedAtmFeeUsd < 0) {
+    return { valid: false, error: 'Fixed ATM fee must be non-negative' };
+  }
+  if (typeof monthlyAtmWithdrawals !== 'number' || monthlyAtmWithdrawals < 0) {
+    return { valid: false, error: 'Monthly ATM withdrawals must be non-negative' };
+  }
+
+  const monthlyFxFeeUsd = Math.round((monthlyForeignSpendUsd * (fxMarkupPercentage / 100)) * 100) / 100;
+  const monthlyAtmTotalFeeUsd = Math.round((fixedAtmFeeUsd * monthlyAtmWithdrawals) * 100) / 100;
+  const totalMonthlyFeeUsd = Math.round((monthlyFxFeeUsd + monthlyAtmTotalFeeUsd) * 100) / 100;
+  const annualTotalFeeUsd = Math.round((totalMonthlyFeeUsd * 12) * 100) / 100;
+
+  const monthlyOptimizedFxCostUsd = Math.round(
+    (monthlyForeignSpendUsd * (Math.max(0, fxMarkupPercentage - multiCurrencyCardDiscountPercentage) / 100)) * 100
+  ) / 100;
+  const monthlySavingsUsd = Math.round((totalMonthlyFeeUsd - monthlyOptimizedFxCostUsd) * 100) / 100;
+  const annualSavingsUsd = Math.round((monthlySavingsUsd * 12) * 100) / 100;
+
+  let feeRiskTier = 'OPTIMIZED_FX';
+  if (totalMonthlyFeeUsd >= 100 || fxMarkupPercentage >= 3.5) {
+    feeRiskTier = 'HIGH_FX_DRAIN';
+  } else if (totalMonthlyFeeUsd >= 40 || fxMarkupPercentage >= 1.5) {
+    feeRiskTier = 'MODERATE_FX_DRAIN';
+  }
+
+  return {
+    valid: true,
+    monthlyForeignSpendUsd,
+    fxMarkupPercentage,
+    monthlyFxFeeUsd,
+    monthlyAtmTotalFeeUsd,
+    totalMonthlyFeeUsd,
+    annualTotalFeeUsd,
+    monthlyOptimizedFxCostUsd,
+    monthlySavingsUsd,
+    annualSavingsUsd,
+    feeRiskTier,
+    recommendation: feeRiskTier === 'HIGH_FX_DRAIN'
+      ? `High currency conversion drain ($${totalMonthlyFeeUsd}/mo, $${annualTotalFeeUsd}/yr). Switch to borderless multi-currency card to save $${annualSavingsUsd}/yr.`
+      : feeRiskTier === 'MODERATE_FX_DRAIN'
+      ? `Moderate FX fee overhead ($${totalMonthlyFeeUsd}/mo). Use local currency billing to save up to $${annualSavingsUsd}/yr.`
+      : `Optimized foreign transaction fee profile ($${totalMonthlyFeeUsd}/mo total fees).`
+  };
+}
+
+
 
 
 

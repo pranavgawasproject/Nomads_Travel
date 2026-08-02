@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit, calculateNomadTaxResidencyPhysicalPresenceAudit, calculateNomadVisaExemptTravelWindow, calculateNomadRemoteWorkTaxTieBreakerScore, calculateNomadEmergencyMedicalEvacuationCoverageScore, calculateNomadColivingSecurityAndPrivacyScore, calculateNomadTravelInsuranceAndEmergencyFund, calculateNomadColivingCommunityMatchScore, calculateNomadCoworkingPassSavingsIndex, calculateNomadCrossBorderTaxLiabilityIndex, calculateNomadCommunityEventEngagementScore, calculateNomadVisaDurationAndOverstayRiskScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit, calculateNomadTaxResidencyPhysicalPresenceAudit, calculateNomadVisaExemptTravelWindow, calculateNomadRemoteWorkTaxTieBreakerScore, calculateNomadEmergencyMedicalEvacuationCoverageScore, calculateNomadColivingSecurityAndPrivacyScore, calculateNomadTravelInsuranceAndEmergencyFund, calculateNomadColivingCommunityMatchScore, calculateNomadCoworkingPassSavingsIndex, calculateNomadCrossBorderTaxLiabilityIndex, calculateNomadCommunityEventEngagementScore, calculateNomadVisaDurationAndOverstayRiskScore, calculateNomadMultiCurrencyFxAndAtmFeeAudit } from '../utils/travelUtils.js';
 
 
 
@@ -1591,6 +1591,45 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const inv = calculateNomadVisaDurationAndOverstayRiskScore({ stayRecords: 'invalid' });
       expect(inv.valid).toBe(false);
       expect(inv.error).toBe('Stay records must be an array');
+    });
+  });
+
+  describe('calculateNomadMultiCurrencyFxAndAtmFeeAudit', () => {
+    it('calculates FX markup fee, ATM fees, and annual savings accurately', () => {
+      const res = calculateNomadMultiCurrencyFxAndAtmFeeAudit({
+        monthlyForeignSpendUsd: 2000,
+        fxMarkupPercentage: 3.0,
+        fixedAtmFeeUsd: 5.0,
+        monthlyAtmWithdrawals: 4,
+        multiCurrencyCardDiscountPercentage: 2.0
+      });
+      expect(res.valid).toBe(true);
+      expect(res.monthlyFxFeeUsd).toBe(60);
+      expect(res.monthlyAtmTotalFeeUsd).toBe(20);
+      expect(res.totalMonthlyFeeUsd).toBe(80);
+      expect(res.annualTotalFeeUsd).toBe(960);
+      expect(res.monthlyOptimizedFxCostUsd).toBe(20);
+      expect(res.monthlySavingsUsd).toBe(60);
+      expect(res.annualSavingsUsd).toBe(720);
+      expect(res.feeRiskTier).toBe('MODERATE_FX_DRAIN');
+    });
+
+    it('flags HIGH_FX_DRAIN tier when total fees exceed threshold', () => {
+      const res = calculateNomadMultiCurrencyFxAndAtmFeeAudit({
+        monthlyForeignSpendUsd: 4000,
+        fxMarkupPercentage: 3.5,
+        fixedAtmFeeUsd: 5.0,
+        monthlyAtmWithdrawals: 6
+      });
+      expect(res.valid).toBe(true);
+      expect(res.feeRiskTier).toBe('HIGH_FX_DRAIN');
+      expect(res.recommendation).toContain('High currency conversion drain');
+    });
+
+    it('returns error for non-positive monthly spend input', () => {
+      const res = calculateNomadMultiCurrencyFxAndAtmFeeAudit({ monthlyForeignSpendUsd: -500 });
+      expect(res.valid).toBe(false);
+      expect(res.error).toBe('Monthly foreign spend must be a positive number');
     });
   });
 });
