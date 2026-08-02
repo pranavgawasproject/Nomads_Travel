@@ -2402,6 +2402,54 @@ export function calculateNomadCrossBorderTaxLiabilityIndex(stayRecords, taxResid
   };
 }
 
+export function calculateNomadCommunityEventEngagementScore({
+  attendeesCount = 25,
+  maxCapacity = 30,
+  discussionThreadsCount = 8,
+  verifiedNomadsCount = 18,
+  isHostVerified = true
+} = {}) {
+  if (typeof attendeesCount !== 'number' || attendeesCount < 0 || isNaN(attendeesCount)) {
+    return { valid: false, error: 'Attendees count must be a non-negative number' };
+  }
+  if (typeof maxCapacity !== 'number' || maxCapacity <= 0 || isNaN(maxCapacity)) {
+    return { valid: false, error: 'Max capacity must be a positive number' };
+  }
+
+  const occupancyPct = Math.min(100, Math.round((attendeesCount / maxCapacity) * 100 * 10) / 10);
+  const verifiedPct = attendeesCount > 0 ? Math.round((verifiedNomadsCount / attendeesCount) * 100 * 10) / 10 : 0;
+
+  const occupancyScore = Math.min(40, Math.round(occupancyPct * 0.4));
+  const discussionScore = Math.min(30, discussionThreadsCount * 3.75);
+  const verificationScore = Math.min(20, Math.round(verifiedPct * 0.2));
+  const hostBonus = isHostVerified ? 10 : 0;
+
+  const engagementScore = Math.min(100, Math.round(occupancyScore + discussionScore + verificationScore + hostBonus));
+
+  let engagementTier = 'HIGH_ENGAGEMENT_EVENT';
+  if (engagementScore < 50) {
+    engagementTier = 'LOW_ENGAGEMENT_EVENT';
+  } else if (engagementScore < 80) {
+    engagementTier = 'MODERATE_ENGAGEMENT_EVENT';
+  }
+
+  return {
+    valid: true,
+    attendeesCount,
+    maxCapacity,
+    occupancyPct,
+    verifiedPct,
+    discussionThreadsCount,
+    isHostVerified: Boolean(isHostVerified),
+    engagementScore,
+    engagementTier,
+    recommendation: engagementScore >= 80
+      ? `High community engagement event (${engagementScore}/100 score, ${occupancyPct}% full with ${discussionThreadsCount} discussion threads).`
+      : `Moderate community event engagement (${engagementScore}/100 score). Promote event to local nomad network.`
+  };
+}
+
+
 
 
 
