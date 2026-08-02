@@ -2449,6 +2449,61 @@ export function calculateNomadCommunityEventEngagementScore({
   };
 }
 
+export function calculateNomadVisaDurationAndOverstayRiskScore({
+  stayRecords = [],
+  targetZoneDaysLimit = 90,
+  rollingWindowDays = 180,
+  dailyOverstayFineUsd = 50
+} = {}) {
+  if (!Array.isArray(stayRecords)) {
+    return { valid: false, error: 'Stay records must be an array' };
+  }
+  if (typeof targetZoneDaysLimit !== 'number' || targetZoneDaysLimit <= 0 || isNaN(targetZoneDaysLimit)) {
+    return { valid: false, error: 'Target zone days limit must be a positive number' };
+  }
+  if (typeof rollingWindowDays !== 'number' || rollingWindowDays <= 0 || isNaN(rollingWindowDays)) {
+    return { valid: false, error: 'Rolling window days must be a positive number' };
+  }
+
+  let totalDaysInZone = 0;
+  for (const record of stayRecords) {
+    if (record && typeof record.daysStayed === 'number' && record.daysStayed > 0) {
+      totalDaysInZone += record.daysStayed;
+    }
+  }
+
+  const daysRemaining = Math.max(0, targetZoneDaysLimit - totalDaysInZone);
+  const overstayDays = Math.max(0, totalDaysInZone - targetZoneDaysLimit);
+  const utilizationPct = Math.min(100, Math.round((totalDaysInZone / targetZoneDaysLimit) * 100 * 10) / 10);
+  const estimatedFineRiskUsd = overstayDays * dailyOverstayFineUsd;
+
+  let riskTier = 'SAFE';
+  if (overstayDays > 0) {
+    riskTier = 'OVERSTAY_VIOLATION';
+  } else if (daysRemaining <= 7) {
+    riskTier = 'HIGH_RISK';
+  } else if (daysRemaining <= 20) {
+    riskTier = 'WARNING';
+  }
+
+  return {
+    valid: true,
+    totalDaysInZone,
+    targetZoneDaysLimit,
+    rollingWindowDays,
+    daysRemaining,
+    overstayDays,
+    utilizationPct,
+    estimatedFineRiskUsd,
+    riskTier,
+    recommendation: riskTier === 'OVERSTAY_VIOLATION'
+      ? `CRITICAL: Overstayed by ${overstayDays} days! Estimated potential fine: $${estimatedFineRiskUsd}. Exit zone immediately.`
+      : riskTier === 'HIGH_RISK'
+      ? `WARNING: Only ${daysRemaining} days remaining in visa zone (${utilizationPct}% used). Prepare departure plan.`
+      : `Visa status safe (${daysRemaining} days remaining out of ${targetZoneDaysLimit} allowed).`
+  };
+}
+
 
 
 

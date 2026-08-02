@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit, calculateNomadTaxResidencyPhysicalPresenceAudit, calculateNomadVisaExemptTravelWindow, calculateNomadRemoteWorkTaxTieBreakerScore, calculateNomadEmergencyMedicalEvacuationCoverageScore, calculateNomadColivingSecurityAndPrivacyScore, calculateNomadTravelInsuranceAndEmergencyFund, calculateNomadColivingCommunityMatchScore, calculateNomadCoworkingPassSavingsIndex, calculateNomadCrossBorderTaxLiabilityIndex, calculateNomadCommunityEventEngagementScore } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit, calculateNomadTaxResidencyPhysicalPresenceAudit, calculateNomadVisaExemptTravelWindow, calculateNomadRemoteWorkTaxTieBreakerScore, calculateNomadEmergencyMedicalEvacuationCoverageScore, calculateNomadColivingSecurityAndPrivacyScore, calculateNomadTravelInsuranceAndEmergencyFund, calculateNomadColivingCommunityMatchScore, calculateNomadCoworkingPassSavingsIndex, calculateNomadCrossBorderTaxLiabilityIndex, calculateNomadCommunityEventEngagementScore, calculateNomadVisaDurationAndOverstayRiskScore } from '../utils/travelUtils.js';
 
 
 
@@ -1556,6 +1556,41 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       const inv = calculateNomadCommunityEventEngagementScore({ attendeesCount: -5 });
       expect(inv.valid).toBe(false);
       expect(inv.error).toBe('Attendees count must be a non-negative number');
+    });
+  });
+
+  describe('calculateNomadVisaDurationAndOverstayRiskScore', () => {
+    it('calculates visa duration and overstay risk correctly when safe', () => {
+      const res = calculateNomadVisaDurationAndOverstayRiskScore({
+        stayRecords: [{ daysStayed: 30 }, { daysStayed: 20 }],
+        targetZoneDaysLimit: 90,
+        rollingWindowDays: 180
+      });
+      expect(res.valid).toBe(true);
+      expect(res.totalDaysInZone).toBe(50);
+      expect(res.daysRemaining).toBe(40);
+      expect(res.overstayDays).toBe(0);
+      expect(res.riskTier).toBe('SAFE');
+      expect(res.recommendation).toContain('Visa status safe (40 days remaining');
+    });
+
+    it('flags OVERSTAY_VIOLATION when total stay exceeds target limit', () => {
+      const res = calculateNomadVisaDurationAndOverstayRiskScore({
+        stayRecords: [{ daysStayed: 60 }, { daysStayed: 40 }],
+        targetZoneDaysLimit: 90,
+        dailyOverstayFineUsd: 100
+      });
+      expect(res.valid).toBe(true);
+      expect(res.overstayDays).toBe(10);
+      expect(res.estimatedFineRiskUsd).toBe(1000);
+      expect(res.riskTier).toBe('OVERSTAY_VIOLATION');
+      expect(res.recommendation).toContain('CRITICAL: Overstayed by 10 days!');
+    });
+
+    it('returns error for non-array stay records', () => {
+      const inv = calculateNomadVisaDurationAndOverstayRiskScore({ stayRecords: 'invalid' });
+      expect(inv.valid).toBe(false);
+      expect(inv.error).toBe('Stay records must be an array');
     });
   });
 });
