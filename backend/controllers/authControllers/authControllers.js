@@ -121,8 +121,8 @@ export const forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     // Create reset URL (frontend route)
-    // const resetUrl = `${process.env.FRONTEND_PROD_LINK}/reset-password/${resetToken}`;
-    const resetUrl = `${process.env.FRONTEND_PROD_LINK}reset-password/${resetToken}`;
+    const baseUrl = (process.env.FRONTEND_PROD_LINK || "https://nomads-travel-indol.vercel.app").replace(/\/+$/, "");
+    const resetUrl = `${baseUrl}/reset-password/${resetToken}`;
 
     const message = `
       <p>Hi ${user.name || ""},</p> 

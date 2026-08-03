@@ -5,8 +5,9 @@ export const verifyJwt = (req, res, next) => {
   if (!authorization) return res.status(401).json({ message: "Unauthorized" });
 
   const token = authorization.split(" ")[1];
+  const secret = process.env.JWT_ACCESS_SECRET || process.env.ACCESS_TOKEN_SECRET;
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+  jwt.verify(token, secret, (err, decoded) => {
     if (err) return res.status(403).json({ message: "Forbidden" });
 
     req.userData = decoded.userInfo;
@@ -25,7 +26,9 @@ export const requireAuth = (req, res, next) => {
     return res.status(401).json({ message: "Unauthorized — no token provided" });
   }
   const token = authorization.split(" ")[1];
-  jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, decoded) => {
+  const secret = process.env.JWT_ACCESS_SECRET || process.env.ACCESS_TOKEN_SECRET;
+
+  jwt.verify(token, secret, (err, decoded) => {
     if (err) {
       if (err.name === "TokenExpiredError") {
         return res.status(401).json({ message: "Token expired — please log in again" });
