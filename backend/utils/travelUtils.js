@@ -2562,22 +2562,64 @@ export function calculateNomadMultiCurrencyFxAndAtmFeeAudit({
   };
 }
 
+export function calculateNomadStartupRunwayExtension({
+  currentMonthlyBurnUsd = 10000,
+  currentCashUsd = 100000,
+  targetDestinationMonthlyCostUsd = 3000,
+  relocationCostUsd = 2000,
+  teamSize = 1
+} = {}) {
+  if (typeof currentMonthlyBurnUsd !== 'number' || currentMonthlyBurnUsd <= 0 || isNaN(currentMonthlyBurnUsd)) {
+    return { valid: false, error: 'Current monthly burn must be a positive number' };
+  }
+  if (typeof currentCashUsd !== 'number' || currentCashUsd < 0 || isNaN(currentCashUsd)) {
+    return { valid: false, error: 'Current cash must be a non-negative number' };
+  }
+  if (typeof targetDestinationMonthlyCostUsd !== 'number' || targetDestinationMonthlyCostUsd <= 0 || isNaN(targetDestinationMonthlyCostUsd)) {
+    return { valid: false, error: 'Target destination monthly cost must be a positive number' };
+  }
+  if (typeof relocationCostUsd !== 'number' || relocationCostUsd < 0 || isNaN(relocationCostUsd)) {
+    return { valid: false, error: 'Relocation cost must be a non-negative number' };
+  }
+  if (typeof teamSize !== 'number' || teamSize < 1 || isNaN(teamSize)) {
+    return { valid: false, error: 'Team size must be at least 1' };
+  }
 
+  const currentRunwayMonths = Math.round((currentCashUsd / currentMonthlyBurnUsd) * 10) / 10;
+  
+  const totalRelocationCost = relocationCostUsd * teamSize;
+  const newCashAfterRelocation = currentCashUsd - totalRelocationCost;
 
+  if (newCashAfterRelocation <= 0) {
+    return {
+      valid: true,
+      isFeasible: false,
+      message: 'Relocation costs exceed current cash reserves.'
+    };
+  }
 
+  const targetMonthlyBurn = targetDestinationMonthlyCostUsd * teamSize;
+  const newRunwayMonths = Math.round((newCashAfterRelocation / targetMonthlyBurn) * 10) / 10;
+  
+  const runwayExtensionMonths = Math.round((newRunwayMonths - currentRunwayMonths) * 10) / 10;
+  
+  let recommendation = '';
+  if (runwayExtensionMonths > 6) {
+    recommendation = 'Highly Recommended: Significant runway extension achieved.';
+  } else if (runwayExtensionMonths > 0) {
+    recommendation = 'Favorable: Moderate runway extension achieved.';
+  } else {
+    recommendation = 'Not Recommended: Relocation reduces or does not meaningfully extend runway.';
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  return {
+    valid: true,
+    isFeasible: true,
+    currentRunwayMonths,
+    newRunwayMonths,
+    runwayExtensionMonths,
+    totalRelocationCost,
+    targetMonthlyBurn,
+    recommendation
+  };
+}
