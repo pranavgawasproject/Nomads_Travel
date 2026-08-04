@@ -2695,3 +2695,53 @@ export function calculateNomadColivingLeaseCancellationRiskScore({
   };
 }
 
+export function calculateNomadTaxResidencyAndPhysicalPresenceAudit({
+  primaryCountryDays = 120,
+  targetCountryDays = 90,
+  schengenZoneDaysCount = 45,
+  taxResidencyThresholdDays = 183,
+  schengenLimitDays = 90,
+} = {}) {
+  if (typeof primaryCountryDays !== 'number' || primaryCountryDays < 0 ||
+      typeof targetCountryDays !== 'number' || targetCountryDays < 0) {
+    return { valid: false, error: 'Stay duration days must be non-negative numbers' };
+  }
+
+  const isTaxResidencyTriggered = targetCountryDays >= taxResidencyThresholdDays;
+  const isSchengenOverstayRisk = schengenZoneDaysCount > schengenLimitDays;
+
+  let riskScore = 10;
+  if (isTaxResidencyTriggered) riskScore += 50;
+  else if (targetCountryDays >= taxResidencyThresholdDays * 0.75) riskScore += 25;
+
+  if (isSchengenOverstayRisk) riskScore += 40;
+  else if (schengenZoneDaysCount >= schengenLimitDays * 0.8) riskScore += 20;
+
+  riskScore = Math.min(100, Math.max(0, Math.round(riskScore)));
+
+  let riskTier = 'LOW_TAX_AND_VISA_RISK';
+  if (riskScore >= 70) riskTier = 'HIGH_TAX_AND_VISA_RISK';
+  else if (riskScore >= 40) riskTier = 'MODERATE_TAX_AND_VISA_RISK';
+
+  let recommendation = 'Stay durations comply with 183-day tax residency and Schengen 90/180 rules.';
+  if (riskTier === 'HIGH_TAX_AND_VISA_RISK') {
+    recommendation = `High tax/visa risk (${riskScore}/100). Target stay (${targetCountryDays} days) triggers or approaches tax residency or Schengen limits.`;
+  } else if (riskTier === 'MODERATE_TAX_AND_VISA_RISK') {
+    recommendation = `Moderate tax/visa risk (${riskScore}/100). Monitor total stay days closely to prevent unintentional tax exposure.`;
+  }
+
+  return {
+    valid: true,
+    primaryCountryDays,
+    targetCountryDays,
+    schengenZoneDaysCount,
+    taxResidencyThresholdDays,
+    isTaxResidencyTriggered,
+    isSchengenOverstayRisk,
+    riskScore,
+    riskTier,
+    recommendation
+  };
+}
+
+
