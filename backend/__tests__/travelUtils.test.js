@@ -1,4 +1,5 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit, calculateNomadTaxResidencyPhysicalPresenceAudit, calculateNomadVisaExemptTravelWindow, calculateNomadRemoteWorkTaxTieBreakerScore, calculateNomadEmergencyMedicalEvacuationCoverageScore, calculateNomadColivingSecurityAndPrivacyScore, calculateNomadTravelInsuranceAndEmergencyFund, calculateNomadColivingCommunityMatchScore, calculateNomadCoworkingPassSavingsIndex, calculateNomadCrossBorderTaxLiabilityIndex, calculateNomadCommunityEventEngagementScore, calculateNomadVisaDurationAndOverstayRiskScore, calculateNomadMultiCurrencyFxAndAtmFeeAudit , calculateNomadStartupRunwayExtension } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit, calculateNomadTaxResidencyPhysicalPresenceAudit, calculateNomadVisaExemptTravelWindow, calculateNomadRemoteWorkTaxTieBreakerScore, calculateNomadEmergencyMedicalEvacuationCoverageScore, calculateNomadColivingSecurityAndPrivacyScore, calculateNomadTravelInsuranceAndEmergencyFund, calculateNomadColivingCommunityMatchScore, calculateNomadCoworkingPassSavingsIndex, calculateNomadCrossBorderTaxLiabilityIndex, calculateNomadCommunityEventEngagementScore, calculateNomadVisaDurationAndOverstayRiskScore, calculateNomadMultiCurrencyFxAndAtmFeeAudit, calculateNomadStartupRunwayExtension, calculateNomadColivingLeaseCancellationRiskScore } from '../utils/travelUtils.js';
+
 
 
 
@@ -1670,7 +1671,47 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(res.message).toBe('Relocation costs exceed current cash reserves.');
     });
   });
+
+  describe('calculateNomadColivingLeaseCancellationRiskScore', () => {
+    it('calculates low cancellation risk for flexible policy with adequate notice', () => {
+      const res = calculateNomadColivingLeaseCancellationRiskScore({
+        monthlyRentUsd: 1500,
+        depositUsd: 1500,
+        noticePeriodDays: 30,
+        requiredNoticeDays: 30,
+        policyTier: 'FLEXIBLE',
+        hostEarlyTerminationClause: false
+      });
+      expect(res.valid).toBe(true);
+      expect(res.riskTier).toBe('LOW_CANCELLATION_RISK');
+      expect(res.financialExposureUsd).toBe(0);
+      expect(res.recommendation).toContain('Flexible lease agreement');
+    });
+
+    it('identifies high cancellation risk for strict policy and short notice', () => {
+      const res = calculateNomadColivingLeaseCancellationRiskScore({
+        monthlyRentUsd: 2000,
+        depositUsd: 2000,
+        noticePeriodDays: 7,
+        requiredNoticeDays: 30,
+        policyTier: 'STRICT',
+        hostEarlyTerminationClause: true
+      });
+      expect(res.valid).toBe(true);
+      expect(res.riskScore).toBeGreaterThanOrEqual(70);
+      expect(res.riskTier).toBe('HIGH_CANCELLATION_RISK');
+      expect(res.financialExposureUsd).toBe(2000);
+      expect(res.recommendation).toContain('High lease cancellation risk');
+    });
+
+    it('returns error for invalid non-positive monthly rent', () => {
+      const inv = calculateNomadColivingLeaseCancellationRiskScore({ monthlyRentUsd: -500 });
+      expect(inv.valid).toBe(false);
+      expect(inv.error).toBe('Monthly rent must be a positive number');
+    });
+  });
 });
+
 
 
 

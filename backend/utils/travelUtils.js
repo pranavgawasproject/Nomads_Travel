@@ -2623,3 +2623,75 @@ export function calculateNomadStartupRunwayExtension({
     recommendation
   };
 }
+
+export function calculateNomadColivingLeaseCancellationRiskScore({
+  monthlyRentUsd = 1500,
+  depositUsd = 1500,
+  noticePeriodDays = 14,
+  requiredNoticeDays = 30,
+  policyTier = 'MODERATE',
+  hostEarlyTerminationClause = false
+} = {}) {
+  if (typeof monthlyRentUsd !== 'number' || monthlyRentUsd <= 0 || isNaN(monthlyRentUsd)) {
+    return { valid: false, error: 'Monthly rent must be a positive number' };
+  }
+  if (typeof depositUsd !== 'number' || depositUsd < 0 || isNaN(depositUsd)) {
+    return { valid: false, error: 'Deposit must be a non-negative number' };
+  }
+  if (typeof noticePeriodDays !== 'number' || noticePeriodDays < 0 || isNaN(noticePeriodDays)) {
+    return { valid: false, error: 'Notice period days must be a non-negative number' };
+  }
+
+  const tier = (policyTier || 'MODERATE').toUpperCase();
+  let baseRisk = 30;
+
+  if (tier === 'STRICT') baseRisk += 30;
+  else if (tier === 'FLEXIBLE') baseRisk -= 15;
+
+  if (noticePeriodDays < requiredNoticeDays) {
+    const shortageDays = requiredNoticeDays - noticePeriodDays;
+    baseRisk += Math.min(30, shortageDays * 1.5);
+  }
+
+  if (hostEarlyTerminationClause) {
+    baseRisk += 20;
+  }
+
+  const riskScore = Math.min(100, Math.max(0, Math.round(baseRisk)));
+
+  let penaltyPct = 0.25;
+  if (tier === 'STRICT') penaltyPct = 0.75;
+  else if (tier === 'FLEXIBLE') penaltyPct = 0.0;
+
+  if (noticePeriodDays < requiredNoticeDays) {
+    penaltyPct = Math.min(1.0, penaltyPct + 0.25);
+  }
+
+  const financialExposureUsd = Math.round((depositUsd * penaltyPct) * 100) / 100;
+
+  let riskTier = 'LOW_CANCELLATION_RISK';
+  if (riskScore >= 70) riskTier = 'HIGH_CANCELLATION_RISK';
+  else if (riskScore >= 45) riskTier = 'MODERATE_CANCELLATION_RISK';
+
+  let recommendation = 'Flexible lease agreement with minimal cancellation financial exposure.';
+  if (riskTier === 'HIGH_CANCELLATION_RISK') {
+    recommendation = `High lease cancellation risk (${riskScore}/100). Potential exposure: $${financialExposureUsd}. Require standard 30-day notice or flexible terms.`;
+  } else if (riskTier === 'MODERATE_CANCELLATION_RISK') {
+    recommendation = `Moderate cancellation risk (${riskScore}/100). Review notice requirements to minimize deposit forfeiture ($${financialExposureUsd}).`;
+  }
+
+  return {
+    valid: true,
+    monthlyRentUsd,
+    depositUsd,
+    noticePeriodDays,
+    requiredNoticeDays,
+    policyTier: tier,
+    hostEarlyTerminationClause: Boolean(hostEarlyTerminationClause),
+    riskScore,
+    riskTier,
+    financialExposureUsd,
+    recommendation
+  };
+}
+
