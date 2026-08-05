@@ -2744,4 +2744,45 @@ export function calculateNomadTaxResidencyAndPhysicalPresenceAudit({
   };
 }
 
+export function calculateNomadColivingCostSharingIndex({
+  monthlyRentUsd = 3000,
+  numberOfNomads = 4,
+  privateRoomPremiumRatio = 0.2,
+  sharedUtilitiesUsd = 400
+} = {}) {
+  if (typeof monthlyRentUsd !== 'number' || monthlyRentUsd <= 0 ||
+      typeof numberOfNomads !== 'number' || numberOfNomads <= 0) {
+    return { valid: false, error: 'Monthly rent and number of nomads must be positive numbers' };
+  }
+
+  const rent = Math.max(0, monthlyRentUsd);
+  const nomads = Math.max(1, Math.round(numberOfNomads));
+  const utilities = Math.max(0, typeof sharedUtilitiesUsd === 'number' ? sharedUtilitiesUsd : 0);
+  const premiumRatio = Math.max(0, Math.min(0.5, typeof privateRoomPremiumRatio === 'number' ? privateRoomPremiumRatio : 0.2));
+
+  const totalMonthlyCost = rent + utilities;
+  const basePerPersonRent = rent / nomads;
+  const privateRoomPremiumUsd = basePerPersonRent * premiumRatio;
+  const sharedUtilitiesPerPerson = utilities / nomads;
+  const perPersonCostUsd = Math.round((basePerPersonRent + sharedUtilitiesPerPerson) * 100) / 100;
+  const perPersonWithPremiumUsd = Math.round((basePerPersonRent + privateRoomPremiumUsd + sharedUtilitiesPerPerson) * 100) / 100;
+
+  const costEfficiencyScore = Math.min(100, Math.max(0, Math.round((1 - (perPersonCostUsd / 2500)) * 100)));
+
+  return {
+    valid: true,
+    totalMonthlyCost: Math.round(totalMonthlyCost * 100) / 100,
+    numberOfNomads: nomads,
+    basePerPersonRent: Math.round(basePerPersonRent * 100) / 100,
+    sharedUtilitiesPerPerson: Math.round(sharedUtilitiesPerPerson * 100) / 100,
+    perPersonCostUsd,
+    perPersonWithPremiumUsd,
+    costEfficiencyScore,
+    recommendation: costEfficiencyScore >= 50
+      ? 'High coliving cost efficiency. Group sharing provides substantial monthly savings.'
+      : 'Moderate coliving cost efficiency. Consider adding more co-tenants or seeking alternative hub options.'
+  };
+}
+
+
 
