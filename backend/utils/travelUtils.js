@@ -2784,5 +2784,59 @@ export function calculateNomadColivingCostSharingIndex({
   };
 }
 
+export function calculateNomadInternetSlaAndBackupRisk({
+  primarySpeedMbps = 100,
+  hasBackupConnection = true,
+  hasPowerGeneratorBackup = true,
+  monthlyOutageHours = 2,
+  averageLatencyMs = 25
+} = {}) {
+  if (typeof primarySpeedMbps !== 'number' || primarySpeedMbps < 0 || isNaN(primarySpeedMbps)) {
+    return { valid: false, error: 'Primary speed Mbps must be a non-negative number' };
+  }
+
+  const speed = Math.max(0, primarySpeedMbps);
+  const outage = Math.max(0, typeof monthlyOutageHours === 'number' ? monthlyOutageHours : 0);
+  const latency = Math.max(0, typeof averageLatencyMs === 'number' ? averageLatencyMs : 25);
+
+  const totalMonthlyHours = 720;
+  const uptimePercentage = Math.max(0, Math.min(100, Math.round(((totalMonthlyHours - outage) / totalMonthlyHours) * 10000) / 100));
+
+  let score = 50;
+  if (speed >= 100) score += 20;
+  else if (speed >= 30) score += 10;
+
+  if (hasBackupConnection) score += 15;
+  if (hasPowerGeneratorBackup) score += 15;
+
+  if (latency <= 30) score += 10;
+  else if (latency > 100) score -= 15;
+
+  if (outage > 10) score -= 25;
+  else if (outage > 5) score -= 10;
+
+  const finalScore = Math.max(0, Math.min(100, Math.round(score)));
+
+  let riskTier = 'EXCELLENT_SLA';
+  if (finalScore < 40) riskTier = 'HIGH_OUTAGE_RISK';
+  else if (finalScore < 70) riskTier = 'MODERATE_OUTAGE_RISK';
+
+  return {
+    valid: true,
+    primarySpeedMbps: speed,
+    hasBackupConnection,
+    hasPowerGeneratorBackup,
+    monthlyOutageHours: outage,
+    averageLatencyMs: latency,
+    uptimePercentage,
+    reliabilityScore: finalScore,
+    riskTier,
+    recommendation: finalScore >= 70
+      ? 'Internet SLA is robust. Excellent for remote engineering calls and video streams.'
+      : 'Network risk identified. Ensure a secondary 5G mobile hotspot is available.'
+  };
+}
+
+
 
 
