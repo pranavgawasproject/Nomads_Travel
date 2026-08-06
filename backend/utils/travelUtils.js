@@ -2837,6 +2837,97 @@ export function calculateNomadInternetSlaAndBackupRisk({
   };
 }
 
+export function calculateNomadColivingUtilityAndWifiCostSplit({
+  totalMonthlyUtilitiesUsd = 300,
+  highSpeedWifiBillUsd = 100,
+  occupantsCount = 4,
+  heavyBandwidthUserCount = 1
+} = {}) {
+  if (typeof totalMonthlyUtilitiesUsd !== 'number' || totalMonthlyUtilitiesUsd < 0 || isNaN(totalMonthlyUtilitiesUsd)) {
+    return { valid: false, error: 'Total monthly utilities USD must be a non-negative number' };
+  }
+  if (typeof highSpeedWifiBillUsd !== 'number' || highSpeedWifiBillUsd < 0 || isNaN(highSpeedWifiBillUsd)) {
+    return { valid: false, error: 'High speed wifi bill USD must be a non-negative number' };
+  }
+  if (typeof occupantsCount !== 'number' || occupantsCount <= 0 || !Number.isInteger(occupantsCount)) {
+    return { valid: false, error: 'Occupants count must be a positive integer' };
+  }
+
+  const utilTotal = Math.round(totalMonthlyUtilitiesUsd * 100) / 100;
+  const wifiTotal = Math.round(highSpeedWifiBillUsd * 100) / 100;
+  const grandTotal = Math.round((utilTotal + wifiTotal) * 100) / 100;
+
+  const equalPerPersonShare = Math.round((grandTotal / occupantsCount) * 100) / 100;
+  
+  const wifiPerPersonShare = Math.round((wifiTotal / occupantsCount) * 100) / 100;
+  const utilityPerPersonShare = Math.round((utilTotal / occupantsCount) * 100) / 100;
+
+  return {
+    valid: true,
+    totalMonthlyUtilitiesUsd: utilTotal,
+    highSpeedWifiBillUsd: wifiTotal,
+    grandTotalUsd: grandTotal,
+    occupantsCount,
+    equalPerPersonShare,
+    utilityPerPersonShare,
+    wifiPerPersonShare,
+    recommendation: `Fair coliving utility split: $${equalPerPersonShare.toFixed(2)} per person for ${occupantsCount} occupants ($${wifiPerPersonShare.toFixed(2)} WiFi + $${utilityPerPersonShare.toFixed(2)} utilities).`
+  };
+}
+
+export function calculateNomadCoworkingSlaAndPowerBackupScore({
+  primarySpeedMbps = 100,
+  backupSpeedMbps = 30,
+  hasGeneratorPowerBackup = true,
+  averagePowerOutageHoursPerMonth = 2,
+  dailyDeskRateUsd = 20
+} = {}) {
+  if (typeof primarySpeedMbps !== 'number' || primarySpeedMbps <= 0 || isNaN(primarySpeedMbps)) {
+    return { valid: false, error: 'Primary speed Mbps must be a positive number' };
+  }
+  if (typeof dailyDeskRateUsd !== 'number' || dailyDeskRateUsd <= 0 || isNaN(dailyDeskRateUsd)) {
+    return { valid: false, error: 'Daily desk rate USD must be a positive number' };
+  }
+
+  const outage = Math.max(0, typeof averagePowerOutageHoursPerMonth === 'number' ? averagePowerOutageHoursPerMonth : 0);
+  const backupSpeed = Math.max(0, typeof backupSpeedMbps === 'number' ? backupSpeedMbps : 0);
+
+  let reliabilityScore = 100;
+  if (outage > 0 && !hasGeneratorPowerBackup) {
+    reliabilityScore -= Math.min(50, outage * 10);
+  }
+  if (backupSpeed < 20) {
+    reliabilityScore -= 15;
+  }
+  if (primarySpeedMbps < 50) {
+    reliabilityScore -= 20;
+  }
+
+  const finalScore = Math.max(0, Math.min(100, Math.round(reliabilityScore)));
+
+  let slaTier = 'PREMIUM_ENTERPRISE_READY';
+  if (finalScore < 60) {
+    slaTier = 'HIGH_RISK_UNRELIABLE';
+  } else if (finalScore < 85) {
+    slaTier = 'STANDARD_MODERATE_RISK';
+  }
+
+  return {
+    valid: true,
+    primarySpeedMbps,
+    backupSpeedMbps: backupSpeed,
+    hasGeneratorPowerBackup,
+    monthlyOutageHours: outage,
+    reliabilityScore: finalScore,
+    slaTier,
+    recommendation: finalScore >= 85
+      ? `Coworking space is enterprise-ready with high uptime (${finalScore}/100 score).`
+      : `Warning: Risk of power/connectivity downtime detected (${finalScore}/100 score).`
+  };
+}
+
+
+
 
 
 

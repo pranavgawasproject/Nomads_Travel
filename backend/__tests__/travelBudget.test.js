@@ -1,4 +1,4 @@
-import { calculateTripBudget, validateDestinationFilter } from '../utils/travelUtils.js';
+import { calculateTripBudget, validateDestinationFilter, calculateNomadTaxResidencyAndPhysicalPresenceAudit, calculateNomadColivingUtilityAndWifiCostSplit, calculateNomadCoworkingSlaAndPowerBackupScore } from '../utils/travelUtils.js';
 
 describe('calculateTripBudget and validateDestinationFilter', () => {
   describe('calculateTripBudget', () => {
@@ -57,4 +57,48 @@ describe('calculateTripBudget and validateDestinationFilter', () => {
       expect(validateDestinationFilter({ safetyScore: 10 })).toEqual({});
     });
   });
+
+  describe('calculateNomadColivingUtilityAndWifiCostSplit', () => {
+    it('calculates utility and wifi split accurately', () => {
+      const res = calculateNomadColivingUtilityAndWifiCostSplit({
+        totalMonthlyUtilitiesUsd: 300,
+        highSpeedWifiBillUsd: 100,
+        occupantsCount: 4
+      });
+      expect(res.valid).toBe(true);
+      expect(res.grandTotalUsd).toBe(400);
+      expect(res.equalPerPersonShare).toBe(100);
+      expect(res.wifiPerPersonShare).toBe(25);
+      expect(res.utilityPerPersonShare).toBe(75);
+    });
+
+    it('returns error on invalid occupants count', () => {
+      const err = calculateNomadColivingUtilityAndWifiCostSplit({ occupantsCount: 0 });
+      expect(err.valid).toBe(false);
+      expect(err.error).toBe('Occupants count must be a positive integer');
+    });
+  });
+
+  describe('calculateNomadCoworkingSlaAndPowerBackupScore', () => {
+    it('calculates enterprise ready SLA tier for reliable workspace', () => {
+      const res = calculateNomadCoworkingSlaAndPowerBackupScore({
+        primarySpeedMbps: 200,
+        backupSpeedMbps: 50,
+        hasGeneratorPowerBackup: true,
+        averagePowerOutageHoursPerMonth: 1,
+        dailyDeskRateUsd: 25
+      });
+      expect(res.valid).toBe(true);
+      expect(res.reliabilityScore).toBe(100);
+      expect(res.slaTier).toBe('PREMIUM_ENTERPRISE_READY');
+    });
+
+    it('returns error for invalid non-positive primary speed', () => {
+      const err = calculateNomadCoworkingSlaAndPowerBackupScore({ primarySpeedMbps: 0 });
+      expect(err.valid).toBe(false);
+      expect(err.error).toBe('Primary speed Mbps must be a positive number');
+    });
+  });
 });
+
+
