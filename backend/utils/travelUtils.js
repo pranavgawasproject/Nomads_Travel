@@ -1431,7 +1431,7 @@ export function calculateNomadEsimRoamingDataPackageRoi({
   estimatedGbNeeded = 15,
   esimPackagePriceUsd = 35.0,
   localSimPriceUsd = 15.0,
-  airportSimMarkupPct = 25
+  _airportSimMarkupPct = 25
 } = {}) {
   if (typeof durationDays !== 'number' || durationDays <= 0 || !Number.isInteger(durationDays)) {
     return { valid: false, error: 'Duration days must be a positive integer' };
@@ -1450,9 +1450,9 @@ export function calculateNomadEsimRoamingDataPackageRoi({
 
   let recommendation = 'Local SIM card offers lower total cost.';
   if (isEsimCostEffective) {
-    recommendation = `eSIM recommended: premium of \$${priceDifferenceUsd.toFixed(2)} is worth airport arrival convenience and zero physical SIM swap.`;
+    recommendation = `eSIM recommended: premium of $${priceDifferenceUsd.toFixed(2)} is worth airport arrival convenience and zero physical SIM swap.`;
   } else {
-    recommendation = `Local SIM recommended: save \$${priceDifferenceUsd.toFixed(2)} compared to global eSIM package.`;
+    recommendation = `Local SIM recommended: save $${priceDifferenceUsd.toFixed(2)} compared to global eSIM package.`;
   }
 
   return {
@@ -2039,7 +2039,7 @@ export function calculateNomadRemoteWorkTaxTieBreakerScore({
   else { tieBreakerScoreHome += 15; tieBreakerScoreHost += 15; }
 
   if (daysInHomeCountryAnnual > daysInHostCountryAnnual) tieBreakerScoreHome += 25;
-  else if (daysInHostCountryHostCountry > daysInHomeCountryAnnual) tieBreakerScoreHost += 25;
+  else if (daysInHostCountryAnnual > daysInHomeCountryAnnual) tieBreakerScoreHost += 25;
 
   if (isHostCountryCitizen) tieBreakerScoreHost += 10;
   else tieBreakerScoreHome += 10;
@@ -2841,7 +2841,7 @@ export function calculateNomadColivingUtilityAndWifiCostSplit({
   totalMonthlyUtilitiesUsd = 300,
   highSpeedWifiBillUsd = 100,
   occupantsCount = 4,
-  heavyBandwidthUserCount = 1
+  _heavyBandwidthUserCount = 1
 } = {}) {
   if (typeof totalMonthlyUtilitiesUsd !== 'number' || totalMonthlyUtilitiesUsd < 0 || isNaN(totalMonthlyUtilitiesUsd)) {
     return { valid: false, error: 'Total monthly utilities USD must be a non-negative number' };

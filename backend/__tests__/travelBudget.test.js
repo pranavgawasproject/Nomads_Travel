@@ -1,4 +1,4 @@
-import { calculateTripBudget, validateDestinationFilter, calculateNomadTaxResidencyAndPhysicalPresenceAudit, calculateNomadColivingUtilityAndWifiCostSplit, calculateNomadCoworkingSlaAndPowerBackupScore } from '../utils/travelUtils.js';
+import { calculateTripBudget, validateDestinationFilter, calculateNomadColivingUtilityAndWifiCostSplit, calculateNomadCoworkingSlaAndPowerBackupScore } from '../utils/travelUtils.js';
 
 describe('calculateTripBudget and validateDestinationFilter', () => {
   describe('calculateTripBudget', () => {
