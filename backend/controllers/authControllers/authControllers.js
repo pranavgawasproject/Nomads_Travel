@@ -170,9 +170,8 @@ export const aiForgotPassword = async (req, res) => {
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false });
 
-    // Create reset URL (frontend route)
-    // const resetUrl = `${process.env.FRONTEND_PROD_LINK}/reset-password/${resetToken}`;
-    const resetUrl = `${process.env.FRONTEND_PROD_LINK}ai-reset-password/${resetToken}`;
+    const baseUrl = (process.env.FRONTEND_PROD_LINK || "https://nomads-travel-indol.vercel.app").replace(/\/+$/, "");
+    const resetUrl = `${baseUrl}/ai-reset-password/${resetToken}`;
 
     const message = `
       <p>Hi ${user.name || ""},</p> 
@@ -262,8 +261,8 @@ export const resetPassword = async (req, res) => {
       <p>Hi ${(user.fullName || user.name || "").split(" ")[0] || ""},</p>
       <p>Your password has been successfully reset.</p>
       <p>You can now <a href="${
-        process.env.FRONTEND_DEV_LINK
-      }login" target="_blank">Login</a> with your new password.</p>
+        (process.env.FRONTEND_PROD_LINK || "https://nomads-travel-indol.vercel.app").replace(/\/+$/, "")
+      }/login" target="_blank">Login</a> with your new password.</p>
       <p>If you did not perform this action, please contact us immediately.</p>
       <br/>
       <p>Best,<br/>The RoamIQ Team</p>
