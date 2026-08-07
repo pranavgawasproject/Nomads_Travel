@@ -33,12 +33,6 @@ dev: ## Start development servers
 	@cd backend && npm run dev &
 	@cd frontend && npm run dev
 
-dev: ## Run both frontend and backend in development
-	@echo "Starting development..."
-	@make backend &
-	@make frontend
-	@wait
-
 backend: ## Start backend server
 	cd backend && npm run dev
 
