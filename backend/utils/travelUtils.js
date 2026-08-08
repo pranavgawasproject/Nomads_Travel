@@ -3109,6 +3109,70 @@ export function calculateNomadEmergencyEvacuationAndMedicalTravelScore({
   };
 }
 
+export function calculateNomadPassportRenewalAndVisaBufferAudit({
+  passportExpiryDate = '2026-12-31',
+  plannedTripStartDate = '2026-09-01',
+  plannedTripDurationDays = 90,
+  requiredPassportValidityMonths = 6
+} = {}) {
+  if (!passportExpiryDate || !plannedTripStartDate) {
+    return { valid: false, error: 'Passport expiry date and trip start date are required' };
+  }
+  if (typeof plannedTripDurationDays !== 'number' || plannedTripDurationDays <= 0 || !Number.isInteger(plannedTripDurationDays)) {
+    return { valid: false, error: 'Planned trip duration days must be a positive integer' };
+  }
+
+  const expiry = new Date(passportExpiryDate);
+  const start = new Date(plannedTripStartDate);
+
+  if (isNaN(expiry.getTime()) || isNaN(start.getTime())) {
+    return { valid: false, error: 'Invalid date format provided' };
+  }
+
+  const tripEndDate = new Date(start.getTime() + plannedTripDurationDays * 24 * 60 * 60 * 1000);
+  const daysUntilPassportExpiry = Math.round((expiry.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  const daysValidityAfterTripEnd = Math.round((expiry.getTime() - tripEndDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  const requiredValidityDaysAfterDeparture = requiredPassportValidityMonths * 30;
+  const meetsRule = daysValidityAfterTripEnd >= requiredValidityDaysAfterDeparture;
+
+  let auditTier = 'VALID_PASSPORT_BUFFER_OK';
+  if (daysValidityAfterTripEnd < 0) {
+    auditTier = 'CRITICAL_PASSPORT_EXPIRES_DURING_TRIP';
+  } else if (!meetsRule) {
+    auditTier = 'INSUFFICIENT_6MONTH_PASSPORT_VALIDITY_RISK';
+  } else if (daysValidityAfterTripEnd <= requiredValidityDaysAfterDeparture + 30) {
+    auditTier = 'PASSPORT_EXPIRING_SOON_RENEWAL_RECOMMENDED';
+  }
+
+  let complianceScore = 100;
+  if (auditTier === 'CRITICAL_PASSPORT_EXPIRES_DURING_TRIP') complianceScore = 0;
+  else if (auditTier === 'INSUFFICIENT_6MONTH_PASSPORT_VALIDITY_RISK') complianceScore = 35;
+  else if (auditTier === 'PASSPORT_EXPIRING_SOON_RENEWAL_RECOMMENDED') complianceScore = 75;
+
+  return {
+    valid: true,
+    passportExpiryDate,
+    plannedTripStartDate,
+    plannedTripDurationDays,
+    requiredPassportValidityMonths,
+    daysUntilPassportExpiry,
+    daysValidityAfterTripEnd,
+    requiredValidityDaysAfterDeparture,
+    meetsRule,
+    complianceScore,
+    auditTier,
+    recommendation: auditTier === 'VALID_PASSPORT_BUFFER_OK'
+      ? `Passport valid for ${daysValidityAfterTripEnd} days after trip end, satisfying the ${requiredPassportValidityMonths}-month rule.`
+      : auditTier === 'INSUFFICIENT_6MONTH_PASSPORT_VALIDITY_RISK'
+      ? `Border control rejection risk: ${daysValidityAfterTripEnd} days validity remaining after trip end (requires ${requiredValidityDaysAfterDeparture} days / ${requiredPassportValidityMonths} months). Renew passport immediately.`
+      : auditTier === 'CRITICAL_PASSPORT_EXPIRES_DURING_TRIP'
+      ? `Critical failure: Passport expires during planned stay.`
+      : `Passport valid for trip, but renewal recommended within ${daysValidityAfterTripEnd} days.`
+  };
+}
+
+
 
 
 
