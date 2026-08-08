@@ -3053,6 +3053,63 @@ export function calculateNomadTimezoneOverlapAndRemoteWorkSyncIndex({
   };
 }
 
+export function calculateNomadEmergencyEvacuationAndMedicalTravelScore({
+  hasEmergencyEvacuationInsurance = true,
+  evacuationCoverageLimitUsd = 100000,
+  estimatedEvacuationCostUsd = 45000,
+  nearestTraumaHospitalDistanceKm = 35,
+  hasLocalEmergencyRepatriationSupport = true
+} = {}) {
+  if (typeof evacuationCoverageLimitUsd !== 'number' || evacuationCoverageLimitUsd < 0 || isNaN(evacuationCoverageLimitUsd)) {
+    return { valid: false, error: 'Evacuation coverage limit must be a non-negative number' };
+  }
+  if (typeof estimatedEvacuationCostUsd !== 'number' || estimatedEvacuationCostUsd < 0 || isNaN(estimatedEvacuationCostUsd)) {
+    return { valid: false, error: 'Estimated evacuation cost must be a non-negative number' };
+  }
+  if (typeof nearestTraumaHospitalDistanceKm !== 'number' || nearestTraumaHospitalDistanceKm < 0 || isNaN(nearestTraumaHospitalDistanceKm)) {
+    return { valid: false, error: 'Trauma hospital distance must be a non-negative number' };
+  }
+
+  const coverageSurplusDeficitUsd = evacuationCoverageLimitUsd - estimatedEvacuationCostUsd;
+  const isFullyInsured = hasEmergencyEvacuationInsurance && coverageSurplusDeficitUsd >= 0;
+
+  let safetyScore = 100;
+  if (!hasEmergencyEvacuationInsurance) safetyScore -= 50;
+  else if (coverageSurplusDeficitUsd < 0) safetyScore -= 30;
+
+  if (nearestTraumaHospitalDistanceKm > 100) safetyScore -= 20;
+  else if (nearestTraumaHospitalDistanceKm > 50) safetyScore -= 10;
+
+  if (!hasLocalEmergencyRepatriationSupport) safetyScore -= 10;
+
+  safetyScore = Math.max(0, Math.min(100, Math.round(safetyScore)));
+
+  let medicalReadinessTier = 'FULLY_COVERED_EMERGENCY_READY';
+  if (!hasEmergencyEvacuationInsurance || safetyScore < 50) {
+    medicalReadinessTier = 'UNINSURED_CRITICAL_EVACUATION_RISK';
+  } else if (coverageSurplusDeficitUsd < 0 || safetyScore < 75) {
+    medicalReadinessTier = 'UNDERINSURED_HIGH_EVACUATION_COST_RISK';
+  }
+
+  return {
+    valid: true,
+    hasEmergencyEvacuationInsurance: Boolean(hasEmergencyEvacuationInsurance),
+    evacuationCoverageLimitUsd,
+    estimatedEvacuationCostUsd,
+    nearestTraumaHospitalDistanceKm,
+    coverageSurplusDeficitUsd,
+    isFullyInsured,
+    safetyScore,
+    medicalReadinessTier,
+    recommendation: medicalReadinessTier === 'FULLY_COVERED_EMERGENCY_READY'
+      ? `Emergency medical evacuation fully covered ($${evacuationCoverageLimitUsd} limit vs $${estimatedEvacuationCostUsd} est. cost, ${nearestTraumaHospitalDistanceKm}km to hospital).`
+      : medicalReadinessTier === 'UNDERINSURED_HIGH_EVACUATION_COST_RISK'
+      ? `Underinsured warning: $${Math.abs(coverageSurplusDeficitUsd)} deficit between coverage limit ($${evacuationCoverageLimitUsd}) and remote evacuation estimate ($${estimatedEvacuationCostUsd}).`
+      : `Critical risk: Uninsured for air evacuation or hospital >100km away. Acquire comprehensive nomad travel policy.`
+  };
+}
+
+
 
 
 

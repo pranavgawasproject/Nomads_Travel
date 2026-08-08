@@ -1,4 +1,4 @@
-import { calculateTripBudget, validateDestinationFilter, calculateNomadColivingUtilityAndWifiCostSplit, calculateNomadCoworkingSlaAndPowerBackupScore, calculateNomadTimezoneOverlapAndRemoteWorkSyncIndex } from '../utils/travelUtils.js';
+import { calculateTripBudget, validateDestinationFilter, calculateNomadColivingUtilityAndWifiCostSplit, calculateNomadCoworkingSlaAndPowerBackupScore, calculateNomadTimezoneOverlapAndRemoteWorkSyncIndex, calculateNomadEmergencyEvacuationAndMedicalTravelScore } from '../utils/travelUtils.js';
 
 describe('calculateTripBudget and validateDestinationFilter', () => {
   describe('calculateTripBudget', () => {
@@ -127,6 +127,37 @@ describe('calculateTripBudget and validateDestinationFilter', () => {
       const err = calculateNomadTimezoneOverlapAndRemoteWorkSyncIndex({ nomadTimezoneOffsetHours: 'invalid' });
       expect(err.valid).toBe(false);
       expect(err.error).toBe('Nomad timezone offset hours must be a number');
+    });
+  });
+
+  describe('calculateNomadEmergencyEvacuationAndMedicalTravelScore', () => {
+    it('calculates full coverage emergency ready status', () => {
+      const res = calculateNomadEmergencyEvacuationAndMedicalTravelScore({
+        hasEmergencyEvacuationInsurance: true,
+        evacuationCoverageLimitUsd: 100000,
+        estimatedEvacuationCostUsd: 45000,
+        nearestTraumaHospitalDistanceKm: 20
+      });
+      expect(res.valid).toBe(true);
+      expect(res.isFullyInsured).toBe(true);
+      expect(res.medicalReadinessTier).toBe('FULLY_COVERED_EMERGENCY_READY');
+    });
+
+    it('identifies underinsured evacuation cost risk', () => {
+      const res = calculateNomadEmergencyEvacuationAndMedicalTravelScore({
+        hasEmergencyEvacuationInsurance: true,
+        evacuationCoverageLimitUsd: 25000,
+        estimatedEvacuationCostUsd: 60000
+      });
+      expect(res.valid).toBe(true);
+      expect(res.isFullyInsured).toBe(false);
+      expect(res.medicalReadinessTier).toBe('UNDERINSURED_HIGH_EVACUATION_COST_RISK');
+    });
+
+    it('returns error for invalid negative coverage limit', () => {
+      const err = calculateNomadEmergencyEvacuationAndMedicalTravelScore({ evacuationCoverageLimitUsd: -100 });
+      expect(err.valid).toBe(false);
+      expect(err.error).toBe('Evacuation coverage limit must be a non-negative number');
     });
   });
 });
