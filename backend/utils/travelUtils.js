@@ -2996,6 +2996,64 @@ export function calculateNomadVisaAndTaxOptimizationIndex({
   };
 }
 
+export function calculateNomadTimezoneOverlapAndRemoteWorkSyncIndex({
+  nomadTimezoneOffsetHours = 8,
+  teamTimezoneOffsetHours = -5,
+  targetWorkingHoursPerDay = 8,
+  coreSyncOverlapRequiredHours = 4
+} = {}) {
+  if (typeof nomadTimezoneOffsetHours !== 'number' || isNaN(nomadTimezoneOffsetHours)) {
+    return { valid: false, error: 'Nomad timezone offset hours must be a number' };
+  }
+  if (typeof teamTimezoneOffsetHours !== 'number' || isNaN(teamTimezoneOffsetHours)) {
+    return { valid: false, error: 'Team timezone offset hours must be a number' };
+  }
+
+  const offsetDiff = Math.abs(nomadTimezoneOffsetHours - teamTimezoneOffsetHours);
+  const normalizedDiff = offsetDiff > 12 ? 24 - offsetDiff : offsetDiff;
+
+  const naturalOverlapHours = Math.max(0, targetWorkingHoursPerDay - normalizedDiff);
+  
+  let syncQualityTier = 'OPTIMAL_SYNC';
+  let syncScore = 100;
+  let suggestedNomadShiftWindow = 'Standard Business Hours (09:00 - 17:00)';
+
+  if (normalizedDiff === 0) {
+    syncQualityTier = 'OPTIMAL_SYNC';
+    syncScore = 100;
+  } else if (normalizedDiff <= 4) {
+    syncQualityTier = 'EXCELLENT_SYNC';
+    syncScore = 90;
+    suggestedNomadShiftWindow = 'Minor 1-3 Hour Shift';
+  } else if (normalizedDiff <= 7) {
+    syncQualityTier = 'MODERATE_SHIFT_REQUIRED';
+    syncScore = 70;
+    suggestedNomadShiftWindow = 'Afternoon / Evening Shift';
+  } else {
+    syncQualityTier = 'SEVERE_NIGHT_SHIFT_REQUIRED';
+    syncScore = 45;
+    suggestedNomadShiftWindow = 'Night Shift or Asynchronous Communication Model';
+  }
+
+  return {
+    valid: true,
+    nomadTimezoneOffsetHours,
+    teamTimezoneOffsetHours,
+    normalizedDiffHours: normalizedDiff,
+    naturalOverlapHours,
+    coreSyncOverlapRequiredHours,
+    syncQualityTier,
+    syncScore,
+    suggestedNomadShiftWindow,
+    recommendation: syncQualityTier === 'OPTIMAL_SYNC' || syncQualityTier === 'EXCELLENT_SYNC'
+      ? `Seamless timezone alignment (${normalizedDiff}h difference). Full team collaboration available.`
+      : syncQualityTier === 'MODERATE_SHIFT_REQUIRED'
+      ? `Moderate timezone difference (${normalizedDiff}h diff). ${suggestedNomadShiftWindow} recommended for ${coreSyncOverlapRequiredHours}h overlap.`
+      : `High timezone gap (${normalizedDiff}h diff). Rely on async documentation or night shift for real-time meetings.`
+  };
+}
+
+
 
 
 

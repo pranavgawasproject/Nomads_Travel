@@ -1,4 +1,4 @@
-import { calculateTripBudget, validateDestinationFilter, calculateNomadColivingUtilityAndWifiCostSplit, calculateNomadCoworkingSlaAndPowerBackupScore } from '../utils/travelUtils.js';
+import { calculateTripBudget, validateDestinationFilter, calculateNomadColivingUtilityAndWifiCostSplit, calculateNomadCoworkingSlaAndPowerBackupScore, calculateNomadTimezoneOverlapAndRemoteWorkSyncIndex } from '../utils/travelUtils.js';
 
 describe('calculateTripBudget and validateDestinationFilter', () => {
   describe('calculateTripBudget', () => {
@@ -99,6 +99,37 @@ describe('calculateTripBudget and validateDestinationFilter', () => {
       expect(err.error).toBe('Primary speed Mbps must be a positive number');
     });
   });
+
+  describe('calculateNomadTimezoneOverlapAndRemoteWorkSyncIndex', () => {
+    it('calculates optimal timezone sync index for identical offsets', () => {
+      const res = calculateNomadTimezoneOverlapAndRemoteWorkSyncIndex({
+        nomadTimezoneOffsetHours: -5,
+        teamTimezoneOffsetHours: -5
+      });
+      expect(res.valid).toBe(true);
+      expect(res.normalizedDiffHours).toBe(0);
+      expect(res.syncScore).toBe(100);
+      expect(res.syncQualityTier).toBe('OPTIMAL_SYNC');
+    });
+
+    it('identifies moderate shift tier for 6-hour difference', () => {
+      const res = calculateNomadTimezoneOverlapAndRemoteWorkSyncIndex({
+        nomadTimezoneOffsetHours: 1,
+        teamTimezoneOffsetHours: -5
+      });
+      expect(res.valid).toBe(true);
+      expect(res.normalizedDiffHours).toBe(6);
+      expect(res.syncScore).toBe(70);
+      expect(res.syncQualityTier).toBe('MODERATE_SHIFT_REQUIRED');
+    });
+
+    it('returns error for non-number timezone offsets', () => {
+      const err = calculateNomadTimezoneOverlapAndRemoteWorkSyncIndex({ nomadTimezoneOffsetHours: 'invalid' });
+      expect(err.valid).toBe(false);
+      expect(err.error).toBe('Nomad timezone offset hours must be a number');
+    });
+  });
 });
+
 
 
