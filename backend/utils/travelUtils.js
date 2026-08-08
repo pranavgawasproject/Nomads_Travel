@@ -2926,6 +2926,77 @@ export function calculateNomadCoworkingSlaAndPowerBackupScore({
   };
 }
 
+export function calculateNomadVisaAndTaxOptimizationIndex({
+  monthlyIncomeUsd = 4000,
+  stays = [
+    { country: 'Spain', days: 90 },
+    { country: 'Portugal', days: 90 }
+  ],
+  hasProofOfRemoteIncome = true,
+  hasHealthInsurance = true
+} = {}) {
+  if (typeof monthlyIncomeUsd !== 'number' || monthlyIncomeUsd <= 0) {
+    return { valid: false, error: 'Monthly income must be a positive number' };
+  }
+  if (!Array.isArray(stays) || stays.length === 0) {
+    return { valid: false, error: 'Stays must be a non-empty array' };
+  }
+
+  let totalStayDays = 0;
+  let maxSingleCountryDays = 0;
+  let elevatedTaxRiskCountry = null;
+
+  for (const s of stays) {
+    const days = typeof s.days === 'number' && s.days > 0 ? s.days : 0;
+    totalStayDays += days;
+    if (days > maxSingleCountryDays) {
+      maxSingleCountryDays = days;
+    }
+    if (days >= 183 && !elevatedTaxRiskCountry) {
+      elevatedTaxRiskCountry = s.country || 'Unknown Country';
+    }
+  }
+
+  let visaIncomeStatusTier = 'QUALIFIED_EXCEEDS';
+  if (monthlyIncomeUsd < 2500) {
+    visaIncomeStatusTier = 'BELOW_NOMAD_THRESHOLD';
+  } else if (monthlyIncomeUsd < 3500) {
+    visaIncomeStatusTier = 'MARGINAL_MEETS_BASIC';
+  }
+
+  let optimizationScore = 80;
+  if (!hasProofOfRemoteIncome) optimizationScore -= 20;
+  if (!hasHealthInsurance) optimizationScore -= 15;
+  if (elevatedTaxRiskCountry) optimizationScore -= 30;
+  if (visaIncomeStatusTier === 'BELOW_NOMAD_THRESHOLD') optimizationScore -= 25;
+
+  optimizationScore = Math.max(0, Math.min(100, Math.round(optimizationScore)));
+
+  let taxRiskLevel = 'LOW_SAFE';
+  if (elevatedTaxRiskCountry) {
+    taxRiskLevel = 'HIGH_RESIDENCY_TRIGGERED';
+  } else if (maxSingleCountryDays > 150) {
+    taxRiskLevel = 'MODERATE_APPROACHING_LIMIT';
+  }
+
+  return {
+    valid: true,
+    monthlyIncomeUsd,
+    totalStayDays,
+    maxSingleCountryDays,
+    visaIncomeStatusTier,
+    taxRiskLevel,
+    elevatedTaxRiskCountry,
+    optimizationScore,
+    recommendation: elevatedTaxRiskCountry
+      ? `Alert: 183-day tax threshold exceeded in ${elevatedTaxRiskCountry}. Consider rebalancing stay duration to avoid double taxation.`
+      : optimizationScore >= 80
+      ? `Excellent visa & tax compliance posture (${optimizationScore}/100 score).`
+      : `Moderate compliance posture (${optimizationScore}/100 score). Ensure health insurance & income proofs are up to date.`
+  };
+}
+
+
 
 
 

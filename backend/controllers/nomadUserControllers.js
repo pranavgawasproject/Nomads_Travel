@@ -193,16 +193,15 @@ export const changePassword = async (req, res) => {
         .json({ message: "Password cannot exceed 72 characters" });
     }
 
-    // const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = newPassword;
-    // user.refreshToken = "";
+    user.refreshToken = "";
     await user.save();
 
-    // res.clearCookie("roamiqCookie", {
-    //   httpOnly: true,
-    //   sameSite: "None",
-    //   secure: true,
-    // });
+    res.clearCookie("roamiqCookie", {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+    });
 
     return res.status(200).json({ message: "Password changed successfully" });
   } catch (error) {

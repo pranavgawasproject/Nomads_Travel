@@ -1,4 +1,4 @@
-import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit, calculateNomadTaxResidencyPhysicalPresenceAudit, calculateNomadVisaExemptTravelWindow, calculateNomadRemoteWorkTaxTieBreakerScore, calculateNomadEmergencyMedicalEvacuationCoverageScore, calculateNomadColivingSecurityAndPrivacyScore, calculateNomadTravelInsuranceAndEmergencyFund, calculateNomadColivingCommunityMatchScore, calculateNomadCoworkingPassSavingsIndex, calculateNomadCrossBorderTaxLiabilityIndex, calculateNomadCommunityEventEngagementScore, calculateNomadVisaDurationAndOverstayRiskScore, calculateNomadMultiCurrencyFxAndAtmFeeAudit, calculateNomadStartupRunwayExtension, calculateNomadColivingLeaseCancellationRiskScore, calculateNomadTaxResidencyAndPhysicalPresenceAudit, calculateNomadColivingCostSharingIndex, calculateNomadInternetSlaAndBackupRisk } from '../utils/travelUtils.js';
+import { calculateNomadLivingCost, formatCurrency, calculateCurrencyExchange, calculateNomadScore, calculateTimeZoneOverlap, calculateCoworkingCostEstimate, calculateVisaStayLimit, calculateTripBudget, validateDestinationFilter, calculateEventReminderSchedule, calculateNomadTaxResidencyRisk, calculateTravelInsuranceEstimate, calculateNomadWorkationSavings, calculateNomadEmergencyFundRequirement, calculateDigitalNomadSubletRoi, calculateNomadSimDataBudget, calculateNomadCarbonOffsetEstimate, calculateNomadVisaIncomeQualification, calculateNomadSchengen90180Limit, calculateNomadColivingVsApartmentCost, calculateNomadVisaProcessingTimeEstimate, calculateNomadCommunityHubScore, calculateNomadFlightLayoverOptimization, calculateNomadHealthInsuranceCoverageScore, calculateNomadLuggageWeightAndFee, calculateNomadCoworkingPassOptimization, calculateNomadSalaryParity, calculateNomadInternetBackupRedundancyScore, calculateNomadTaxResidencyRiskScore, calculateNomadRemoteWorkStipendRoi, calculateNomadTimezoneOverlapAndConnectivity, calculateNomadCoworkingConnectivityScore, calculateNomadDestinationSafetyAndHealthcareScore, calculateNomadCommunityEventEngagementIndex, calculateNomadCoworkingPassVsWorkspaceCost, calculateNomadTravelInsuranceCoverageScore, calculateNomadWorkspaceErgonomicsIndex, calculateNomadCoworkingCommunityDensityScore, calculateNomadColivingBudgetOptimization, calculateNomadColivingWorkstationHealthScore, calculateNomadRemoteWorkstationPowerBackupScore, calculateNomadEsimRoamingDataPackageRoi, calculateNomadMultiCityItineraryBudget, calculateNomadRemoteWorkConnectivityScore, calculateNomadColivingCommunitySafetyRating, calculateNomadDestinationQualityOfLifeIndex, calculateNomadHealthcareAccessAndEvacuationIndex, calculateNomadDigitalNomadVisaEligibilityScore, calculateNomadColivingMonthlyLivingCostIndex, calculateNomadColivingSpaceReviewAuthenticityScore, calculateNomadColivingReservationDepositRefundAudit, calculateNomadTaxResidencyPhysicalPresenceAudit, calculateNomadVisaExemptTravelWindow, calculateNomadRemoteWorkTaxTieBreakerScore, calculateNomadEmergencyMedicalEvacuationCoverageScore, calculateNomadColivingSecurityAndPrivacyScore, calculateNomadTravelInsuranceAndEmergencyFund, calculateNomadColivingCommunityMatchScore, calculateNomadCoworkingPassSavingsIndex, calculateNomadCrossBorderTaxLiabilityIndex, calculateNomadCommunityEventEngagementScore, calculateNomadVisaDurationAndOverstayRiskScore, calculateNomadMultiCurrencyFxAndAtmFeeAudit, calculateNomadStartupRunwayExtension, calculateNomadColivingLeaseCancellationRiskScore, calculateNomadTaxResidencyAndPhysicalPresenceAudit, calculateNomadColivingCostSharingIndex, calculateNomadInternetSlaAndBackupRisk, calculateNomadVisaAndTaxOptimizationIndex } from '../utils/travelUtils.js';
 
 
 
@@ -1792,7 +1792,36 @@ describe('Travel Utilities — Living Cost & Currency', () => {
       expect(inv.error).toBe('Primary speed Mbps must be a non-negative number');
     });
   });
+
+  describe('calculateNomadVisaAndTaxOptimizationIndex', () => {
+    it('calculates visa qualification and safe tax risk level accurately', () => {
+      const res = calculateNomadVisaAndTaxOptimizationIndex({
+        monthlyIncomeUsd: 4500,
+        stays: [
+          { country: 'Spain', days: 90 },
+          { country: 'Portugal', days: 90 }
+        ],
+        hasProofOfRemoteIncome: true,
+        hasHealthInsurance: true
+      });
+      expect(res.valid).toBe(true);
+      expect(res.visaIncomeStatusTier).toBe('QUALIFIED_EXCEEDS');
+      expect(res.taxRiskLevel).toBe('LOW_SAFE');
+      expect(res.optimizationScore).toBe(80);
+    });
+
+    it('returns error for non-positive monthly income or empty stays', () => {
+      const invIncome = calculateNomadVisaAndTaxOptimizationIndex({ monthlyIncomeUsd: -100 });
+      expect(invIncome.valid).toBe(false);
+      expect(invIncome.error).toBe('Monthly income must be a positive number');
+
+      const invStays = calculateNomadVisaAndTaxOptimizationIndex({ monthlyIncomeUsd: 3000, stays: [] });
+      expect(invStays.valid).toBe(false);
+      expect(invStays.error).toBe('Stays must be a non-empty array');
+    });
+  });
 });
+
 
 
 
