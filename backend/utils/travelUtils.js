@@ -3301,6 +3301,105 @@ export function calculateNomadColivingAndCoworkingPassBundleOptimizationAudit({
   };
 }
 
+export function calculateNomadCorporatePermanentEstablishmentRiskAudit({
+  remoteWorkerStays = [],
+  companyJurisdiction = 'US',
+  peThresholdDays = 90
+} = {}) {
+  if (!Array.isArray(remoteWorkerStays) || remoteWorkerStays.length === 0) {
+    return {
+      valid: false,
+      error: 'Invalid or empty remote worker stays list provided.',
+      totalStaysAnalyzed: 0,
+      peRiskScore: 0,
+      peRiskTier: 'INELIGIBLE',
+      flaggedJurisdictions: [],
+      recommendations: ['Provide valid worker stay records to calculate corporate permanent establishment risk.']
+    };
+  }
+
+  const jurisdictionStays = {};
+  let highRiskRoleCount = 0;
+  let revenueGeneratingCount = 0;
+
+  for (const stay of remoteWorkerStays) {
+    const country = stay.country ? String(stay.country).trim().toUpperCase() : 'UNKNOWN';
+    const duration = typeof stay.durationDays === 'number' && stay.durationDays > 0 ? stay.durationDays : 0;
+    const role = stay.role ? String(stay.role).toUpperCase() : 'ENGINEER';
+    const generatesRevenue = Boolean(stay.generatesRevenue);
+
+    if (!jurisdictionStays[country]) {
+      jurisdictionStays[country] = { totalDays: 0, roles: new Set(), revenueGenerating: false };
+    }
+    jurisdictionStays[country].totalDays += duration;
+    jurisdictionStays[country].roles.add(role);
+    if (generatesRevenue) {
+      jurisdictionStays[country].revenueGenerating = true;
+      revenueGeneratingCount++;
+    }
+    if (['FOUNDER', 'EXECUTIVE', 'DIRECTOR', 'VP_SALES'].includes(role)) {
+      highRiskRoleCount++;
+    }
+  }
+
+  const flaggedJurisdictions = [];
+  let peRiskScore = 100;
+
+  for (const [country, info] of Object.entries(jurisdictionStays)) {
+    if (country === companyJurisdiction.toUpperCase()) continue;
+
+    const exceedsThreshold = info.totalDays > peThresholdDays;
+    const hasHighRiskRole = Array.from(info.roles).some(r => ['FOUNDER', 'EXECUTIVE', 'DIRECTOR', 'VP_SALES'].includes(r));
+    const createsNexusRisk = exceedsThreshold || (info.revenueGenerating && info.totalDays > 30);
+
+    if (createsNexusRisk) {
+      peRiskScore -= (exceedsThreshold ? 30 : 15) + (hasHighRiskRole ? 15 : 0) + (info.revenueGenerating ? 15 : 0);
+      flaggedJurisdictions.push({
+        country,
+        totalDays: info.totalDays,
+        thresholdDays: peThresholdDays,
+        hasHighRiskRole,
+        revenueGenerating: info.revenueGenerating,
+        nexusTriggerReason: exceedsThreshold && info.revenueGenerating
+          ? 'Stay duration threshold exceeded with direct revenue-generating activities.'
+          : exceedsThreshold
+          ? 'Stay duration threshold exceeded.'
+          : 'High-risk role with revenue generation.'
+      });
+    }
+  }
+
+  peRiskScore = Math.max(0, Math.min(100, peRiskScore));
+
+  let peRiskTier = 'LOW_PE_RISK';
+  if (peRiskScore < 50 || flaggedJurisdictions.length >= 2) {
+    peRiskTier = 'CRITICAL_PE_RISK';
+  } else if (peRiskScore < 80 || flaggedJurisdictions.length === 1) {
+    peRiskTier = 'MODERATE_PE_RISK';
+  }
+
+  const recommendations = [];
+  if (peRiskTier === 'CRITICAL_PE_RISK') {
+    recommendations.push(`High Corporate Permanent Establishment (PE) risk detected in ${flaggedJurisdictions.map(f => f.country).join(', ')}. Engage Employer of Record (EOR) or enforce 90-day rotation limits.`);
+  } else if (peRiskTier === 'MODERATE_PE_RISK') {
+    recommendations.push(`Monitor stays in ${flaggedJurisdictions.map(f => f.country).join(', ')} to prevent creating taxable corporate presence.`);
+  } else {
+    recommendations.push('Remote worker stays are within safe threshold limits for corporate PE tax compliance.');
+  }
+
+  return {
+    valid: true,
+    companyJurisdiction,
+    peThresholdDays,
+    totalStaysAnalyzed: remoteWorkerStays.length,
+    peRiskScore,
+    peRiskTier,
+    flaggedJurisdictions,
+    recommendations
+  };
+}
+
+
 
 
 
