@@ -3172,6 +3172,68 @@ export function calculateNomadPassportRenewalAndVisaBufferAudit({
   };
 }
 
+export function calculateNomadHealthInsuranceAndGlobalCoverageAudit({
+  annualCoverageLimitUsd = 250000,
+  deductibleUsd = 250,
+  destinationCountry = 'Portugal',
+  includesAdventureSports = true,
+  hasDirectBillingHospitalNetwork = true,
+  hasRepatriationCoverage = true,
+  tripDurationDays = 90
+} = {}) {
+  if (typeof annualCoverageLimitUsd !== 'number' || annualCoverageLimitUsd <= 0 || isNaN(annualCoverageLimitUsd)) {
+    return { valid: false, error: 'Annual coverage limit USD must be a positive number' };
+  }
+  if (typeof deductibleUsd !== 'number' || deductibleUsd < 0 || isNaN(deductibleUsd)) {
+    return { valid: false, error: 'Deductible USD must be a non-negative number' };
+  }
+  if (typeof tripDurationDays !== 'number' || tripDurationDays <= 0 || !Number.isInteger(tripDurationDays)) {
+    return { valid: false, error: 'Trip duration days must be a positive integer' };
+  }
+
+  const coverageLimit = Math.round(annualCoverageLimitUsd * 100) / 100;
+  const deductible = Math.round(deductibleUsd * 100) / 100;
+
+  let coverageScore = 100;
+  if (coverageLimit < 100000) coverageScore -= 30;
+  else if (coverageLimit < 250000) coverageScore -= 15;
+
+  if (deductible > 1000) coverageScore -= 20;
+  else if (deductible > 500) coverageScore -= 10;
+
+  if (!includesAdventureSports) coverageScore -= 15;
+  if (!hasDirectBillingHospitalNetwork) coverageScore -= 20;
+  if (!hasRepatriationCoverage) coverageScore -= 25;
+
+  coverageScore = Math.max(0, Math.min(100, Math.round(coverageScore)));
+
+  let auditTier = 'COMPREHENSIVE_GLOBAL_COVERAGE';
+  if (coverageScore < 50 || !hasRepatriationCoverage) {
+    auditTier = 'CRITICAL_UNDERINSURED_RISK';
+  } else if (coverageScore < 80) {
+    auditTier = 'MODERATE_OUT_OF_POCKET_RISK';
+  }
+
+  return {
+    valid: true,
+    annualCoverageLimitUsd: coverageLimit,
+    deductibleUsd: deductible,
+    destinationCountry: String(destinationCountry || 'General').trim(),
+    tripDurationDays,
+    includesAdventureSports: Boolean(includesAdventureSports),
+    hasDirectBillingHospitalNetwork: Boolean(hasDirectBillingHospitalNetwork),
+    hasRepatriationCoverage: Boolean(hasRepatriationCoverage),
+    coverageScore,
+    auditTier,
+    recommendation: auditTier === 'COMPREHENSIVE_GLOBAL_COVERAGE'
+      ? `Global health insurance is fully compliant for ${destinationCountry} ($${coverageLimit.toLocaleString()} limit, $${deductible} deductible).`
+      : auditTier === 'MODERATE_OUT_OF_POCKET_RISK'
+      ? `Moderate insurance coverage (${coverageScore}/100 score). Direct billing network or adventure sports rider recommended.`
+      : `Critical underinsurance risk in ${destinationCountry}. Add repatriation coverage or increase limit to $250k+.`
+  };
+}
+
+
 
 
 
