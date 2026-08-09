@@ -3233,6 +3233,75 @@ export function calculateNomadHealthInsuranceAndGlobalCoverageAudit({
   };
 }
 
+export function calculateNomadColivingAndCoworkingPassBundleOptimizationAudit({
+  colivingRentUsd = 1200.0,
+  includesDedicatedDeskInColiving = true,
+  coworkingPassMonthlyUsd = 250.0,
+  dailyDropInRateUsd = 25.0,
+  expectedWorkDaysPerMonth = 20
+} = {}) {
+  if (typeof colivingRentUsd !== 'number' || colivingRentUsd <= 0 || isNaN(colivingRentUsd)) {
+    return { valid: false, error: 'Coliving rent USD must be a positive number' };
+  }
+  if (typeof coworkingPassMonthlyUsd !== 'number' || coworkingPassMonthlyUsd < 0 || isNaN(coworkingPassMonthlyUsd)) {
+    return { valid: false, error: 'Coworking pass monthly USD must be a non-negative number' };
+  }
+  if (typeof dailyDropInRateUsd !== 'number' || dailyDropInRateUsd < 0 || isNaN(dailyDropInRateUsd)) {
+    return { valid: false, error: 'Daily drop-in rate USD must be a non-negative number' };
+  }
+  if (typeof expectedWorkDaysPerMonth !== 'number' || expectedWorkDaysPerMonth <= 0 || !Number.isInteger(expectedWorkDaysPerMonth)) {
+    return { valid: false, error: 'Expected work days per month must be a positive integer' };
+  }
+
+  const dropInTotalUsd = Math.round((dailyDropInRateUsd * expectedWorkDaysPerMonth) * 100) / 100;
+  const coworkingPassTotalUsd = Math.round(coworkingPassMonthlyUsd * 100) / 100;
+
+  let chosenWorkspaceCostUsd = 0;
+  let workspaceStrategyTier = 'INCLUDED_COLIVING_WORKSPACE_OPTIMAL';
+  let monthlySavingsUsd = 0;
+
+  if (includesDedicatedDeskInColiving) {
+    chosenWorkspaceCostUsd = 0;
+    workspaceStrategyTier = 'INCLUDED_COLIVING_WORKSPACE_OPTIMAL';
+    monthlySavingsUsd = Math.min(dropInTotalUsd, coworkingPassTotalUsd);
+  } else {
+    if (coworkingPassTotalUsd <= dropInTotalUsd) {
+      chosenWorkspaceCostUsd = coworkingPassTotalUsd;
+      workspaceStrategyTier = 'COWORKING_PASS_BUNDLE_RECOMMENDED';
+      monthlySavingsUsd = Math.round((dropInTotalUsd - coworkingPassTotalUsd) * 100) / 100;
+    } else {
+      chosenWorkspaceCostUsd = dropInTotalUsd;
+      workspaceStrategyTier = 'DROPIN_PAY_PER_USE_OPTIMAL';
+      monthlySavingsUsd = Math.round((coworkingPassTotalUsd - dropInTotalUsd) * 100) / 100;
+    }
+  }
+
+  const totalMonthlySpendUsd = Math.round((colivingRentUsd + chosenWorkspaceCostUsd) * 100) / 100;
+  let auditScore = 100;
+  if (!includesDedicatedDeskInColiving && chosenWorkspaceCostUsd > 300) auditScore -= 20;
+
+  return {
+    valid: true,
+    colivingRentUsd,
+    includesDedicatedDeskInColiving: Boolean(includesDedicatedDeskInColiving),
+    coworkingPassMonthlyUsd: coworkingPassTotalUsd,
+    dailyDropInRateUsd,
+    expectedWorkDaysPerMonth,
+    dropInTotalUsd,
+    chosenWorkspaceCostUsd,
+    totalMonthlySpendUsd,
+    monthlySavingsUsd,
+    workspaceStrategyTier,
+    auditScore,
+    recommendation: workspaceStrategyTier === 'INCLUDED_COLIVING_WORKSPACE_OPTIMAL'
+      ? `Optimal choice: Dedicated workspace included in coliving (saved $${monthlySavingsUsd.toFixed(2)}/mo vs external coworking). Total: $${totalMonthlySpendUsd.toFixed(2)}.`
+      : workspaceStrategyTier === 'COWORKING_PASS_BUNDLE_RECOMMENDED'
+      ? `Coworking pass recommended ($${coworkingPassTotalUsd.toFixed(2)}/mo pass saves $${monthlySavingsUsd.toFixed(2)}/mo over $${dropInTotalUsd.toFixed(2)} drop-in fees).`
+      : `Pay-per-use drop-in rates recommended ($${dropInTotalUsd.toFixed(2)} total for ${expectedWorkDaysPerMonth} days saves $${monthlySavingsUsd.toFixed(2)}/mo over monthly pass).`
+  };
+}
+
+
 
 
 
