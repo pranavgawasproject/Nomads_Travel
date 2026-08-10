@@ -90,7 +90,7 @@ export default async function CityDetailPage({
   const typedListings = (listings ?? []) as Listing[];
 
 
-  const photo = cityPhotos[typedCity.id];
+  const photo = typedCity.image || cityPhotos[typedCity.id];
   const [gradient] = cityGradient(typedCity.id);
   const monthlyTotal = typedCost
     ? costRows.reduce((sum, r) => sum + (typedCost[r.key] as number), 0)

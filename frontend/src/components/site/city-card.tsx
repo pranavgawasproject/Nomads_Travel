@@ -5,7 +5,7 @@ import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
 
 export function CityCard({ city }: { city: City }) {
-  const photo = cityPhotos[city.id];
+  const photo = city.image || cityPhotos[city.id];
   const [gradient, gradientText] = cityGradient(city.id);
 
   return (
