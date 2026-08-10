@@ -29,7 +29,7 @@ async function getListing(id: string) {
       .single();
 
     if (error || !data) return null;
-    return data as Listing & Record<string, unknown>;
+    return data as Listing;
   } catch {
     return null;
   }
@@ -48,10 +48,8 @@ export default async function WorkspaceDetailPage({
   const images: string[] =
     listing.images && listing.images.length > 0
       ? listing.images.filter(Boolean)
-      : // @ts-expect-error logo_url may exist
-        listing.logo_url
-        ? // @ts-expect-error
-          [listing.logo_url as string]
+      : listing.logo_url
+        ? [listing.logo_url]
         : [];
 
   const tags: string[] = Array.isArray(listing.tags) ? listing.tags : [];
@@ -151,11 +149,11 @@ export default async function WorkspaceDetailPage({
               </div>
 
               {/* About */}
-              {(listing.about || (listing as any).description) && (
+              {(listing.about || listing.description) && (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">About</h2>
                   <p className="mt-3 whitespace-pre-line leading-relaxed text-foreground/80">
-                    {listing.about || (listing as any).description}
+                    {listing.about || listing.description}
                   </p>
                 </div>
               )}
@@ -178,11 +176,11 @@ export default async function WorkspaceDetailPage({
               )}
 
               {/* Inclusions */}
-              {(listing as any).inclusions && (
+              {listing.inclusions && (
                 <div>
                   <h2 className="font-serif text-xl font-semibold">Included</h2>
                   <p className="mt-3 leading-relaxed text-foreground/80">
-                    {(listing as any).inclusions}
+                    {listing.inclusions}
                   </p>
                 </div>
               )}
@@ -204,16 +202,16 @@ export default async function WorkspaceDetailPage({
                       {listing.wifi_speed}
                     </div>
                   )}
-                  {(listing as any).open_hours && (
+                  {listing.open_hours && (
                     <div className="flex items-center gap-2.5 text-foreground/80">
                       <Clock className="h-4 w-4 text-muted-foreground" />
-                      {(listing as any).open_hours}
+                      {listing.open_hours}
                     </div>
                   )}
-                  {(listing as any).capacity && (
+                  {listing.capacity && (
                     <div className="flex items-center gap-2.5 text-foreground/80">
                       <Users className="h-4 w-4 text-muted-foreground" />
-                      {(listing as any).capacity}
+                      {listing.capacity}
                     </div>
                   )}
                   {listing.address && (
@@ -224,9 +222,9 @@ export default async function WorkspaceDetailPage({
                   )}
                 </div>
 
-                {(listing as any).website && (
+                {listing.website && (
                   <a
-                    href={(listing as any).website}
+                    href={listing.website}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
@@ -235,9 +233,9 @@ export default async function WorkspaceDetailPage({
                   </a>
                 )}
 
-                {(listing as any).google_map && (
+                {listing.google_map && (
                   <a
-                    href={(listing as any).google_map}
+                    href={listing.google_map}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium hover:bg-secondary transition-colors"
