@@ -130,7 +130,7 @@ export default function CommunityPage() {
     setLoading(true);
     try {
       const [{ data: dbMeetups }, { data: dbPosts }] = await Promise.all([
-        supabase.from("meetups").select("*").order("date").limit(20),
+        supabase.from("meetups").select("*").order("created_at", { ascending: false }).limit(20),
         supabase
           .from("forum_posts")
           .select("*")
