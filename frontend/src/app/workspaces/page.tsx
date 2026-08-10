@@ -192,8 +192,7 @@ function getCardImage(listing: Listing): string | null {
   if (listing.images && listing.images.length > 0 && listing.images[0]) {
     return listing.images[0];
   }
-  // @ts-expect-error logo_url may exist on the row even if not in the typed select
-  if (listing.logo_url) return listing.logo_url as string;
+  if (listing.logo_url) return listing.logo_url;
   return null;
 }
 
