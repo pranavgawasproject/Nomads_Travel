@@ -86,12 +86,19 @@ export type Listing = {
   state: string;
   country: string;
   images: string[] | null;
+  logo_url?: string | null;
   about: string | null;
   starting_price: string | null;
   wifi_speed: string | null;
   ratings: number;
   total_reviews: number;
   tags: string[] | null;
+  website?: string | null;
+  google_map?: string | null;
+  open_hours?: string | null;
+  capacity?: string | null;
+  inclusions?: string | null;
+  description?: string | null;
 };
 
 export type Meetup = {
@@ -120,4 +127,3 @@ export type ForumPost = {
   best_answer_id?: string | null;
   city?: string | null;
 };
-
