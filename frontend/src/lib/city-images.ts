@@ -3,19 +3,21 @@
 // (see CityThumb) rather than risking a broken/mismatched image.
 export const cityPhotos: Record<string, string> = {
   "chiang-mai":
-    "https://images.unsplash.com/photo-1598935818633-9c9a78d8b7b6?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1512553353614-82a7370096dc?auto=format&fit=crop&w=1200&q=80",
   lisbon:
     "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1200&q=80",
   canggu:
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80",
   "mexico-city":
-    "https://images.unsplash.com/photo-1516410529446-2c777cb7366d?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1512813195386-6cf811ad3542?auto=format&fit=crop&w=1200&q=80",
+  oaxaca:
+    "https://images.unsplash.com/photo-1518659276-94e824eb872a?auto=format&fit=crop&w=1200&q=80",
   tbilisi:
-    "https://images.unsplash.com/photo-1547147834-9088aab6fbf6?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1200&q=80",
   medellin:
-    "https://images.unsplash.com/photo-1571072614024-9e9d0a3b1a22?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1583345237708-add35a664d77?auto=format&fit=crop&w=1200&q=80",
   "cape-town":
-    "https://images.unsplash.com/photo-1576487248805-cf45f6bcc67f?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=1200&q=80",
   bangkok:
     "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1200&q=80",
 };
