@@ -3549,6 +3549,94 @@ export function calculateNomadCrossBorderRemotePayrollAndSocialSecurityAudit({
   };
 }
 
+export function calculateNomadDualTaxResidencyAndTreatyTieBreakerAudit({
+  countryStaysList = [
+    { countryName: 'United States', daysSpentInYear: 150, hasPermanentHome: true, centerOfVitalInterestsScore: 85, isNational: true },
+    { countryName: 'United Kingdom', daysSpentInYear: 190, hasPermanentHome: true, centerOfVitalInterestsScore: 40, isNational: false }
+  ],
+  annualGlobalIncomeUsd = 180000.0,
+  estimatedEffectiveTaxRatePct = 30.0
+} = {}) {
+  if (!Array.isArray(countryStaysList) || countryStaysList.length === 0) {
+    return { valid: false, error: 'Country stays list must be a non-empty array' };
+  }
+  if (typeof annualGlobalIncomeUsd !== 'number' || annualGlobalIncomeUsd <= 0 || isNaN(annualGlobalIncomeUsd)) {
+    return { valid: false, error: 'Annual global income USD must be a positive number' };
+  }
+
+  let totalDaysTracked = 0;
+  const dualResidencyTriggeredCountries = [];
+  let highestDaysCountry = null;
+  let maxDays = 0;
+
+  for (const item of countryStaysList) {
+    const days = typeof item.daysSpentInYear === 'number' && item.daysSpentInYear > 0 ? item.daysSpentInYear : 0;
+    totalDaysTracked += days;
+
+    if (days > maxDays) {
+      maxDays = days;
+      highestDaysCountry = item;
+    }
+
+    if (days >= 183) {
+      dualResidencyTriggeredCountries.push(String(item.countryName || 'Unknown').trim());
+    }
+  }
+
+  const isDualResidencyRisk = dualResidencyTriggeredCountries.length >= 2 || (dualResidencyTriggeredCountries.length === 1 && countryStaysList.some(c => c.hasPermanentHome && c.countryName !== dualResidencyTriggeredCountries[0]));
+  
+  let tieBreakerWinnerCountry = highestDaysCountry ? highestDaysCountry.countryName : 'None';
+  let treatyProtectionEligible = false;
+
+  for (const c of countryStaysList) {
+    if (c.hasPermanentHome && (c.centerOfVitalInterestsScore || 0) >= 70) {
+      tieBreakerWinnerCountry = c.countryName;
+      treatyProtectionEligible = true;
+      break;
+    }
+  }
+
+  const estimatedDoubleTaxExposureUsd = isDualResidencyRisk && !treatyProtectionEligible
+    ? Math.round((annualGlobalIncomeUsd * (estimatedEffectiveTaxRatePct / 100)) * 100) / 100
+    : 0;
+
+  let auditScore = 100;
+  if (isDualResidencyRisk) auditScore -= 40;
+  if (!treatyProtectionEligible && isDualResidencyRisk) auditScore -= 30;
+  auditScore = Math.max(0, Math.round(auditScore));
+
+  let auditTier = 'SAFE_SINGLE_TAX_RESIDENCY';
+  if (isDualResidencyRisk && !treatyProtectionEligible) {
+    auditTier = 'CRITICAL_DUAL_TAX_RESIDENCY_EXPOSURE';
+  } else if (isDualResidencyRisk && treatyProtectionEligible) {
+    auditTier = 'DUAL_RESIDENCY_PROTECTED_BY_TREATY';
+  }
+
+  const recommendations = [];
+  if (auditTier === 'SAFE_SINGLE_TAX_RESIDENCY') {
+    recommendations.push(`Tax residency status clear: Single primary tax home in ${tieBreakerWinnerCountry}.`);
+  } else if (auditTier === 'DUAL_RESIDENCY_PROTECTED_BY_TREATY') {
+    recommendations.push(`Dual tax residency risk in (${dualResidencyTriggeredCountries.join(', ')}), but protected under OECD Article 4 tie-breaker clauses (Primary tax home: ${tieBreakerWinnerCountry}).`);
+  } else {
+    recommendations.push(`Critical dual tax residency risk in (${dualResidencyTriggeredCountries.join(', ')}) creating $${estimatedDoubleTaxExposureUsd.toFixed(2)} double taxation exposure. File tax treaty relief forms immediately.`);
+  }
+
+  return {
+    valid: true,
+    totalDaysTracked,
+    annualGlobalIncomeUsd,
+    dualResidencyTriggeredCountries,
+    isDualResidencyRisk,
+    tieBreakerWinnerCountry,
+    treatyProtectionEligible,
+    estimatedDoubleTaxExposureUsd,
+    auditScore,
+    auditTier,
+    recommendations
+  };
+}
+
+
 
 
 
