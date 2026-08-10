@@ -3399,6 +3399,80 @@ export function calculateNomadCorporatePermanentEstablishmentRiskAudit({
   };
 }
 
+export function calculateNomadDigitalNomadVisaTaxExemptionAndLocalWithholdingAudit({
+  monthlyRemoteIncomeUsd = 6000.0,
+  hostCountryName = 'Spain',
+  hasDigitalNomadVisa = true,
+  visaDurationDays = 180,
+  foreignClientIncomePct = 100.0,
+  localStandardIncomeTaxRatePct = 24.0,
+  specialDnvTaxRatePct = 15.0
+} = {}) {
+  if (typeof monthlyRemoteIncomeUsd !== 'number' || monthlyRemoteIncomeUsd <= 0 || isNaN(monthlyRemoteIncomeUsd)) {
+    return { valid: false, error: 'Monthly remote income USD must be a positive number' };
+  }
+  if (!hostCountryName || typeof hostCountryName !== 'string') {
+    return { valid: false, error: 'Host country name is required' };
+  }
+
+  const annualIncomeUsd = Math.round(monthlyRemoteIncomeUsd * 12 * 100) / 100;
+  const foreignPct = Math.max(0, Math.min(100, typeof foreignClientIncomePct === 'number' ? foreignClientIncomePct : 100.0));
+  const localClientIncomeUsd = Math.round((annualIncomeUsd * ((100 - foreignPct) / 100)) * 100) / 100;
+
+  const isFullForeignIncome = foreignPct >= 90.0;
+  const isTaxExemptEligible = hasDigitalNomadVisa && isFullForeignIncome;
+
+  let effectiveTaxRatePct = localStandardIncomeTaxRatePct;
+  let taxExemptionStatus = 'STANDARD_LOCAL_TAX_WITHHOLDING';
+
+  if (isTaxExemptEligible) {
+    effectiveTaxRatePct = specialDnvTaxRatePct;
+    taxExemptionStatus = 'FULLY_TAX_EXEMPT_DIGITAL_NOMAD';
+  } else if (hasDigitalNomadVisa && !isFullForeignIncome) {
+    effectiveTaxRatePct = (localStandardIncomeTaxRatePct + specialDnvTaxRatePct) / 2;
+    taxExemptionStatus = 'PARTIAL_LOCAL_WITHHOLDING_RISK';
+  } else {
+    taxExemptionStatus = 'CRITICAL_DOUBLE_TAXATION_EXPOSURE';
+  }
+
+  const standardTaxLiabilityUsd = Math.round((annualIncomeUsd * (localStandardIncomeTaxRatePct / 100)) * 100) / 100;
+  const actualTaxLiabilityUsd = Math.round((annualIncomeUsd * (effectiveTaxRatePct / 100)) * 100) / 100;
+  const annualTaxSavingsUsd = Math.max(0, Math.round((standardTaxLiabilityUsd - actualTaxLiabilityUsd) * 100) / 100);
+
+  let auditScore = 100;
+  if (!hasDigitalNomadVisa) auditScore -= 45;
+  if (localClientIncomeUsd > 0) auditScore -= 30;
+  if (visaDurationDays > 183 && !hasDigitalNomadVisa) auditScore -= 25;
+  auditScore = Math.max(0, Math.round(auditScore));
+
+  const recommendations = [];
+  if (taxExemptionStatus === 'FULLY_TAX_EXEMPT_DIGITAL_NOMAD') {
+    recommendations.push(`Fully tax exempt under ${hostCountryName} Digital Nomad Visa! Saving ~$${annualTaxSavingsUsd.toFixed(2)}/yr with reduced ${specialDnvTaxRatePct}% flat rate.`);
+  } else if (taxExemptionStatus === 'PARTIAL_LOCAL_WITHHOLDING_RISK') {
+    recommendations.push(`Warning: $${localClientIncomeUsd.toFixed(2)} in local client billing creates partial local income tax withholding exposure in ${hostCountryName}.`);
+  } else {
+    recommendations.push(`Critical risk: Stays over 183 days in ${hostCountryName} without a Digital Nomad Visa trigger standard local income tax residency ($${standardTaxLiabilityUsd.toFixed(2)} liability).`);
+  }
+
+  return {
+    valid: true,
+    hostCountryName,
+    hasDigitalNomadVisa: Boolean(hasDigitalNomadVisa),
+    monthlyRemoteIncomeUsd,
+    annualIncomeUsd,
+    foreignClientIncomePct: foreignPct,
+    localClientIncomeUsd,
+    effectiveTaxRatePct,
+    standardTaxLiabilityUsd,
+    actualTaxLiabilityUsd,
+    annualTaxSavingsUsd,
+    auditScore,
+    taxExemptionStatus,
+    recommendations
+  };
+}
+
+
 
 
 
