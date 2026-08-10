@@ -3472,6 +3472,84 @@ export function calculateNomadDigitalNomadVisaTaxExemptionAndLocalWithholdingAud
   };
 }
 
+export function calculateNomadCrossBorderRemotePayrollAndSocialSecurityAudit({
+  annualSalaryUsd = 120000.0,
+  stayDurationDays = 120,
+  homeCountryName = 'United States',
+  hostCountryName = 'Portugal',
+  hasTotalizationAgreement = true,
+  hasA1OrCertificateOfCoverage = true,
+  homeSocialSecurityRatePct = 15.3,
+  hostSocialSecurityRatePct = 20.0
+} = {}) {
+  if (typeof annualSalaryUsd !== 'number' || annualSalaryUsd <= 0 || isNaN(annualSalaryUsd)) {
+    return { valid: false, error: 'Annual salary USD must be a positive number' };
+  }
+  if (typeof stayDurationDays !== 'number' || stayDurationDays <= 0 || isNaN(stayDurationDays)) {
+    return { valid: false, error: 'Stay duration days must be a positive number' };
+  }
+
+  const dailySalaryUsd = Math.round((annualSalaryUsd / 365) * 100) / 100;
+  const stayEarningsUsd = Math.round((dailySalaryUsd * stayDurationDays) * 100) / 100;
+
+  const homeTaxLiabilityUsd = Math.round((stayEarningsUsd * (homeSocialSecurityRatePct / 100)) * 100) / 100;
+  const hostTaxLiabilityUsd = Math.round((stayEarningsUsd * (hostSocialSecurityRatePct / 100)) * 100) / 100;
+
+  let isExemptFromHostSocialSecurity = false;
+  let socialSecurityRiskTier = 'SAFE_SHORT_TERM_WORK';
+  let doubleTaxationSavingsUsd = 0;
+
+  if (stayDurationDays <= 90) {
+    isExemptFromHostSocialSecurity = true;
+    socialSecurityRiskTier = 'SAFE_SHORT_TERM_WORK';
+  } else if (hasTotalizationAgreement && hasA1OrCertificateOfCoverage) {
+    isExemptFromHostSocialSecurity = true;
+    socialSecurityRiskTier = 'EXEMPT_TOTALIZATION_AGREEMENT_IN_PLACE';
+    doubleTaxationSavingsUsd = hostTaxLiabilityUsd;
+  } else if (stayDurationDays > 183) {
+    isExemptFromHostSocialSecurity = false;
+    socialSecurityRiskTier = 'CRITICAL_DUAL_SOCIAL_SECURITY_CONTRIBUTION_RISK';
+  } else {
+    isExemptFromHostSocialSecurity = false;
+    socialSecurityRiskTier = 'MISSING_CERTIFICATE_OF_COVERAGE_WARNING';
+  }
+
+  let auditScore = 100;
+  if (!isExemptFromHostSocialSecurity) {
+    auditScore -= stayDurationDays > 183 ? 50 : 30;
+  }
+  if (!hasA1OrCertificateOfCoverage && stayDurationDays > 90) {
+    auditScore -= 20;
+  }
+  auditScore = Math.max(0, Math.round(auditScore));
+
+  const recommendations = [];
+  if (socialSecurityRiskTier === 'EXEMPT_TOTALIZATION_AGREEMENT_IN_PLACE' || socialSecurityRiskTier === 'SAFE_SHORT_TERM_WORK') {
+    recommendations.push(`Social Security compliant! Exempt from ${hostCountryName} social security tax under Totalization Agreement / short-term stay (Saved ~$${doubleTaxationSavingsUsd.toFixed(2)} in dual contributions).`);
+  } else if (socialSecurityRiskTier === 'MISSING_CERTIFICATE_OF_COVERAGE_WARNING') {
+    recommendations.push(`Action required: Obtain Form CoC / A1 Certificate from ${homeCountryName} to prevent dual social security liability in ${hostCountryName} ($${hostTaxLiabilityUsd.toFixed(2)} potential host tax).`);
+  } else {
+    recommendations.push(`Critical risk: Stays >183 days without Certificate of Coverage trigger dual social security contribution requirements in ${hostCountryName} ($${hostTaxLiabilityUsd.toFixed(2)} host tax exposure).`);
+  }
+
+  return {
+    valid: true,
+    homeCountryName,
+    hostCountryName,
+    annualSalaryUsd,
+    stayDurationDays,
+    stayEarningsUsd,
+    homeTaxLiabilityUsd,
+    hostTaxLiabilityUsd,
+    isExemptFromHostSocialSecurity,
+    doubleTaxationSavingsUsd,
+    auditScore,
+    socialSecurityRiskTier,
+    recommendations
+  };
+}
+
+
 
 
 
