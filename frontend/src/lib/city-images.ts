@@ -11,7 +11,7 @@ export const cityPhotos: Record<string, string> = {
   "mexico-city":
     "https://images.unsplash.com/photo-1512813195386-6cf811ad3542?auto=format&fit=crop&w=1200&q=80",
   oaxaca:
-    "https://images.unsplash.com/photo-1518659276-94e824eb872a?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?auto=format&fit=crop&w=1200&q=80",
   tbilisi:
     "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1200&q=80",
   medellin:
