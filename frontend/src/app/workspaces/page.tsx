@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Star, MapPin, Wifi, ArrowRight, ArrowLeft, Building2 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -32,7 +33,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags",
+        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images",
         { count: "exact" }
       )
       .eq("is_public", true)
@@ -62,7 +63,6 @@ async function getListings(params: {
     return { listings: [] as Listing[], count: 0, page };
   }
 }
-
 
 export default async function WorkspacesPage({
   searchParams,
@@ -188,47 +188,86 @@ export default async function WorkspacesPage({
   );
 }
 
-function ListingCard({ listing }: { listing: Listing }) {
-  return (
-    <div className="flex flex-col rounded-3xl border border-border bg-card p-6 transition-shadow hover:shadow-lg hover:shadow-forest/5">
-      <span className="w-fit rounded-full bg-secondary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground/70">
-        {listing.company_type}
-      </span>
-      <h3 className="mt-3 font-serif text-xl font-semibold tracking-tight">
-        {listing.company_name}
-      </h3>
-      {listing.company_title && (
-        <p className="mt-1 text-sm text-muted-foreground">{listing.company_title}</p>
-      )}
+function getCardImage(listing: Listing): string | null {
+  if (listing.images && listing.images.length > 0 && listing.images[0]) {
+    return listing.images[0];
+  }
+  // @ts-expect-error logo_url may exist on the row even if not in the typed select
+  if (listing.logo_url) return listing.logo_url as string;
+  return null;
+}
 
-      <div className="mt-3 flex items-center gap-1.5 text-sm text-foreground/70">
-        <MapPin className="h-3.5 w-3.5" />
-        {listing.city}, {listing.country}
+function ListingCard({ listing }: { listing: Listing }) {
+  const imageUrl = getCardImage(listing);
+
+  return (
+    <Link
+      href={`/workspaces/${listing.id}`}
+      className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all hover:shadow-lg hover:shadow-forest/5 hover:-translate-y-0.5"
+    >
+      {/* Image */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-secondary">
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={listing.company_name}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            unoptimized
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-secondary to-muted">
+            <Building2 className="h-12 w-12 text-muted-foreground/50" />
+          </div>
+        )}
+        <span className="absolute left-3 top-3 rounded-full bg-card/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground/80 backdrop-blur-sm">
+          {listing.company_type}
+        </span>
       </div>
 
-      <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-        <div>
-          {listing.starting_price && (
-            <div className="font-serif text-lg font-semibold text-forest">
-              {listing.starting_price}
-            </div>
-          )}
-          {listing.wifi_speed && (
-            <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-              <Wifi className="h-3 w-3" /> {listing.wifi_speed}
+      {/* Content */}
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-serif text-lg font-semibold tracking-tight line-clamp-1 group-hover:text-accent transition-colors">
+          {listing.company_name}
+        </h3>
+        {listing.company_title && (
+          <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">
+            {listing.company_title}
+          </p>
+        )}
+
+        <div className="mt-2.5 flex items-center gap-1.5 text-sm text-foreground/70">
+          <MapPin className="h-3.5 w-3.5 shrink-0" />
+          <span className="line-clamp-1">
+            {listing.city}, {listing.country}
+          </span>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
+          <div>
+            {listing.starting_price && (
+              <div className="font-serif text-lg font-semibold text-forest">
+                {listing.starting_price}
+              </div>
+            )}
+            {listing.wifi_speed && (
+              <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                <Wifi className="h-3 w-3" /> {listing.wifi_speed}
+              </div>
+            )}
+          </div>
+          {listing.ratings > 0 && (
+            <div className="flex items-center gap-1 text-sm font-medium">
+              <Star className="h-3.5 w-3.5 fill-sunset text-sunset" />
+              {Number(listing.ratings).toFixed(1)}
+              <span className="text-xs font-normal text-muted-foreground">
+                ({listing.total_reviews})
+              </span>
             </div>
           )}
         </div>
-        {listing.ratings > 0 && (
-          <div className="flex items-center gap-1 text-sm font-medium">
-            <Star className="h-3.5 w-3.5 fill-sunset text-sunset" />
-            {Number(listing.ratings).toFixed(1)}
-            <span className="text-xs font-normal text-muted-foreground">
-              ({listing.total_reviews})
-            </span>
-          </div>
-        )}
       </div>
-    </div>
+    </Link>
   );
 }
