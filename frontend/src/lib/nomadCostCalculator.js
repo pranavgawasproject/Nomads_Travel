@@ -89,3 +89,71 @@ export function calculateNomadMonthlyBudgetAndVisaRunCost(params = {}) {
       : `Optimal nomad stay: $${amortizedMonthlyCostUsd.toFixed(2)}/mo total estimated living expense in ${cityName} (${stayDurationMonths} months total $${totalTripBudgetUsd.toFixed(2)}).`
   };
 }
+
+export function calculateNomadFeieTaxExclusionCompliance(params = {}) {
+  const {
+    annualEarnedIncomeUsd = 120000,
+    daysInForeignCountriesCount = 335,
+    qualifyingWindowDays = 365,
+    feieMaximumExclusionLimitUsd = 126500,
+    foreignHousingExpenseUsd = 18000,
+    usEffectiveTaxRatePct = 25.0
+  } = params;
+
+  if (typeof annualEarnedIncomeUsd !== 'number' || annualEarnedIncomeUsd <= 0) {
+    return {
+      valid: false,
+      error: 'Annual earned income must be a positive number',
+      meetsPhysicalPresenceTest: false,
+      eligibleExclusionUsd: 0,
+      estimatedTaxSavingsUsd: 0,
+      daysNeededForQualificationCount: 0,
+      complianceTier: 'INVALID_INPUT',
+      recommendation: 'Provide valid positive annual earned income.'
+    };
+  }
+
+  const daysInUSCount = Math.max(0, qualifyingWindowDays - daysInForeignCountriesCount);
+  const meetsPhysicalPresenceTest = daysInForeignCountriesCount >= 330;
+  const daysNeededForQualificationCount = meetsPhysicalPresenceTest ? 0 : Math.max(0, 330 - daysInForeignCountriesCount);
+
+  let eligibleExclusionUsd = 0;
+  let estimatedTaxSavingsUsd = 0;
+
+  if (meetsPhysicalPresenceTest) {
+    eligibleExclusionUsd = Math.round(Math.min(annualEarnedIncomeUsd, feieMaximumExclusionLimitUsd) * 100) / 100;
+    estimatedTaxSavingsUsd = Math.round((eligibleExclusionUsd * (usEffectiveTaxRatePct / 100)) * 100) / 100;
+  }
+
+  const baseHousingThresholdUsd = Math.round((feieMaximumExclusionLimitUsd * 0.16) * 100) / 100;
+  const eligibleHousingDeductionUsd = meetsPhysicalPresenceTest && foreignHousingExpenseUsd > baseHousingThresholdUsd
+    ? Math.round(Math.min(foreignHousingExpenseUsd - baseHousingThresholdUsd, feieMaximumExclusionLimitUsd * 0.30) * 100) / 100
+    : 0;
+
+  const totalExclusionAndDeductionUsd = Math.round((eligibleExclusionUsd + eligibleHousingDeductionUsd) * 100) / 100;
+
+  let complianceTier = 'QUALIFIED_FULL_FEIE_EXCLUSION';
+  if (!meetsPhysicalPresenceTest) {
+    complianceTier = 'INSUFFICIENT_FOREIGN_PRESENCE_RISK';
+  } else if (annualEarnedIncomeUsd > feieMaximumExclusionLimitUsd) {
+    complianceTier = 'PARTIAL_FEIE_CAP_EXCEEDED';
+  }
+
+  return {
+    valid: true,
+    annualEarnedIncomeUsd,
+    daysInForeignCountriesCount,
+    daysInUSCount,
+    meetsPhysicalPresenceTest,
+    daysNeededForQualificationCount,
+    eligibleExclusionUsd,
+    eligibleHousingDeductionUsd,
+    totalExclusionAndDeductionUsd,
+    estimatedTaxSavingsUsd,
+    complianceTier,
+    recommendation: meetsPhysicalPresenceTest
+      ? `IRS Form 2555 FEIE Qualified! Physical presence test met (${daysInForeignCountriesCount}/330 days). Estimated U.S. federal tax savings: $${estimatedTaxSavingsUsd.toFixed(2)}.`
+      : `FEIE Alert: Only ${daysInForeignCountriesCount}/330 full foreign days completed. Spend ${daysNeededForQualificationCount} more day(s) abroad within the 365-day window to unlock $${(Math.min(annualEarnedIncomeUsd, feieMaximumExclusionLimitUsd) * (usEffectiveTaxRatePct / 100)).toFixed(2)} in tax savings.`
+  };
+}
+
