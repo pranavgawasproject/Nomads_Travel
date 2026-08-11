@@ -15,8 +15,63 @@ import { Footer } from "@/components/site/footer";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
 
 export const revalidate = 300;
+
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  try {
+    const { data: city } = await supabase
+      .from("cities")
+      .select("id, name, country, continent, overall_score, cost_usd, internet_mbps, visa_difficulty, image")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (!city) {
+      return {
+        title: "Destination not found | RoamIQ",
+        description: "This digital nomad destination could not be found on RoamIQ.",
+      };
+    }
+
+    const title = `${city.name}, ${city.country} for Digital Nomads | Cost, Visa & Internet | RoamIQ`;
+    const description = `Plan your workation in ${city.name}, ${city.country}. Overall score ${Number(city.overall_score).toFixed(1)}/5, ~$${Number(city.cost_usd).toLocaleString()}/mo, ${city.internet_mbps} Mbps internet, visa difficulty: ${city.visa_difficulty}. Cost of living, coworking, and community insights on RoamIQ.`;
+    const url = `${BASE_URL}/destinations/${city.id}`;
+    const image = city.image || `${BASE_URL}/logo.svg`;
+
+    return {
+      title,
+      description,
+      alternates: { canonical: url },
+      openGraph: {
+        title,
+        description,
+        url,
+        siteName: "RoamIQ",
+        type: "article",
+        images: [{ url: image, alt: `${city.name}, ${city.country}` }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [image],
+      },
+    };
+  } catch {
+    return {
+      title: "Destinations | RoamIQ",
+      description: "Explore digital nomad destinations with cost, visa, and internet data on RoamIQ.",
+    };
+  }
+}
 
 const scoreRows: { key: keyof City; label: string; icon: typeof Wifi }[] = [
   { key: "cost_score", label: "Affordability", icon: DollarSign },
