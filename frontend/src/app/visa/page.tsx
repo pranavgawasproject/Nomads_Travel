@@ -1,7 +1,33 @@
+import type { Metadata } from "next";
 import { Globe2, CheckCircle2, XCircle } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { supabase, type VisaInfo } from "@/lib/supabase";
+
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
+
+export const metadata: Metadata = {
+  title: "Visa intelligence — Digital nomad & tourist stay rules by country | RoamIQ",
+  description:
+    "Look up tourist stay limits and digital nomad visa options for 190+ countries. See cost, duration, and whether a dedicated nomad visa is available before you fly.",
+  alternates: {
+    canonical: `${BASE_URL}/visa`,
+  },
+  openGraph: {
+    title: "Visa intelligence — Digital nomad & tourist stay rules | RoamIQ",
+    description:
+      "Tourist stay limits and digital nomad visa options for 190+ countries — cost, duration, and availability.",
+    url: `${BASE_URL}/visa`,
+    siteName: "RoamIQ",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Visa intelligence — Digital nomad & tourist stay rules | RoamIQ",
+    description:
+      "Tourist stay limits and digital nomad visa options for 190+ countries — cost, duration, and availability.",
+  },
+};
 
 export const revalidate = 300;
 

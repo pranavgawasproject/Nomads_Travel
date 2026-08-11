@@ -1,9 +1,35 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, MapPin, Wifi, ArrowRight, ArrowLeft, Building2 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { supabase, type Listing } from "@/lib/supabase";
+
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
+
+export const metadata: Metadata = {
+  title: "Workspaces & stays — Coworking, coliving, workations | RoamIQ",
+  description:
+    "Browse coworking desks, coliving houses, workations, hostels, cafés and meeting rooms for digital nomads. Filter by city, type, price and Wi‑Fi speed.",
+  alternates: {
+    canonical: `${BASE_URL}/workspaces`,
+  },
+  openGraph: {
+    title: "Workspaces & stays — Coworking, coliving, workations | RoamIQ",
+    description:
+      "Browse coworking, coliving, workations and more for digital nomads. Filter by city, type, price and Wi‑Fi.",
+    url: `${BASE_URL}/workspaces`,
+    siteName: "RoamIQ",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Workspaces & stays — Coworking, coliving, workations | RoamIQ",
+    description:
+      "Browse coworking, coliving, workations and more for digital nomads. Filter by city, type, price and Wi‑Fi.",
+  },
+};
 
 export const revalidate = 180;
 
