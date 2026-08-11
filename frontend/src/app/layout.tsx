@@ -62,7 +62,7 @@ export const metadata: Metadata = {
         url: "/logo.svg",
         width: 512,
         height: 512,
-        alt: "RoamIQ logo",
+        alt: "RoamIQ — digital nomad operating system logo",
       },
     ],
   },
@@ -75,38 +75,34 @@ export const metadata: Metadata = {
   },
 };
 
-const organizationJsonLd = {
+const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "RoamIQ",
-  alternateName: "Nomads Travel",
-  url: BASE_URL,
-  logo: `${BASE_URL}/logo.svg`,
-  description:
-    "AI-powered operating system for digital nomads: destinations, costs, visas, workspaces, and community in one place.",
-  email: "hello@roamiq.com",
-  sameAs: [],
-};
-
-const websiteJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "RoamIQ",
-  url: BASE_URL,
-  description:
-    "Discover cities, compare costs, find visas and workspaces — plan your next workation with RoamIQ.",
-  publisher: {
-    "@type": "Organization",
-    name: "RoamIQ",
-  },
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: `${BASE_URL}/destinations?search={search_term_string}`,
+  "@graph": [
+    {
+      "@type": "Organization",
+      name: "RoamIQ",
+      url: BASE_URL,
+      logo: `${BASE_URL}/logo.svg`,
+      description:
+        "AI-powered platform for digital nomads: visa intelligence, city cost data, workspaces, and community.",
+      sameAs: [],
     },
-    "query-input": "required name=search_term_string",
-  },
+    {
+      "@type": "WebSite",
+      name: "RoamIQ",
+      url: BASE_URL,
+      description:
+        "The operating system for digital nomads — discover cities, compare costs, find workspaces, and plan workations.",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${BASE_URL}/destinations?search={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -116,23 +112,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationJsonLd),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(websiteJsonLd),
-          }}
-        />
-      </head>
       <body
         className={`${inter.variable} ${fraunces.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd),
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
