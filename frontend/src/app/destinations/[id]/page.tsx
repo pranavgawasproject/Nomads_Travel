@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
@@ -15,7 +16,6 @@ import { Footer } from "@/components/site/footer";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
-import type { Metadata } from "next";
 
 export const revalidate = 300;
 
@@ -30,21 +30,21 @@ export async function generateMetadata({
   try {
     const { data: city } = await supabase
       .from("cities")
-      .select("id, name, country, continent, overall_score, cost_usd, internet_mbps, visa_difficulty, image")
+      .select("id, name, country, flag, image, continent, overall_score, cost_usd, visa_difficulty, internet_mbps")
       .eq("id", id)
       .maybeSingle();
 
     if (!city) {
       return {
         title: "Destination not found | RoamIQ",
-        description: "This digital nomad destination could not be found on RoamIQ.",
+        description: "This destination could not be found on RoamIQ.",
       };
     }
 
-    const title = `${city.name}, ${city.country} for Digital Nomads | Cost, Visa & Internet | RoamIQ`;
-    const description = `Plan your workation in ${city.name}, ${city.country}. Overall score ${Number(city.overall_score).toFixed(1)}/5, ~$${Number(city.cost_usd).toLocaleString()}/mo, ${city.internet_mbps} Mbps internet, visa difficulty: ${city.visa_difficulty}. Cost of living, coworking, and community insights on RoamIQ.`;
+    const title = `${city.flag ? city.flag + " " : ""}${city.name}, ${city.country} — Digital Nomad Guide | RoamIQ`;
+    const description = `Cost of living, internet speed, visa rules, and lifestyle scores for digital nomads in ${city.name}, ${city.country}. Overall score ${Number(city.overall_score).toFixed(1)}/5 · ~$${Number(city.cost_usd).toLocaleString()}/mo · Visa: ${city.visa_difficulty}.`;
     const url = `${BASE_URL}/destinations/${city.id}`;
-    const image = city.image || `${BASE_URL}/logo.svg`;
+    const image = city.image || undefined;
 
     return {
       title,
@@ -56,19 +56,19 @@ export async function generateMetadata({
         url,
         siteName: "RoamIQ",
         type: "article",
-        images: [{ url: image, alt: `${city.name}, ${city.country}` }],
+        ...(image ? { images: [{ url: image, alt: `${city.name}, ${city.country}` }] } : {}),
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
-        images: [image],
+        ...(image ? { images: [image] } : {}),
       },
     };
   } catch {
     return {
-      title: "Destinations | RoamIQ",
-      description: "Explore digital nomad destinations with cost, visa, and internet data on RoamIQ.",
+      title: "Destination | RoamIQ",
+      description: "Explore digital nomad destinations on RoamIQ.",
     };
   }
 }
@@ -151,10 +151,29 @@ export default async function CityDetailPage({
     ? costRows.reduce((sum, r) => sum + (typedCost[r.key] as number), 0)
     : null;
 
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    name: `${typedCity.name}, ${typedCity.country}`,
+    description: `Digital nomad destination guide for ${typedCity.name}: cost of living, internet, visa difficulty, and lifestyle scores.`,
+    url: `${BASE_URL}/destinations/${typedCity.id}`,
+    ...(photo ? { image: photo } : {}),
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: typedCity.name,
+      addressCountry: typedCity.country,
+    },
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteNav />
       <main className="flex-1 pt-24 sm:pt-28">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {/* Header */}
         <section className="relative overflow-hidden">
           <div className="relative h-64 sm:h-80">

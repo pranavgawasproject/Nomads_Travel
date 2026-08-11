@@ -92,6 +92,22 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "RoamIQ",
+              url: BASE_URL,
+              logo: `${BASE_URL}/logo.svg`,
+              description:
+                "AI-powered travel intelligence for digital nomads: visa rules, city cost data, workspaces, and community.",
+              sameAs: [],
+            }),
+          }}
+        />
           <Toaster />
         </ThemeProvider>
       </body>

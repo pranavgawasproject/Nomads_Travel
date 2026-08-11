@@ -25,10 +25,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const { data: cities } = await supabase
       .from("cities")
-      .select("id, name")
+      .select("id")
       .order("overall_score", { ascending: false });
 
-    if (cities && cities.length > 0) {
+    if (cities?.length) {
       cityEntries = cities.map((city) => ({
         url: `${BASE_URL}/destinations/${city.id}`,
         lastModified: new Date(),
@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }));
     }
   } catch (error) {
-    console.error("Sitemap: failed to fetch cities", error);
+    console.error("sitemap: failed to load cities", error);
   }
 
   return [...staticEntries, ...cityEntries];
