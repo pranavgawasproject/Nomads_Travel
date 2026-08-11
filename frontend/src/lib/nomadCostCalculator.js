@@ -92,15 +92,18 @@ export function calculateNomadMonthlyBudgetAndVisaRunCost(params = {}) {
 
 export function calculateNomadFeieTaxExclusionCompliance(params = {}) {
   const {
-    annualEarnedIncomeUsd = 120000,
-    daysInForeignCountriesCount = 335,
+    annualEarnedIncomeUsd: rawIncome = 120000,
+    daysInForeignCountriesCount: rawForeignDays = 335,
     qualifyingWindowDays = 365,
     feieMaximumExclusionLimitUsd = 126500,
     foreignHousingExpenseUsd = 18000,
     usEffectiveTaxRatePct = 25.0
   } = params;
 
-  if (typeof annualEarnedIncomeUsd !== 'number' || annualEarnedIncomeUsd <= 0) {
+  const annualEarnedIncomeUsd = Number(rawIncome);
+  const daysInForeignCountriesCount = Number(rawForeignDays);
+
+  if (isNaN(annualEarnedIncomeUsd) || annualEarnedIncomeUsd <= 0) {
     return {
       valid: false,
       error: 'Annual earned income must be a positive number',
@@ -159,14 +162,17 @@ export function calculateNomadFeieTaxExclusionCompliance(params = {}) {
 
 export function calculateNomadSchengenRollingWindowCompliance(params = {}) {
   const {
-    plannedSchengenDaysCount = 0,
-    past180DaysSchengenCount = 0,
+    plannedSchengenDaysCount: rawPlanned = 0,
+    past180DaysSchengenCount: rawPast = 0,
     rollingWindowDays = 180,
     maxAllowedDays = 90,
     dailyOverstayPenaltyEur = 50
   } = params;
 
-  if (typeof plannedSchengenDaysCount !== 'number' || plannedSchengenDaysCount <= 0) {
+  const plannedSchengenDaysCount = Number(rawPlanned);
+  const past180DaysSchengenCount = Math.max(0, Number(rawPast) || 0);
+
+  if (isNaN(plannedSchengenDaysCount) || plannedSchengenDaysCount <= 0) {
     return {
       valid: false,
       error: 'Planned Schengen days count must be a positive number',
