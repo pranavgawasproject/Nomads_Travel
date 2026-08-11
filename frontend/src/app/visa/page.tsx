@@ -7,25 +7,25 @@ import { supabase, type VisaInfo } from "@/lib/supabase";
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Visa intelligence — Digital nomad & tourist stay rules by country | RoamIQ",
+  title: "Visa Intelligence \u2014 Digital nomad & tourist stay rules by country | RoamIQ",
   description:
-    "Look up tourist stay limits and digital nomad visa options for 190+ countries. See cost, duration, and whether a dedicated nomad visa is available before you fly.",
+    "Look up tourist stay limits and digital nomad visa options for 190+ countries. See which destinations offer dedicated remote-work visas, costs, and durations \u2014 before you book.",
   alternates: {
     canonical: `${BASE_URL}/visa`,
   },
   openGraph: {
-    title: "Visa intelligence — Digital nomad & tourist stay rules | RoamIQ",
+    title: "Visa Intelligence \u2014 Digital nomad & tourist stay rules | RoamIQ",
     description:
-      "Tourist stay limits and digital nomad visa options for 190+ countries — cost, duration, and availability.",
+      "Tourist stay limits and digital nomad visa options for 190+ countries. Know costs, durations, and which places offer dedicated nomad visas.",
     url: `${BASE_URL}/visa`,
     siteName: "RoamIQ",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Visa intelligence — Digital nomad & tourist stay rules | RoamIQ",
+    title: "Visa Intelligence \u2014 Digital nomad & tourist stay rules | RoamIQ",
     description:
-      "Tourist stay limits and digital nomad visa options for 190+ countries — cost, duration, and availability.",
+      "Tourist stay limits and digital nomad visa options for 190+ countries. Know costs, durations, and which places offer dedicated nomad visas.",
   },
 };
 
@@ -73,7 +73,7 @@ export default async function VisaPage({
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
               Tourist stay limits and digital nomad visa options for{" "}
-              {countries.length} countries — {withDnVisa} of them now offer a
+              {countries.length} countries \u2014 {withDnVisa} of them now offer a
               dedicated nomad visa.
             </p>
 
@@ -82,7 +82,7 @@ export default async function VisaPage({
                 type="text"
                 name="search"
                 defaultValue={params.search ?? ""}
-                placeholder="Search a country…"
+                placeholder="Search a country\u2026"
                 className="w-full max-w-sm rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
               />
               <button
@@ -135,10 +135,10 @@ export default async function VisaPage({
                           )}
                         </td>
                         <td className="px-5 py-4 text-foreground/80">
-                          {c.has_dn_visa ? c.dn_visa_cost : "—"}
+                          {c.has_dn_visa ? c.dn_visa_cost : "\u2014"}
                         </td>
                         <td className="px-5 py-4 text-foreground/80">
-                          {c.has_dn_visa ? c.dn_visa_duration : "—"}
+                          {c.has_dn_visa ? c.dn_visa_duration : "\u2014"}
                         </td>
                       </tr>
                     ))}
