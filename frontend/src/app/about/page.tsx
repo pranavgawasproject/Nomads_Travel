@@ -1,9 +1,35 @@
+import type { Metadata } from "next";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { WhyRoamIQ } from "@/components/site/why-roamiq";
 import { Roadmap } from "@/components/site/roadmap";
 import { Testimonials } from "@/components/site/testimonials";
 import { CTA } from "@/components/site/cta";
+
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
+
+export const metadata: Metadata = {
+  title: "About RoamIQ — Building the operating system for digital nomads",
+  description:
+    "Learn why we built RoamIQ: AI-powered visa intelligence, city cost data, workspaces, and community for remote workers living a location-independent life.",
+  alternates: {
+    canonical: `${BASE_URL}/about`,
+  },
+  openGraph: {
+    title: "About RoamIQ — Building the operating system for digital nomads",
+    description:
+      "Learn why we built RoamIQ: AI-powered visa intelligence, city cost data, workspaces, and community for remote workers.",
+    url: `${BASE_URL}/about`,
+    siteName: "RoamIQ",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About RoamIQ — Building the operating system for digital nomads",
+    description:
+      "Learn why we built RoamIQ: AI-powered visa intelligence, city cost data, workspaces, and community for remote workers.",
+  },
+};
 
 export default function AboutPage() {
   return (
@@ -21,8 +47,8 @@ export default function AboutPage() {
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
               We started RoamIQ because researching a nomad move meant a
               dozen browser tabs, three spreadsheets, and a Discord server
-              full of conflicting advice. Here's what we believe, and where
-              we're headed.
+              full of conflicting advice. Here&apos;s what we believe, and where
+              we&apos;re headed.
             </p>
           </div>
         </section>

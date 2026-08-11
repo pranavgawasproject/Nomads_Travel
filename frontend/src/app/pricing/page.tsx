@@ -1,8 +1,34 @@
+import type { Metadata } from "next";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { Comparison } from "@/components/site/comparison";
 import { CTA } from "@/components/site/cta";
 import { Check } from "lucide-react";
+
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
+
+export const metadata: Metadata = {
+  title: "Pricing — RoamIQ free Explorer & Nomad plans for digital nomads",
+  description:
+    "RoamIQ pricing: free Explorer plan to browse destinations and visas, or Nomad plan for trip saving, visa tracking, community posts, and priority AI planning. No credit card to start.",
+  alternates: {
+    canonical: `${BASE_URL}/pricing`,
+  },
+  openGraph: {
+    title: "Pricing — RoamIQ free Explorer & Nomad plans",
+    description:
+      "Free Explorer plan to browse destinations and visas, or Nomad plan for trip saving, community, and priority AI planning.",
+    url: `${BASE_URL}/pricing`,
+    siteName: "RoamIQ",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pricing — RoamIQ free Explorer & Nomad plans",
+    description:
+      "Free Explorer plan to browse destinations and visas, or Nomad plan for trip saving, community, and priority AI planning.",
+  },
+};
 
 const plans = [
   {
@@ -45,7 +71,7 @@ export default function PricingPage() {
               Free to explore. Simple to upgrade.
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              No credit card needed to browse. Upgrade when you're ready to
+              No credit card needed to browse. Upgrade when you&apos;re ready to
               save trips and join the community.
             </p>
           </div>
