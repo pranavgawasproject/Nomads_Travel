@@ -75,6 +75,40 @@ export const metadata: Metadata = {
   },
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "RoamIQ",
+  alternateName: "Nomads Travel",
+  url: BASE_URL,
+  logo: `${BASE_URL}/logo.svg`,
+  description:
+    "AI-powered operating system for digital nomads: destinations, costs, visas, workspaces, and community in one place.",
+  email: "hello@roamiq.com",
+  sameAs: [],
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "RoamIQ",
+  url: BASE_URL,
+  description:
+    "Discover cities, compare costs, find visas and workspaces — plan your next workation with RoamIQ.",
+  publisher: {
+    "@type": "Organization",
+    name: "RoamIQ",
+  },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${BASE_URL}/destinations?search={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -82,6 +116,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteJsonLd),
+          }}
+        />
+      </head>
       <body
         className={`${inter.variable} ${fraunces.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
@@ -92,22 +140,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "RoamIQ",
-              url: BASE_URL,
-              logo: `${BASE_URL}/logo.svg`,
-              description:
-                "AI-powered travel intelligence for digital nomads: visa rules, city cost data, workspaces, and community.",
-              sameAs: [],
-            }),
-          }}
-        />
           <Toaster />
         </ThemeProvider>
       </body>
