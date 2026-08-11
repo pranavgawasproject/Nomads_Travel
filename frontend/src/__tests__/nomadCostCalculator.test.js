@@ -1,4 +1,4 @@
-import { calculateNomadMonthlyBudgetAndVisaRunCost, calculateNomadFeieTaxExclusionCompliance } from '../lib/nomadCostCalculator.js';
+import { calculateNomadMonthlyBudgetAndVisaRunCost, calculateNomadFeieTaxExclusionCompliance, calculateNomadSchengenRollingWindowCompliance } from '../lib/nomadCostCalculator.js';
 
 console.log('--- Testing calculateNomadMonthlyBudgetAndVisaRunCost ---');
 
@@ -117,4 +117,47 @@ if (
 }
 
 console.log('All calculateNomadFeieTaxExclusionCompliance tests passed successfully!\n');
+
+console.log('--- Testing calculateNomadSchengenRollingWindowCompliance ---');
+
+// Test 6: Compliant 60-day Schengen stay with 15 past days
+const schengenTest1 = calculateNomadSchengenRollingWindowCompliance({
+  plannedSchengenDaysCount: 60,
+  past180DaysSchengenCount: 15
+});
+
+if (
+  schengenTest1.valid &&
+  schengenTest1.totalDaysInWindow === 75 &&
+  schengenTest1.daysRemainingAllowed === 75 &&
+  schengenTest1.overstayDaysCount === 0 &&
+  schengenTest1.complianceTier === 'FULL_SCHENGEN_COMPLIANT'
+) {
+  console.log('✓ Test 6 Passed: Fully compliant Schengen stay verified');
+} else {
+  console.error('✗ Test 6 Failed:', schengenTest1);
+  process.exit(1);
+}
+
+// Test 7: Overstay violation (planned 60 days, 45 past days in window = 105 days total)
+const schengenTest2 = calculateNomadSchengenRollingWindowCompliance({
+  plannedSchengenDaysCount: 60,
+  past180DaysSchengenCount: 45
+});
+
+if (
+  schengenTest2.valid &&
+  schengenTest2.totalDaysInWindow === 105 &&
+  schengenTest2.overstayDaysCount === 15 &&
+  schengenTest2.estimatedFineEur === 750 &&
+  schengenTest2.complianceTier === 'SCHENGEN_90_180_OVERSTAY_VIOLATION'
+) {
+  console.log('✓ Test 7 Passed: Correctly flags Schengen 90/180-day overstay violation');
+} else {
+  console.error('✗ Test 7 Failed:', schengenTest2);
+  process.exit(1);
+}
+
+console.log('All calculateNomadSchengenRollingWindowCompliance tests passed successfully!\n');
+
 

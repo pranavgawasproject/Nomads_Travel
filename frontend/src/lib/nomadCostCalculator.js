@@ -157,3 +157,59 @@ export function calculateNomadFeieTaxExclusionCompliance(params = {}) {
   };
 }
 
+export function calculateNomadSchengenRollingWindowCompliance(params = {}) {
+  const {
+    plannedSchengenDaysCount = 0,
+    past180DaysSchengenCount = 0,
+    rollingWindowDays = 180,
+    maxAllowedDays = 90,
+    dailyOverstayPenaltyEur = 50
+  } = params;
+
+  if (typeof plannedSchengenDaysCount !== 'number' || plannedSchengenDaysCount <= 0) {
+    return {
+      valid: false,
+      error: 'Planned Schengen days count must be a positive number',
+      totalDaysInWindow: 0,
+      daysRemainingAllowed: 0,
+      overstayDaysCount: 0,
+      complianceTier: 'INVALID_INPUT',
+      recommendation: 'Provide valid positive planned stay duration in days.'
+    };
+  }
+
+  const totalDaysInWindow = past180DaysSchengenCount + plannedSchengenDaysCount;
+  const daysRemainingAllowed = Math.max(0, maxAllowedDays - past180DaysSchengenCount);
+  const overstayDaysCount = Math.max(0, totalDaysInWindow - maxAllowedDays);
+  const estimatedFineEur = Math.round(overstayDaysCount * dailyOverstayPenaltyEur * 100) / 100;
+
+  const isCompliant = totalDaysInWindow <= maxAllowedDays;
+  const isTaxResidencyAlert = totalDaysInWindow >= 183;
+
+  let complianceTier = 'FULL_SCHENGEN_COMPLIANT';
+  if (overstayDaysCount > 0) {
+    complianceTier = 'SCHENGEN_90_180_OVERSTAY_VIOLATION';
+  } else if (daysRemainingAllowed - plannedSchengenDaysCount <= 10) {
+    complianceTier = 'SCHENGEN_BUFFER_CRITICAL';
+  } else if (isTaxResidencyAlert) {
+    complianceTier = 'TAX_RESIDENCY_RISK_TRIGGERED';
+  }
+
+  return {
+    valid: true,
+    plannedSchengenDaysCount,
+    past180DaysSchengenCount,
+    totalDaysInWindow,
+    daysRemainingAllowed,
+    overstayDaysCount,
+    estimatedFineEur,
+    isCompliant,
+    isTaxResidencyAlert,
+    complianceTier,
+    recommendation: isCompliant
+      ? `Schengen 90/180 Rule Compliant! Total stay: ${totalDaysInWindow}/${maxAllowedDays} days. ${daysRemainingAllowed - plannedSchengenDaysCount} buffer days remaining.`
+      : `Schengen Overstay Risk! Planned ${plannedSchengenDaysCount}-day stay exceeds remaining 90-day window quota by ${overstayDaysCount} day(s). Est. penalty: €${estimatedFineEur.toFixed(2)} + entry ban risk.`
+  };
+}
+
+
