@@ -1,8 +1,34 @@
+import type { Metadata } from "next";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { CityCard } from "@/components/site/city-card";
 import { supabase, type City } from "@/lib/supabase";
 import { Compass } from "lucide-react";
+
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
+
+export const metadata: Metadata = {
+  title: "Destinations for Digital Nomads — Cost, Visa & Internet | RoamIQ",
+  description:
+    "Browse digital nomad destinations ranked by real cost of living, internet speed, safety and visa difficulty. Filter by continent and budget. Plan your next workation on RoamIQ.",
+  alternates: {
+    canonical: `${BASE_URL}/destinations`,
+  },
+  openGraph: {
+    title: "Destinations for Digital Nomads — Cost, Visa & Internet | RoamIQ",
+    description:
+      "Browse digital nomad destinations ranked by real cost of living, internet speed, safety and visa difficulty. Filter by continent and budget.",
+    url: `${BASE_URL}/destinations`,
+    siteName: "RoamIQ",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Destinations for Digital Nomads | RoamIQ",
+    description:
+      "Ranked digital nomad cities by cost, internet, safety and visa difficulty.",
+  },
+};
 
 export const revalidate = 300;
 
@@ -50,7 +76,6 @@ async function getCities(params: {
   }
 }
 
-
 export default async function DestinationsPage({
   searchParams,
 }: {
@@ -72,7 +97,7 @@ export default async function DestinationsPage({
               {cities.length} destinations, ranked by real cost & lifestyle data.
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Every score here is pulled straight from RoamIQ's database —
+              Every score here is pulled straight from RoamIQ&apos;s database —
               cost of living, internet speed, safety, and visa difficulty,
               side by side.
             </p>
