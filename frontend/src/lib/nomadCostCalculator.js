@@ -218,4 +218,87 @@ export function calculateNomadSchengenRollingWindowCompliance(params = {}) {
   };
 }
 
+export function calculateNomadDigitalNomadVisaIncomeTaxOptimization(params = {}) {
+  const {
+    annualRemoteIncomeUsd: rawIncome = 75000,
+    destinationCountry = 'Spain',
+    stayMonths = 12,
+    isForeignSourceIncome = true,
+    homeCountryTaxRatePct = 30.0
+  } = params;
+
+  const annualRemoteIncomeUsd = Number(rawIncome);
+  if (isNaN(annualRemoteIncomeUsd) || annualRemoteIncomeUsd <= 0) {
+    return {
+      valid: false,
+      error: 'Annual remote income must be a positive number',
+      meetsMinimumIncomeRequirement: false,
+      annualTaxSavingsUsd: 0,
+      taxEfficiencyScore: 0,
+      complianceTier: 'INVALID_INPUT',
+      recommendation: 'Provide valid positive annual remote income.'
+    };
+  }
+
+  const dnvRules = {
+    Spain: { minMonthlyIncomeUsd: 2700, dnvTaxRatePct: 24.0, zeroTaxForeignIncome: false },
+    Portugal: { minMonthlyIncomeUsd: 3280, dnvTaxRatePct: 20.0, zeroTaxForeignIncome: false },
+    Dubai: { minMonthlyIncomeUsd: 3500, dnvTaxRatePct: 0.0, zeroTaxForeignIncome: true },
+    CostaRica: { minMonthlyIncomeUsd: 3000, dnvTaxRatePct: 0.0, zeroTaxForeignIncome: true },
+    Bali: { minMonthlyIncomeUsd: 2000, dnvTaxRatePct: 0.0, zeroTaxForeignIncome: true },
+    Greece: { minMonthlyIncomeUsd: 3800, dnvTaxRatePct: 22.0, zeroTaxForeignIncome: false }
+  };
+
+  const countryKey = Object.keys(dnvRules).find(
+    k => k.toLowerCase() === (destinationCountry || '').toLowerCase().replace(/\s+/g, '')
+  ) || 'Spain';
+
+  const config = dnvRules[countryKey];
+  const minAnnualIncomeRequiredUsd = config.minMonthlyIncomeUsd * 12;
+  const meetsMinimumIncomeRequirement = annualRemoteIncomeUsd >= minAnnualIncomeRequiredUsd;
+
+  const baselineHomeTaxUsd = Math.round((annualRemoteIncomeUsd * (homeCountryTaxRatePct / 100)) * 100) / 100;
+
+  let dnvTaxUsd = 0;
+  if (config.zeroTaxForeignIncome && isForeignSourceIncome) {
+    dnvTaxUsd = 0;
+  } else {
+    dnvTaxUsd = Math.round((annualRemoteIncomeUsd * (config.dnvTaxRatePct / 100)) * 100) / 100;
+  }
+
+  const annualTaxSavingsUsd = meetsMinimumIncomeRequirement
+    ? Math.max(0, Math.round((baselineHomeTaxUsd - dnvTaxUsd) * 100) / 100)
+    : 0;
+
+  let taxEfficiencyScore = 100;
+  if (!meetsMinimumIncomeRequirement) taxEfficiencyScore -= 40;
+  if (!isForeignSourceIncome && config.zeroTaxForeignIncome) taxEfficiencyScore -= 25;
+  if (dnvTaxUsd > baselineHomeTaxUsd) taxEfficiencyScore -= 30;
+  taxEfficiencyScore = Math.max(0, Math.round(taxEfficiencyScore));
+
+  let complianceTier = 'QUALIFIED_DNV_TAX_OPTIMIZED';
+  if (!meetsMinimumIncomeRequirement) {
+    complianceTier = 'INCOME_BELOW_DNV_THRESHOLD';
+  } else if (config.zeroTaxForeignIncome && isForeignSourceIncome) {
+    complianceTier = 'ZERO_TAX_FOREIGN_INCOME_EXEMPT';
+  }
+
+  return {
+    valid: true,
+    destinationCountry: countryKey,
+    annualRemoteIncomeUsd,
+    minAnnualIncomeRequiredUsd,
+    meetsMinimumIncomeRequirement,
+    baselineHomeTaxUsd,
+    dnvTaxUsd,
+    annualTaxSavingsUsd,
+    taxEfficiencyScore,
+    complianceTier,
+    recommendation: meetsMinimumIncomeRequirement
+      ? `${countryKey} Digital Nomad Visa Qualified! Annual income ($${annualRemoteIncomeUsd.toFixed(2)}) meets $${minAnnualIncomeRequiredUsd.toFixed(2)} threshold. Est. annual tax savings: $${annualTaxSavingsUsd.toFixed(2)}.`
+      : `${countryKey} DNV Alert: Annual remote income ($${annualRemoteIncomeUsd.toFixed(2)}) is below the required $${minAnnualIncomeRequiredUsd.toFixed(2)} threshold ($${config.minMonthlyIncomeUsd}/mo).`
+  };
+}
+
+
 

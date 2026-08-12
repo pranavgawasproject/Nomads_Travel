@@ -1,4 +1,4 @@
-import { calculateNomadMonthlyBudgetAndVisaRunCost, calculateNomadFeieTaxExclusionCompliance, calculateNomadSchengenRollingWindowCompliance } from '../lib/nomadCostCalculator.js';
+import { calculateNomadMonthlyBudgetAndVisaRunCost, calculateNomadFeieTaxExclusionCompliance, calculateNomadSchengenRollingWindowCompliance, calculateNomadDigitalNomadVisaIncomeTaxOptimization } from '../lib/nomadCostCalculator.js';
 
 console.log('--- Testing calculateNomadMonthlyBudgetAndVisaRunCost ---');
 
@@ -160,4 +160,51 @@ if (
 
 console.log('All calculateNomadSchengenRollingWindowCompliance tests passed successfully!\n');
 
+console.log('--- Testing calculateNomadDigitalNomadVisaIncomeTaxOptimization ---');
 
+// Test 8: Qualified Spain DNV tax optimization
+const dnvTest1 = calculateNomadDigitalNomadVisaIncomeTaxOptimization({
+  annualRemoteIncomeUsd: 80000,
+  destinationCountry: 'Spain',
+  stayMonths: 12,
+  homeCountryTaxRatePct: 30.0
+});
+
+if (
+  dnvTest1.valid &&
+  dnvTest1.destinationCountry === 'Spain' &&
+  dnvTest1.meetsMinimumIncomeRequirement === true &&
+  dnvTest1.baselineHomeTaxUsd === 24000 &&
+  dnvTest1.dnvTaxUsd === 19200 &&
+  dnvTest1.annualTaxSavingsUsd === 4800 &&
+  dnvTest1.complianceTier === 'QUALIFIED_DNV_TAX_OPTIMIZED'
+) {
+  console.log('✓ Test 8 Passed: Qualified DNV tax savings calculated correctly');
+} else {
+  console.error('✗ Test 8 Failed:', dnvTest1);
+  process.exit(1);
+}
+
+// Test 9: Zero-tax Dubai DNV for foreign source income
+const dnvTest2 = calculateNomadDigitalNomadVisaIncomeTaxOptimization({
+  annualRemoteIncomeUsd: 100000,
+  destinationCountry: 'Dubai',
+  isForeignSourceIncome: true,
+  homeCountryTaxRatePct: 35.0
+});
+
+if (
+  dnvTest2.valid &&
+  dnvTest2.destinationCountry === 'Dubai' &&
+  dnvTest2.meetsMinimumIncomeRequirement === true &&
+  dnvTest2.dnvTaxUsd === 0 &&
+  dnvTest2.annualTaxSavingsUsd === 35000 &&
+  dnvTest2.complianceTier === 'ZERO_TAX_FOREIGN_INCOME_EXEMPT'
+) {
+  console.log('✓ Test 9 Passed: Zero-tax Dubai DNV exemption verified cleanly');
+} else {
+  console.error('✗ Test 9 Failed:', dnvTest2);
+  process.exit(1);
+}
+
+console.log('All calculateNomadDigitalNomadVisaIncomeTaxOptimization tests passed successfully!\n');
