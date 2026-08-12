@@ -71,5 +71,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticEntries, ...cityEntries];
+  // Workspace / listing detail pages — public & active only
+  let listingIds: string[] = [];
+  try {
+    const { data: listings } = await supabase
+      .from("listings")
+      .select("id")
+      .eq("is_public", true)
+      .eq("is_active", true)
+      .limit(500);
+
+    if (listings && listings.length > 0) {
+      listingIds = listings.map((row) => row.id);
+    }
+  } catch (error) {
+    console.error("Sitemap: failed to fetch listings", error);
+  }
+
+  const listingEntries: MetadataRoute.Sitemap = listingIds.map((id) => ({
+    url: `${BASE_URL}/workspaces/${id}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticEntries, ...cityEntries, ...listingEntries];
 }
