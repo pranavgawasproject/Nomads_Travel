@@ -59,7 +59,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images",
+        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about",
         { count: "exact" }
       )
       .eq("is_public", true)
@@ -259,6 +259,11 @@ function ListingCard({ listing }: { listing: Listing }) {
         {listing.company_title && (
           <p className="mt-0.5 text-sm text-muted-foreground line-clamp-1">
             {listing.company_title}
+          </p>
+        )}
+        {listing.about && (
+          <p className="mt-1 text-sm text-foreground/70 line-clamp-2">
+            {listing.about}
           </p>
         )}
 

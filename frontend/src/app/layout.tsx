@@ -3,6 +3,7 @@ import { Inter, Fraunces, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "next-themes";
+import Script from "next/script";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -121,6 +122,18 @@ export default function RootLayout({
             __html: JSON.stringify(jsonLd),
           }}
         />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-QBDK33Q2NZ"
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-QBDK33Q2NZ');
+          `}
+        </Script>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
