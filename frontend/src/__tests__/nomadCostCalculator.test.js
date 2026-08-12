@@ -3,7 +3,8 @@ import {
   calculateNomadFeieTaxExclusionCompliance,
   calculateNomadSchengenRollingWindowCompliance,
   calculateNomadDigitalNomadVisaIncomeTaxOptimization,
-  calculateNomadPermanentEstablishmentRisk
+  calculateNomadPermanentEstablishmentRisk,
+  calculateNomadFeiePhysicalPresenceWindowCompliance
 } from '../lib/nomadCostCalculator.js';
 
 console.log('--- Testing calculateNomadMonthlyBudgetAndVisaRunCost ---');
@@ -263,3 +264,50 @@ if (
 }
 
 console.log('All calculateNomadPermanentEstablishmentRisk tests passed successfully!\n');
+
+console.log('--- Testing calculateNomadFeiePhysicalPresenceWindowCompliance ---');
+
+// Test 12: Qualified FEIE physical presence window (340 foreign days, $120k income)
+const feieWinTest1 = calculateNomadFeiePhysicalPresenceWindowCompliance({
+  foreignDaysCount: 340,
+  usDaysCount: 25,
+  annualForeignEarnedIncomeUsd: 120000,
+  usTaxBracketPct: 24.0
+});
+
+if (
+  feieWinTest1.valid &&
+  feieWinTest1.meetsPhysicalPresenceTest === true &&
+  feieWinTest1.daysNeededAbroadForExclusion === 0 &&
+  feieWinTest1.eligibleExclusionAmountUsd === 120000 &&
+  feieWinTest1.estimatedUsTaxSavingsUsd === 28800 &&
+  feieWinTest1.complianceTier === 'QUALIFIED_FULL_FEIE_EXCLUSION'
+) {
+  console.log('✓ Test 12 Passed: Fully qualified FEIE 330-day physical presence verified');
+} else {
+  console.error('✗ Test 12 Failed:', feieWinTest1);
+  process.exit(1);
+}
+
+// Test 13: At-risk FEIE physical presence window (315 foreign days, 15 days needed)
+const feieWinTest2 = calculateNomadFeiePhysicalPresenceWindowCompliance({
+  foreignDaysCount: 315,
+  usDaysCount: 50,
+  annualForeignEarnedIncomeUsd: 125000,
+  usTaxBracketPct: 24.0
+});
+
+if (
+  feieWinTest2.valid &&
+  feieWinTest2.meetsPhysicalPresenceTest === false &&
+  feieWinTest2.daysNeededAbroadForExclusion === 15 &&
+  feieWinTest2.eligibleExclusionAmountUsd === 0 &&
+  feieWinTest2.complianceTier === 'AT_RISK_PHYSICAL_PRESENCE_GAP'
+) {
+  console.log('✓ Test 13 Passed: Correctly flags at-risk FEIE physical presence gap');
+} else {
+  console.error('✗ Test 13 Failed:', feieWinTest2);
+  process.exit(1);
+}
+
+console.log('All calculateNomadFeiePhysicalPresenceWindowCompliance tests passed successfully!\n');

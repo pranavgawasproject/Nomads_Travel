@@ -369,3 +369,78 @@ export function calculateNomadPermanentEstablishmentRisk(params = {}) {
       : `Low Permanent Establishment risk (${peRiskScore}/100 score). Remote work stay compliant for employer.`
   };
 }
+
+export function calculateNomadFeiePhysicalPresenceWindowCompliance(params = {}) {
+  const {
+    foreignDaysCount: rawForeign = 340,
+    usDaysCount: rawUs = 25,
+    transitDaysCount: rawTransit = 0,
+    annualForeignEarnedIncomeUsd: rawIncome = 120000,
+    maxFeieExclusionCapUsd: rawCap = 126500,
+    usTaxBracketPct: rawTaxBracket = 24.0
+  } = params;
+
+  const foreignDaysCount = Number(rawForeign);
+  const usDaysCount = Number(rawUs);
+  const transitDaysCount = Number(rawTransit);
+  const annualForeignEarnedIncomeUsd = Number(rawIncome);
+  const maxFeieExclusionCapUsd = Number(rawCap);
+  const usTaxBracketPct = Number(rawTaxBracket);
+
+  if (isNaN(foreignDaysCount) || foreignDaysCount < 0 || isNaN(usDaysCount) || usDaysCount < 0) {
+    return {
+      valid: false,
+      error: 'Foreign days and US days counts must be non-negative numbers',
+      meetsPhysicalPresenceTest: false,
+      daysNeededAbroadForExclusion: 0,
+      eligibleExclusionAmountUsd: 0,
+      estimatedUsTaxSavingsUsd: 0,
+      unqualifiedTaxLiabilityUsd: 0,
+      complianceTier: 'INVALID_INPUT',
+      recommendation: 'Provide valid day counts for FEIE physical presence audit.'
+    };
+  }
+
+  const totalTrackedDays = foreignDaysCount + usDaysCount + transitDaysCount;
+  const meetsPhysicalPresenceTest = foreignDaysCount >= 330;
+  const daysNeededAbroadForExclusion = Math.max(0, 330 - foreignDaysCount);
+
+  const eligibleExclusionAmountUsd = meetsPhysicalPresenceTest
+    ? Math.min(annualForeignEarnedIncomeUsd, maxFeieExclusionCapUsd)
+    : 0;
+
+  const estimatedUsTaxSavingsUsd = Math.round((eligibleExclusionAmountUsd * (usTaxBracketPct / 100)) * 100) / 100;
+  
+  const potentialTaxSavingsUsd = Math.round((Math.min(annualForeignEarnedIncomeUsd, maxFeieExclusionCapUsd) * (usTaxBracketPct / 100)) * 100) / 100;
+  const unqualifiedTaxLiabilityUsd = meetsPhysicalPresenceTest ? 0 : potentialTaxSavingsUsd;
+
+  let complianceTier = 'QUALIFIED_FULL_FEIE_EXCLUSION';
+  if (!meetsPhysicalPresenceTest) {
+    if (daysNeededAbroadForExclusion <= 30) {
+      complianceTier = 'AT_RISK_PHYSICAL_PRESENCE_GAP';
+    } else {
+      complianceTier = 'FAILED_FEIE_PHYSICAL_PRESENCE';
+    }
+  }
+
+  return {
+    valid: true,
+    foreignDaysCount,
+    usDaysCount,
+    transitDaysCount,
+    totalTrackedDays,
+    meetsPhysicalPresenceTest,
+    daysNeededAbroadForExclusion,
+    annualForeignEarnedIncomeUsd,
+    maxFeieExclusionCapUsd,
+    eligibleExclusionAmountUsd,
+    estimatedUsTaxSavingsUsd,
+    unqualifiedTaxLiabilityUsd,
+    complianceTier,
+    recommendation: complianceTier === 'QUALIFIED_FULL_FEIE_EXCLUSION'
+      ? `FEIE Qualified! ${foreignDaysCount} qualifying foreign days in 12-month window exceeds 330-day requirement. $${eligibleExclusionAmountUsd.toLocaleString()} excluded from US tax ($${estimatedUsTaxSavingsUsd.toLocaleString()} tax savings).`
+      : complianceTier === 'AT_RISK_PHYSICAL_PRESENCE_GAP'
+      ? `FEIE Warning: ${daysNeededAbroadForExclusion} additional foreign days required to reach 330-day threshold. Pass threshold to save ~$${potentialTaxSavingsUsd.toLocaleString()} in US income tax.`
+      : `FEIE Ineligible: ${foreignDaysCount}/330 foreign days completed. Tax liability exposure: $${unqualifiedTaxLiabilityUsd.toLocaleString()}.`
+  };
+}
