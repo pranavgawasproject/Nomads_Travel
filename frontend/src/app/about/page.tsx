@@ -31,9 +31,34 @@ export const metadata: Metadata = {
   },
 };
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: BASE_URL,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "About",
+      item: `${BASE_URL}/about`,
+    },
+  ],
+};
+
 export default function AboutPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd),
+        }}
+      />
       <SiteNav />
       <main className="flex-1 pt-28 sm:pt-32">
         <section className="border-b border-border bg-secondary/40 py-14 sm:py-20">
