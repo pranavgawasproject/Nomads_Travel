@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node frontend/src/__tests__/nomadCostCalculator.test.js && npm --prefix frontend run build",
+    "test": "node frontend/src/__tests__/nomadCostCalculator.test.js && node frontend/src/__tests__/nomadSubstantialPresenceTest.test.js && npm --prefix frontend run build",
 
 
 

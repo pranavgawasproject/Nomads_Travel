@@ -444,3 +444,88 @@ export function calculateNomadFeiePhysicalPresenceWindowCompliance(params = {}) 
       : `FEIE Ineligible: ${foreignDaysCount}/330 foreign days completed. Tax liability exposure: $${unqualifiedTaxLiabilityUsd.toLocaleString()}.`
   };
 }
+
+export function calculateNomadSubstantialPresenceTestRisk(params = {}) {
+  const {
+    currentYearUsDaysCount: rawCurrent = 120,
+    priorYearUsDaysCount: rawPrior = 120,
+    twoYearsPriorUsDaysCount: rawTwoPrior = 120,
+    hasCloserConnectionToForeignCountry = false,
+    annualGlobalIncomeUsd: rawIncome = 150000,
+    usTaxRatePct: rawTaxRate = 24.0
+  } = params;
+
+  const currentYearUsDaysCount = Number(rawCurrent);
+  const priorYearUsDaysCount = Number(rawPrior);
+  const twoYearsPriorUsDaysCount = Number(rawTwoPrior);
+  const annualGlobalIncomeUsd = Number(rawIncome);
+  const usTaxRatePct = Number(rawTaxRate);
+
+  if (
+    isNaN(currentYearUsDaysCount) || currentYearUsDaysCount < 0 ||
+    isNaN(priorYearUsDaysCount) || priorYearUsDaysCount < 0 ||
+    isNaN(twoYearsPriorUsDaysCount) || twoYearsPriorUsDaysCount < 0
+  ) {
+    return {
+      valid: false,
+      error: 'US day counts for all 3 years must be non-negative numbers',
+      sptWeightedDaysCount: 0,
+      meetsSubstantialPresenceTest: false,
+      qualifiesForForm8840CloserConnection: false,
+      usTaxResidencyStatus: 'INVALID_INPUT',
+      complianceTier: 'INVALID_INPUT',
+      recommendation: 'Provide valid US day counts for Substantial Presence Test evaluation.'
+    };
+  }
+
+  const sptWeightedDaysCount = Math.round(
+    (currentYearUsDaysCount + (priorYearUsDaysCount / 3) + (twoYearsPriorUsDaysCount / 6)) * 10
+  ) / 10;
+
+  const meets31DayThreshold = currentYearUsDaysCount >= 31;
+  const meetsSubstantialPresenceTest = meets31DayThreshold && sptWeightedDaysCount >= 183;
+
+  const qualifiesForForm8840CloserConnection =
+    meetsSubstantialPresenceTest && currentYearUsDaysCount < 183 && hasCloserConnectionToForeignCountry;
+
+  let usTaxResidencyStatus = 'NON_RESIDENT_ALIEN';
+  let estimatedUsTaxExposureUsd = 0;
+  let complianceTier = 'NO_US_TAX_RESIDENCY_RISK';
+
+  if (meetsSubstantialPresenceTest) {
+    if (qualifiesForForm8840CloserConnection) {
+      usTaxResidencyStatus = 'EXEMPT_VIA_FORM_8840';
+      complianceTier = 'FORM_8840_CLOSER_CONNECTION_QUALIFIED';
+      estimatedUsTaxExposureUsd = 0;
+    } else {
+      usTaxResidencyStatus = 'US_TAX_RESIDENT_TRIGGERED';
+      complianceTier = 'DUAL_TAX_RESIDENCY_TRIGGERED';
+      estimatedUsTaxExposureUsd = Math.round((annualGlobalIncomeUsd * (usTaxRatePct / 100)) * 100) / 100;
+    }
+  } else if (sptWeightedDaysCount >= 150) {
+    complianceTier = 'HIGH_SPT_BORDERLINE_WARNING';
+  }
+
+  return {
+    valid: true,
+    currentYearUsDaysCount,
+    priorYearUsDaysCount,
+    twoYearsPriorUsDaysCount,
+    sptWeightedDaysCount,
+    meets31DayThreshold,
+    meetsSubstantialPresenceTest,
+    qualifiesForForm8840CloserConnection,
+    usTaxResidencyStatus,
+    annualGlobalIncomeUsd,
+    estimatedUsTaxExposureUsd,
+    complianceTier,
+    recommendation: complianceTier === 'DUAL_TAX_RESIDENCY_TRIGGERED'
+      ? `SPT Alert: US Tax Residency triggered (${sptWeightedDaysCount} weighted days >= 183). Global income ($${annualGlobalIncomeUsd.toLocaleString()}) subject to US tax ($${estimatedUsTaxExposureUsd.toLocaleString()} exposure).`
+      : complianceTier === 'FORM_8840_CLOSER_CONNECTION_QUALIFIED'
+      ? `SPT Qualified Exception: IRS Form 8840 closer connection exception applies (${currentYearUsDaysCount} US days < 183). File Form 8840 to claim non-resident tax status.`
+      : complianceTier === 'HIGH_SPT_BORDERLINE_WARNING'
+      ? `SPT Warning: Weighted US stay is ${sptWeightedDaysCount} days (approaching 183-day limit). Limit current year US stay to avoid tax residency.`
+      : `SPT Compliant: ${sptWeightedDaysCount} weighted US days. No US tax residency triggered.`
+  };
+}
+
