@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   Star,
@@ -18,6 +19,8 @@ import { supabase, type Listing } from "@/lib/supabase";
 
 export const revalidate = 180;
 
+const BASE_URL = "https://nomads-travel-indol.vercel.app";
+
 async function getListing(id: string) {
   try {
     const { data, error } = await supabase
@@ -32,6 +35,81 @@ async function getListing(id: string) {
     return data as Listing;
   } catch {
     return null;
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  try {
+    const listing = await getListing(id);
+
+    if (!listing) {
+      return {
+        title: "Workspace not found | RoamIQ",
+        description: "This workspace listing could not be found on RoamIQ.",
+      };
+    }
+
+    const location = [
+      listing.city,
+      listing.state,
+      listing.country,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    const title = `${listing.company_name}${location ? ` — ${location}` : ""} | RoamIQ Workspaces`;
+
+    const aboutSnippet = (listing.about || listing.description || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 140);
+
+    const extras: string[] = [];
+    if (listing.starting_price) extras.push(String(listing.starting_price));
+    if (listing.wifi_speed) extras.push(String(listing.wifi_speed));
+    if (listing.company_type) extras.push(String(listing.company_type));
+
+    const description =
+      aboutSnippet ||
+      `${listing.company_name}${location ? ` in ${location}` : ""} — coworking and workspace details for digital nomads on RoamIQ.${extras.length ? ` ${extras.join(" · ")}.` : ""}`;
+
+    const url = `${BASE_URL}/workspaces/${listing.id}`;
+    const image =
+      (listing.images && listing.images.length > 0 && listing.images[0]) ||
+      listing.logo_url ||
+      undefined;
+
+    return {
+      title,
+      description,
+      alternates: { canonical: url },
+      openGraph: {
+        title,
+        description,
+        url,
+        siteName: "RoamIQ",
+        type: "article",
+        ...(image
+          ? { images: [{ url: image, alt: listing.company_name }] }
+          : {}),
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        ...(image ? { images: [image] } : {}),
+      },
+    };
+  } catch {
+    return {
+      title: "Workspace | RoamIQ",
+      description: "Explore coworking spaces and workspaces for digital nomads on RoamIQ.",
+    };
   }
 }
 
