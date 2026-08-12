@@ -300,5 +300,72 @@ export function calculateNomadDigitalNomadVisaIncomeTaxOptimization(params = {})
   };
 }
 
+export function calculateNomadPermanentEstablishmentRisk(params = {}) {
+  const {
+    employeeName = 'Remote Worker',
+    employerHomeCountry = 'US',
+    hostCountry = 'Portugal',
+    stayDaysCount: rawStay = 120,
+    hasContractSigningAuthority = false,
+    isExecutiveOrManager = false,
+    hasDedicatedHostOfficeSpace = false,
+    companyAnnualRevenueUsd = 5000000
+  } = params;
 
+  const stayDaysCount = Number(rawStay);
+  if (isNaN(stayDaysCount) || stayDaysCount <= 0) {
+    return {
+      valid: false,
+      error: 'Stay days count must be a positive number',
+      peRiskScore: 0,
+      maxRecommendedSafeDaysCount: 0,
+      complianceTier: 'INVALID_INPUT',
+      recommendation: 'Provide a valid positive stay duration in days.'
+    };
+  }
 
+  let riskScore = 10;
+
+  if (stayDaysCount >= 183) riskScore += 50;
+  else if (stayDaysCount >= 90) riskScore += 25;
+  else if (stayDaysCount >= 60) riskScore += 10;
+
+  if (hasContractSigningAuthority) riskScore += 35;
+  if (isExecutiveOrManager) riskScore += 20;
+  if (hasDedicatedHostOfficeSpace) riskScore += 15;
+
+  const peRiskScore = Math.min(100, Math.round(riskScore));
+
+  const maxRecommendedSafeDaysCount = hasContractSigningAuthority ? 30 : 90;
+  const daysExceedingSafeLimitCount = Math.max(0, stayDaysCount - maxRecommendedSafeDaysCount);
+
+  const estimatedCorporateTaxExposureUsd = Math.round((companyAnnualRevenueUsd * 0.03 * (peRiskScore / 100)) * 100) / 100;
+
+  let complianceTier = 'LOW_PE_RISK_COMPLIANT';
+  if (peRiskScore >= 60 || stayDaysCount >= 183 || (hasContractSigningAuthority && stayDaysCount > 30)) {
+    complianceTier = 'HIGH_CORPORATE_PE_TAX_NEXUS_RISK';
+  } else if (peRiskScore >= 30) {
+    complianceTier = 'MODERATE_PE_MONITORING_REQUIRED';
+  }
+
+  return {
+    valid: true,
+    employeeName: String(employeeName || 'Remote Worker'),
+    employerHomeCountry: String(employerHomeCountry || 'US').toUpperCase(),
+    hostCountry: String(hostCountry || 'Portugal'),
+    stayDaysCount,
+    hasContractSigningAuthority: Boolean(hasContractSigningAuthority),
+    isExecutiveOrManager: Boolean(isExecutiveOrManager),
+    hasDedicatedHostOfficeSpace: Boolean(hasDedicatedHostOfficeSpace),
+    peRiskScore,
+    maxRecommendedSafeDaysCount,
+    daysExceedingSafeLimitCount,
+    estimatedCorporateTaxExposureUsd,
+    complianceTier,
+    recommendation: complianceTier === 'HIGH_CORPORATE_PE_TAX_NEXUS_RISK'
+      ? `PE Corporate Tax Alert: ${employeeName}'s ${stayDaysCount}-day stay in ${hostCountry} creates high Permanent Establishment tax nexus risk (${peRiskScore}/100 score). Cap stay at ${maxRecommendedSafeDaysCount} days or utilize an Employer of Record (EOR).`
+      : complianceTier === 'MODERATE_PE_MONITORING_REQUIRED'
+      ? `Moderate PE risk (${peRiskScore}/100 score) for ${employeeName} in ${hostCountry}. Track days abroad and restrict contract signing authority.`
+      : `Low Permanent Establishment risk (${peRiskScore}/100 score). Remote work stay compliant for employer.`
+  };
+}

@@ -1,4 +1,10 @@
-import { calculateNomadMonthlyBudgetAndVisaRunCost, calculateNomadFeieTaxExclusionCompliance, calculateNomadSchengenRollingWindowCompliance, calculateNomadDigitalNomadVisaIncomeTaxOptimization } from '../lib/nomadCostCalculator.js';
+import {
+  calculateNomadMonthlyBudgetAndVisaRunCost,
+  calculateNomadFeieTaxExclusionCompliance,
+  calculateNomadSchengenRollingWindowCompliance,
+  calculateNomadDigitalNomadVisaIncomeTaxOptimization,
+  calculateNomadPermanentEstablishmentRisk
+} from '../lib/nomadCostCalculator.js';
 
 console.log('--- Testing calculateNomadMonthlyBudgetAndVisaRunCost ---');
 
@@ -208,3 +214,52 @@ if (
 }
 
 console.log('All calculateNomadDigitalNomadVisaIncomeTaxOptimization tests passed successfully!\n');
+
+console.log('--- Testing calculateNomadPermanentEstablishmentRisk ---');
+
+// Test 10: High PE risk (contract signing authority + 120-day stay in Portugal)
+const peTest1 = calculateNomadPermanentEstablishmentRisk({
+  employeeName: 'Sarah Jenkins',
+  employerHomeCountry: 'US',
+  hostCountry: 'Portugal',
+  stayDaysCount: 120,
+  hasContractSigningAuthority: true,
+  isExecutiveOrManager: true,
+  companyAnnualRevenueUsd: 10000000
+});
+
+if (
+  peTest1.valid &&
+  peTest1.peRiskScore >= 60 &&
+  peTest1.maxRecommendedSafeDaysCount === 30 &&
+  peTest1.daysExceedingSafeLimitCount === 90 &&
+  peTest1.complianceTier === 'HIGH_CORPORATE_PE_TAX_NEXUS_RISK'
+) {
+  console.log('✓ Test 10 Passed: High PE risk for signing authority verified cleanly');
+} else {
+  console.error('✗ Test 10 Failed:', peTest1);
+  process.exit(1);
+}
+
+// Test 11: Low PE risk (45-day stay, no signing authority)
+const peTest2 = calculateNomadPermanentEstablishmentRisk({
+  employeeName: 'Alex Rivera',
+  hostCountry: 'Spain',
+  stayDaysCount: 45,
+  hasContractSigningAuthority: false,
+  isExecutiveOrManager: false
+});
+
+if (
+  peTest2.valid &&
+  peTest2.peRiskScore < 30 &&
+  peTest2.maxRecommendedSafeDaysCount === 90 &&
+  peTest2.complianceTier === 'LOW_PE_RISK_COMPLIANT'
+) {
+  console.log('✓ Test 11 Passed: Low PE risk for short stay verified cleanly');
+} else {
+  console.error('✗ Test 11 Failed:', peTest2);
+  process.exit(1);
+}
+
+console.log('All calculateNomadPermanentEstablishmentRisk tests passed successfully!\n');
