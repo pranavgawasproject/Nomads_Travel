@@ -84,26 +84,57 @@ export default async function DestinationsPage({
   const params = await searchParams;
   const cities = await getCities(params);
 
-  
   const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
-      { "@type": "ListItem", position: 2, name: "Destinations", item: `${BASE_URL}/destinations` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Destinations",
+        item: `${BASE_URL}/destinations`,
+      },
     ],
   };
 
-return (
+  // CollectionPage + ItemList from live city rows (no fabricated entries)
+  const itemListJsonLd = {
+    "@type": "ItemList",
+    name: "Digital nomad destinations on RoamIQ",
+    numberOfItems: cities.length,
+    itemListElement: cities.slice(0, 50).map((city, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: `${city.name}, ${city.country}`,
+      url: `${BASE_URL}/destinations/${city.id}`,
+    })),
+  };
+
+  const collectionJsonLd = {
+    "@type": "CollectionPage",
+    name: "Destinations for Digital Nomads | RoamIQ",
+    description:
+      "Browse digital nomad destinations ranked by real cost of living, internet speed, safety and visa difficulty.",
+    url: `${BASE_URL}/destinations`,
+    isPartOf: { "@type": "WebSite", name: "RoamIQ", url: BASE_URL },
+    mainEntity: itemListJsonLd,
+  };
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [breadcrumbJsonLd, collectionJsonLd],
+  };
+
+  return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteNav />
       <main className="flex-1 pt-28 sm:pt-32">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbJsonLd),
-        }}
-      />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd),
+          }}
+        />
 
         <section className="border-b border-border bg-secondary/40 py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
