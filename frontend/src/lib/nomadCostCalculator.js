@@ -529,3 +529,115 @@ export function calculateNomadSubstantialPresenceTestRisk(params = {}) {
   };
 }
 
+export function calculateNomadUkStatutoryResidenceTestRisk(params = {}) {
+  const {
+    daysInUkCurrentTaxYear: rawDays = 45,
+    daysInUkPriorYear1: rawPrior1 = 30,
+    daysInUkPriorYear2: rawPrior2 = 30,
+    daysInUkPriorYear3: rawPrior3 = 30,
+    hasUkHome = false,
+    hasUkFamily = false,
+    hasUkAccommodation = false,
+    ukWorkDaysCount: rawWorkDays = 0,
+    annualGlobalIncomeGbp: rawIncome = 100000,
+    ukIncomeTaxRatePct: rawTaxRate = 40.0
+  } = params;
+
+  const daysInUkCurrentTaxYear = Number(rawDays);
+  const daysInUkPriorYear1 = Number(rawPrior1);
+  const daysInUkPriorYear2 = Number(rawPrior2);
+  const daysInUkPriorYear3 = Number(rawPrior3);
+  const ukWorkDaysCount = Number(rawWorkDays);
+  const annualGlobalIncomeGbp = Number(rawIncome);
+  const ukIncomeTaxRatePct = Number(rawTaxRate);
+
+  if (
+    isNaN(daysInUkCurrentTaxYear) || daysInUkCurrentTaxYear < 0 ||
+    isNaN(daysInUkPriorYear1) || daysInUkPriorYear1 < 0 ||
+    isNaN(daysInUkPriorYear2) || daysInUkPriorYear2 < 0 ||
+    isNaN(daysInUkPriorYear3) || daysInUkPriorYear3 < 0
+  ) {
+    return {
+      valid: false,
+      error: 'UK day counts for all tax years must be non-negative numbers',
+      isUkTaxResident: false,
+      srtTestCategory: 'INVALID_INPUT',
+      complianceTier: 'INVALID_INPUT',
+      recommendation: 'Provide valid UK day counts for Statutory Residence Test evaluation.'
+    };
+  }
+
+  const wasResidentInPast3Years = daysInUkPriorYear1 >= 183 || daysInUkPriorYear2 >= 183 || daysInUkPriorYear3 >= 183;
+
+  let passesAutomaticOverseasTest = false;
+  if (daysInUkCurrentTaxYear < 16 && wasResidentInPast3Years) {
+    passesAutomaticOverseasTest = true;
+  } else if (daysInUkCurrentTaxYear < 46 && !wasResidentInPast3Years) {
+    passesAutomaticOverseasTest = true;
+  }
+
+  let triggersAutomaticUkTest = false;
+  if (daysInUkCurrentTaxYear >= 183) {
+    triggersAutomaticUkTest = true;
+  } else if (hasUkHome && daysInUkCurrentTaxYear >= 30) {
+    triggersAutomaticUkTest = true;
+  }
+
+  let tiesCount = 0;
+  if (hasUkFamily) tiesCount++;
+  if (hasUkAccommodation) tiesCount++;
+  if (ukWorkDaysCount >= 40) tiesCount++;
+  if (daysInUkPriorYear1 >= 90 || daysInUkPriorYear2 >= 90) tiesCount++;
+
+  let triggersSufficientTiesTest = false;
+  if (!wasResidentInPast3Years) {
+    if (daysInUkCurrentTaxYear >= 46 && daysInUkCurrentTaxYear <= 90 && tiesCount >= 4) triggersSufficientTiesTest = true;
+    else if (daysInUkCurrentTaxYear >= 91 && daysInUkCurrentTaxYear <= 120 && tiesCount >= 3) triggersSufficientTiesTest = true;
+    else if (daysInUkCurrentTaxYear >= 121 && daysInUkCurrentTaxYear <= 182 && tiesCount >= 2) triggersSufficientTiesTest = true;
+  } else {
+    if (daysInUkCurrentTaxYear >= 16 && daysInUkCurrentTaxYear <= 45 && tiesCount >= 4) triggersSufficientTiesTest = true;
+    else if (daysInUkCurrentTaxYear >= 46 && daysInUkCurrentTaxYear <= 90 && tiesCount >= 3) triggersSufficientTiesTest = true;
+    else if (daysInUkCurrentTaxYear >= 91 && daysInUkCurrentTaxYear <= 120 && tiesCount >= 2) triggersSufficientTiesTest = true;
+    else if (daysInUkCurrentTaxYear >= 121 && daysInUkCurrentTaxYear <= 182 && tiesCount >= 1) triggersSufficientTiesTest = true;
+  }
+
+  const isUkTaxResident = !passesAutomaticOverseasTest && (triggersAutomaticUkTest || triggersSufficientTiesTest);
+
+  let estimatedUkTaxExposureGbp = 0;
+  let complianceTier = 'NON_UK_TAX_RESIDENT';
+  let srtTestCategory = 'AUTOMATIC_OVERSEAS_TEST';
+
+  if (isUkTaxResident) {
+    srtTestCategory = triggersAutomaticUkTest ? 'AUTOMATIC_UK_TEST' : 'SUFFICIENT_TIES_TEST';
+    complianceTier = 'UK_TAX_RESIDENCY_TRIGGERED';
+    estimatedUkTaxExposureGbp = Math.round((annualGlobalIncomeGbp * (ukIncomeTaxRatePct / 100)) * 100) / 100;
+  } else if (passesAutomaticOverseasTest) {
+    srtTestCategory = 'AUTOMATIC_OVERSEAS_TEST';
+    complianceTier = 'AUTOMATIC_OVERSEAS_EXEMPT';
+  } else {
+    srtTestCategory = 'SUFFICIENT_TIES_CLEAR';
+    complianceTier = 'SUFFICIENT_TIES_BELOW_THRESHOLD';
+  }
+
+  return {
+    valid: true,
+    daysInUkCurrentTaxYear,
+    wasResidentInPast3Years,
+    tiesCount,
+    passesAutomaticOverseasTest,
+    triggersAutomaticUkTest,
+    triggersSufficientTiesTest,
+    isUkTaxResident,
+    srtTestCategory,
+    annualGlobalIncomeGbp,
+    estimatedUkTaxExposureGbp,
+    complianceTier,
+    recommendation: complianceTier === 'UK_TAX_RESIDENCY_TRIGGERED'
+      ? `UK SRT Alert: UK tax residency triggered under ${srtTestCategory} (${daysInUkCurrentTaxYear} days, ${tiesCount} UK ties). Worldwide income subject to HMRC tax (£${estimatedUkTaxExposureGbp.toLocaleString()} exposure).`
+      : complianceTier === 'AUTOMATIC_OVERSEAS_EXEMPT'
+      ? `UK SRT Exempt: Qualified for HMRC Automatic Overseas Test (${daysInUkCurrentTaxYear} UK days). Non-resident status preserved.`
+      : `UK SRT Compliant: ${daysInUkCurrentTaxYear} UK days with ${tiesCount} tie(s). No UK tax residency triggered.`
+  };
+}
+
+
