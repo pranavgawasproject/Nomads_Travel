@@ -28,20 +28,21 @@ const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "RoamIQ — The Operating System for Digital Nomads",
+  title: "RoamIQ | #1 Digital Nomad & Remote Work Travel Operating System",
   description:
-    "The all-in-one platform for digital nomads: AI-powered visa intelligence, remote job board, global city listings, workation planning, and community. Built for the 35M remote workers living their best location-independent life.",
+    "RoamIQ (Roam IQ) is the all-in-one digital nomad travel tool & operating system. Explore AI visa intelligence, 1,000+ remote job listings, cost of living data, coworking spaces, and workation planning for remote workers worldwide.",
   keywords: [
+    "roamiq",
+    "roam iq",
     "digital nomad",
-    "remote work",
-    "visa",
-    "workation",
+    "digital nomad travel tool",
+    "digital nomad visa",
+    "remote work travel",
+    "workation planner",
+    "cost of living for nomads",
     "remote jobs",
-    "nomad visa",
-    "travel",
     "work abroad",
-    "location independent",
-    "digital nomad tools",
+    "location independent tools",
   ],
   authors: [{ name: "RoamIQ" }],
   alternates: {
@@ -52,9 +53,9 @@ export const metadata: Metadata = {
     apple: "/logo.svg",
   },
   openGraph: {
-    title: "RoamIQ — The Operating System for Digital Nomads",
+    title: "RoamIQ | #1 Digital Nomad & Remote Work Travel Operating System",
     description:
-      "The all-in-one platform for digital nomads: AI-powered visa intelligence, remote job board, global city listings, workation planning, and community.",
+      "RoamIQ is the premier AI-powered digital nomad operating system. Compare cost of living, check visa rules, find remote jobs, and plan workations seamlessly.",
     siteName: "RoamIQ",
     type: "website",
     url: BASE_URL,
@@ -63,15 +64,15 @@ export const metadata: Metadata = {
         url: "/logo.svg",
         width: 512,
         height: 512,
-        alt: "RoamIQ — digital nomad operating system logo",
+        alt: "RoamIQ Digital Nomad Travel Platform",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "RoamIQ — The Operating System for Digital Nomads",
+    title: "RoamIQ | #1 Digital Nomad & Remote Work Travel Operating System",
     description:
-      "The all-in-one platform for digital nomads: AI-powered visa intelligence, remote job board, global city listings, workation planning, and community.",
+      "RoamIQ is the premier AI-powered digital nomad operating system. Compare cost of living, check visa rules, find remote jobs, and plan workations seamlessly.",
     images: ["/logo.svg"],
   },
 };
@@ -130,8 +131,8 @@ export default function RootLayout({
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-QBDK33Q2NZ');
+            gtag(js, new Date());
+            gtag(config, G-QBDK33Q2NZ);
           `}
         </Script>
         <ThemeProvider
