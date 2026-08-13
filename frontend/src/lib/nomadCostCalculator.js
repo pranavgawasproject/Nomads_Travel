@@ -744,5 +744,99 @@ export function calculateNomadTaxTreatyTieBreakerRisk(params = {}) {
   };
 }
 
+export function calculateNomadForeignHousingDeductionAudit(params = {}) {
+  const {
+    annualForeignEarnedIncomeUsd: rawIncome = 120000,
+    actualForeignHousingExpensesUsd: rawHousing = 32000,
+    localityName = 'London',
+    qualifyingForeignDaysCount: rawDays = 340,
+    feieMaximumExclusionLimitUsd: rawFeieCap = 126500,
+    usEffectiveTaxRatePct: rawTaxRate = 24.0
+  } = params;
+
+  const annualForeignEarnedIncomeUsd = Number(rawIncome);
+  const actualForeignHousingExpensesUsd = Number(rawHousing);
+  const qualifyingForeignDaysCount = Number(rawDays);
+  const feieMaximumExclusionLimitUsd = Number(rawFeieCap);
+  const usEffectiveTaxRatePct = Number(rawTaxRate);
+
+  if (
+    isNaN(annualForeignEarnedIncomeUsd) || annualForeignEarnedIncomeUsd <= 0 ||
+    isNaN(actualForeignHousingExpensesUsd) || actualForeignHousingExpensesUsd <= 0
+  ) {
+    return {
+      valid: false,
+      error: 'Annual foreign earned income and actual housing expenses must be positive numbers',
+      meetsPhysicalPresenceTest: false,
+      eligibleHousingDeductionUsd: 0,
+      estimatedTaxSavingsUsd: 0,
+      complianceTier: 'INVALID_INPUT',
+      recommendation: 'Provide valid income and housing expense figures.'
+    };
+  }
+
+  const meetsPhysicalPresenceTest = qualifyingForeignDaysCount >= 330;
+  const baseHousingThresholdUsd = Math.round((feieMaximumExclusionLimitUsd * 0.16) * 100) / 100;
+
+  const localityCaps = {
+    London: 65000,
+    Tokyo: 55000,
+    Zurich: 68000,
+    Singapore: 72000,
+    Dubai: 58000,
+    Paris: 52000,
+    HongKong: 75000,
+    Sydney: 50000,
+    General: Math.round((feieMaximumExclusionLimitUsd * 0.30) * 100) / 100
+  };
+
+  const matchedLocalityKey = Object.keys(localityCaps).find(
+    k => k.toLowerCase() === (localityName || '').toLowerCase().replace(/\s+/g, '')
+  ) || 'General';
+
+  const maxLocalityCapUsd = localityCaps[matchedLocalityKey];
+  const maxAllowableDeductionCapUsd = Math.max(0, maxLocalityCapUsd - baseHousingThresholdUsd);
+
+  let eligibleHousingDeductionUsd = 0;
+  let estimatedTaxSavingsUsd = 0;
+
+  if (meetsPhysicalPresenceTest && actualForeignHousingExpensesUsd > baseHousingThresholdUsd) {
+    const rawExcess = actualForeignHousingExpensesUsd - baseHousingThresholdUsd;
+    eligibleHousingDeductionUsd = Math.round(Math.min(rawExcess, maxAllowableDeductionCapUsd) * 100) / 100;
+    estimatedTaxSavingsUsd = Math.round((eligibleHousingDeductionUsd * (usEffectiveTaxRatePct / 100)) * 100) / 100;
+  }
+
+  let complianceTier = 'FULL_FOREIGN_HOUSING_DEDUCTION_QUALIFIED';
+  if (!meetsPhysicalPresenceTest) {
+    complianceTier = 'FEIE_PHYSICAL_PRESENCE_INELIGIBLE';
+  } else if (actualForeignHousingExpensesUsd <= baseHousingThresholdUsd) {
+    complianceTier = 'BELOW_BASE_HOUSING_THRESHOLD_INELIGIBLE';
+  } else if (actualForeignHousingExpensesUsd - baseHousingThresholdUsd > maxAllowableDeductionCapUsd) {
+    complianceTier = 'LOCALITY_CAP_EXCEEDED_PARTIAL_DEDUCTION';
+  }
+
+  return {
+    valid: true,
+    localityName: matchedLocalityKey,
+    annualForeignEarnedIncomeUsd,
+    actualForeignHousingExpensesUsd,
+    baseHousingThresholdUsd,
+    maxLocalityCapUsd,
+    maxAllowableDeductionCapUsd,
+    meetsPhysicalPresenceTest,
+    eligibleHousingDeductionUsd,
+    estimatedTaxSavingsUsd,
+    complianceTier,
+    recommendation: complianceTier === 'FULL_FOREIGN_HOUSING_DEDUCTION_QUALIFIED'
+      ? `IRC Sec 911(c) Foreign Housing Deduction Qualified! Expenses in ${matchedLocalityKey} ($${actualForeignHousingExpensesUsd.toLocaleString()}) exceed $${baseHousingThresholdUsd.toLocaleString()} base threshold. $${eligibleHousingDeductionUsd.toLocaleString()} eligible housing deduction ($${estimatedTaxSavingsUsd.toLocaleString()} estimated tax savings).`
+      : complianceTier === 'LOCALITY_CAP_EXCEEDED_PARTIAL_DEDUCTION'
+      ? `Foreign Housing Cap Reached: Housing expenses in ${matchedLocalityKey} exceed the $${maxLocalityCapUsd.toLocaleString()} locality cap. Maximum deduction of $${eligibleHousingDeductionUsd.toLocaleString()} claimed ($${estimatedTaxSavingsUsd.toLocaleString()} tax savings).`
+      : complianceTier === 'BELOW_BASE_HOUSING_THRESHOLD_INELIGIBLE'
+      ? `Housing Expense Below Threshold: Foreign housing costs ($${actualForeignHousingExpensesUsd.toLocaleString()}) are below the mandatory $${baseHousingThresholdUsd.toLocaleString()} IRS base threshold (16% of FEIE limit).`
+      : `Ineligible: 330-day foreign physical presence requirement not met (${qualifyingForeignDaysCount}/330 days).`
+  };
+}
+
+
 
 
