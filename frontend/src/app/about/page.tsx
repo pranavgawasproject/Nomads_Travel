@@ -50,6 +50,46 @@ const breadcrumbJsonLd = {
   ],
 };
 
+/** FAQ answers grounded only in product capabilities already described on-site — no fabricated claims. */
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is RoamIQ?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "RoamIQ is an all-in-one platform for digital nomads: AI-powered visa intelligence, city cost and lifestyle data, workspace listings, workation planning, and community — built so remote workers do not need a dozen tabs to research a move.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What can I find on destination pages?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Each destination page surfaces cost of living breakdowns, internet and lifestyle scores, visa difficulty, and related coworking or coliving workspaces for that city, so you can compare locations before you go.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does RoamIQ include visa information?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. RoamIQ includes visa lookup and related intelligence for many countries so you can check stay duration, difficulty, and remote-work considerations before planning a workation.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are workspace listings free to browse?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Public workspace listings (coworking and coliving) are available on the Workspaces section. You can open individual listing pages for location, wifi, pricing when provided, and other details published by the space.",
+      },
+    },
+  ],
+};
+
 export default function AboutPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -57,6 +97,12 @@ export default function AboutPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(breadcrumbJsonLd),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqJsonLd),
         }}
       />
       <SiteNav />
