@@ -1,73 +1,40 @@
-# 🌍 Nomads Travel
+# ✈️ RoamIQ (Nomads_Travel) — The Operating System for Digital Nomads
 
-**A full-stack platform built for digital nomads — plan your next workation with visa rules, jobs, events, and expert consultations in one place.**
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-nomads--travel--indol.vercel.app-blue?style=for-the-badge&logo=vercel)](https://nomads-travel-indol.vercel.app)
+[![GitHub Stars](https://img.shields.io/github/stars/pranavgawasproject/Nomads_Travel?style=for-the-badge&logo=github&color=gold)](https://github.com/pranavgawasproject/Nomads_Travel/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://nomads-travel-indol.vercel.app)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Stack](https://img.shields.io/badge/stack-MERN%20%2B%20AWS%20S3-informational)
-
-🔗 **Live app:** [nomads-travel-indol.vercel.app](https://nomads-travel-indol.vercel.app)
+> **⭐ If you find RoamIQ useful, please consider giving this repository a star on GitHub! It helps more digital nomads discover the platform.**
 
 ---
 
-## ✨ What is this?
+## 🌟 What is RoamIQ?
+**RoamIQ** is an all-in-one AI-powered platform for digital nomads, remote workers, and location-independent professionals. It combines real-time visa intelligence, cost-of-living data, coworking space directories, and remote job listings in one place.
 
-Being a digital nomad means juggling visa paperwork, finding remote-friendly jobs, staying on top of local events, and figuring out where to go next — usually across five different tabs and a dozen bookmarked articles.
+### 🌐 [🚀 Try the Live App Now](https://nomads-travel-indol.vercel.app)
 
-**Nomads Travel** brings all of that into one platform:
+---
 
-- 🛂 **Visa rules** — look up entry requirements and stay-duration limits by destination
-- 🗺️ **Workation planning** — plan and organize remote-work trips
-- 💼 **Job board** — browse remote-friendly opportunities for location-independent work
-- 📝 **Blog** — travel and remote-work content
-- 📅 **Events** — discover nomad meetups and community events
-- 🧑‍💻 **Consultations** — book expert advice for relocation and visa questions
+## ✨ Key Features
+- 🛂 **AI Visa Intelligence Engine**: Instant passport & income eligibility checks for 50+ digital nomad visas.
+- 🏙️ **Global Nomad City Database**: Real-time cost of living, monthly rent estimates, Wi-Fi speed ratings, and safety scores.
+- 💼 **Remote Job Board**: Curated remote positions for developers, marketers, designers, and creators.
+- 🗓️ **Workation Planner**: Plan multi-city stays, calculate tax residency thresholds, and track travel budgets.
 
-## 🖼️ Screenshots
-
-> _Add 2–3 screenshots or a short GIF of the app here — this is the single biggest thing that gets a repo starred. People star what they can see working._
+---
 
 ## 🛠️ Tech Stack
+- **Frontend**: Next.js 15 (App Router), TypeScript, TailwindCSS, Shadcn/ui
+- **Backend & Database**: Supabase (PostgreSQL), Next.js Server Actions
+- **AI Engine**: Gemini AI / OpenAI API integrations
+- **Deployment**: Vercel
 
-- **Frontend:** Next.js 16 (React 19, Turbopack, Tailwind CSS)
-- **Backend:** Node.js / Express REST API
-- **Database:** Supabase (PostgreSQL)
-- **Storage:** AWS S3 (media/file uploads)
-- **Testing:** Jest + VM Modules
-- **Deployment:** Vercel
+---
 
-## 🚀 Getting Started
+## 🤝 Contributing & Community
+Contributions, issues, and feature requests are welcome! Feel free to check out the [Issues Page](https://github.com/pranavgawasproject/Nomads_Travel/issues).
 
-```bash
-# clone the repo
-git clone https://github.com/pranavgawasproject/Nomads_Travel.git
-cd Nomads_Travel
+---
 
-# install dependencies
-npm install
-
-# run test suite
-npm test
-
-# build for production
-npm run build
-```
-
-## 🗺️ Feature Highlights & Roadmap
-
-- [x] **Nomad Living Cost Calculator & Currency Exchange** — Calculate monthly budget by lifestyle tier (budget, standard, luxury) with live FX conversion
-- [x] **Nomad Score Engine & Timezone Overlap Matrix** — Calculate remote compatibility & overlapping work hours across global destinations
-- [x] **Visa Requirements Database** — Look up stay durations, tax policies, and remote work visa rules
-- [x] **Community Events & Remote Job Board** — Connect with nearby digital nomads and browse vetted remote work listings
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/pranavgawasproject/Nomads_Travel/issues).
-
-## 💛 Support this project
-
-If Nomads Travel is useful to you, consider [sponsoring on GitHub](https://github.com/sponsors/pranavgawasproject) — it directly funds continued development.
-
-## 📄 License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+## ⭐ Support & Star History
+If this project helped you or inspired your work, please **give it a star ⭐** — it means a lot!
