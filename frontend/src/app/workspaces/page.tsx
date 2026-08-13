@@ -108,10 +108,27 @@ export default async function WorkspacesPage({
     return `/workspaces?${qs.toString()}`;
   };
 
-  return (
+  
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
+      { "@type": "ListItem", position: 2, name: "Workspaces", item: `${BASE_URL}/workspaces` },
+    ],
+  };
+
+return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteNav />
       <main className="flex-1 pt-28 sm:pt-32">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd),
+        }}
+      />
+
         <section className="border-b border-border bg-secondary/40 py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
             <div className="text-sm font-medium uppercase tracking-widest text-accent">
