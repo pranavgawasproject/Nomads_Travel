@@ -640,4 +640,109 @@ export function calculateNomadUkStatutoryResidenceTestRisk(params = {}) {
   };
 }
 
+export function calculateNomadTaxTreatyTieBreakerRisk(params = {}) {
+  const {
+    primaryCountryName = 'Portugal',
+    secondaryCountryName = 'US',
+    primaryCountryDaysCount: rawPrimaryDays = 200,
+    secondaryCountryDaysCount: rawSecondaryDays = 150,
+    hasPermanentHomePrimary = true,
+    hasPermanentHomeSecondary = false,
+    centerOfVitalInterestsLocation = 'Primary',
+    habitualAbodeDaysPrimary: rawHabitualPrimary = 200,
+    habitualAbodeDaysSecondary: rawHabitualSecondary = 150,
+    annualGlobalIncomeUsd: rawIncome = 120000,
+    primaryTaxRatePct: rawPrimaryTax = 25.0,
+    secondaryTaxRatePct: rawSecondaryTax = 30.0
+  } = params;
+
+  const primaryCountryDaysCount = Number(rawPrimaryDays);
+  const secondaryCountryDaysCount = Number(rawSecondaryDays);
+  const habitualAbodeDaysPrimary = Number(rawHabitualPrimary);
+  const habitualAbodeDaysSecondary = Number(rawHabitualSecondary);
+  const annualGlobalIncomeUsd = Number(rawIncome);
+  const primaryTaxRatePct = Number(rawPrimaryTax);
+  const secondaryTaxRatePct = Number(rawSecondaryTax);
+
+  if (
+    isNaN(primaryCountryDaysCount) || primaryCountryDaysCount < 0 ||
+    isNaN(secondaryCountryDaysCount) || secondaryCountryDaysCount < 0
+  ) {
+    return {
+      valid: false,
+      error: 'Primary and secondary country day counts must be non-negative numbers',
+      tieBreakerResultCountry: 'INVALID_INPUT',
+      treatyArticle4Step: 'INVALID_INPUT',
+      complianceTier: 'INVALID_INPUT',
+      recommendation: 'Provide valid day counts for OECD tax treaty tie-breaker evaluation.'
+    };
+  }
+
+  const isDualResidentTriggered = primaryCountryDaysCount >= 183 && secondaryCountryDaysCount >= 183;
+  const isHighDualResidencyRisk = primaryCountryDaysCount >= 183 || secondaryCountryDaysCount >= 183;
+
+  let tieBreakerResultCountry = primaryCountryName;
+  let treatyArticle4Step = 'PERMANENT_HOME_TEST';
+
+  if (hasPermanentHomePrimary && !hasPermanentHomeSecondary) {
+    tieBreakerResultCountry = primaryCountryName;
+    treatyArticle4Step = 'PERMANENT_HOME_TEST';
+  } else if (!hasPermanentHomePrimary && hasPermanentHomeSecondary) {
+    tieBreakerResultCountry = secondaryCountryName;
+    treatyArticle4Step = 'PERMANENT_HOME_TEST';
+  } else {
+    if (centerOfVitalInterestsLocation === 'Primary') {
+      tieBreakerResultCountry = primaryCountryName;
+      treatyArticle4Step = 'CENTER_OF_VITAL_INTERESTS_TEST';
+    } else if (centerOfVitalInterestsLocation === 'Secondary') {
+      tieBreakerResultCountry = secondaryCountryName;
+      treatyArticle4Step = 'CENTER_OF_VITAL_INTERESTS_TEST';
+    } else {
+      if (habitualAbodeDaysPrimary > habitualAbodeDaysSecondary) {
+        tieBreakerResultCountry = primaryCountryName;
+        treatyArticle4Step = 'HABITUAL_ABODE_TEST';
+      } else if (habitualAbodeDaysSecondary > habitualAbodeDaysPrimary) {
+        tieBreakerResultCountry = secondaryCountryName;
+        treatyArticle4Step = 'HABITUAL_ABODE_TEST';
+      } else {
+        treatyArticle4Step = 'MUTUAL_AGREEMENT_PROCEDURE_REQUIRED';
+        tieBreakerResultCountry = 'UNDETERMINED';
+      }
+    }
+  }
+
+  const primaryPotentialTaxUsd = Math.round((annualGlobalIncomeUsd * (primaryTaxRatePct / 100)) * 100) / 100;
+  const secondaryPotentialTaxUsd = Math.round((annualGlobalIncomeUsd * (secondaryTaxRatePct / 100)) * 100) / 100;
+  const doubleTaxationExposureUsd = isDualResidentTriggered
+    ? Math.round((primaryPotentialTaxUsd + secondaryPotentialTaxUsd) * 100) / 100
+    : 0;
+
+  let complianceTier = 'SINGLE_RESIDENCY_TREATY_SAFE';
+  if (isDualResidentTriggered) {
+    complianceTier = 'DUAL_RESIDENCY_DOUBLE_TAXATION_RISK';
+  } else if (isHighDualResidencyRisk) {
+    complianceTier = 'TREATY_TIE_BREAKER_CLAIM_RECOMMENDED';
+  }
+
+  return {
+    valid: true,
+    primaryCountryName,
+    secondaryCountryName,
+    primaryCountryDaysCount,
+    secondaryCountryDaysCount,
+    isDualResidentTriggered,
+    tieBreakerResultCountry,
+    treatyArticle4Step,
+    annualGlobalIncomeUsd,
+    doubleTaxationExposureUsd,
+    complianceTier,
+    recommendation: complianceTier === 'DUAL_RESIDENCY_DOUBLE_TAXATION_RISK'
+      ? `Tax Treaty Alert: Dual residency triggered across ${primaryCountryName} (${primaryCountryDaysCount} days) & ${secondaryCountryName} (${secondaryCountryDaysCount} days). OECD Article 4 tie-breaker resolves sole tax residency to ${tieBreakerResultCountry} via ${treatyArticle4Step}.`
+      : complianceTier === 'TREATY_TIE_BREAKER_CLAIM_RECOMMENDED'
+      ? `Tax Treaty Guidance: 183-day threshold met in ${primaryCountryDaysCount >= 183 ? primaryCountryName : secondaryCountryName}. File Form 8833 / Treaty Tie-Breaker claim designating ${tieBreakerResultCountry} as sole tax residency.`
+      : `Tax Treaty Clean: Single tax residency maintained in ${tieBreakerResultCountry}. No OECD Article 4 tie-breaker dispute.`
+  };
+}
+
+
 
