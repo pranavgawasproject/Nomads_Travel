@@ -113,91 +113,6 @@ export async function generateMetadata({
   }
 }
 
-function buildJsonLd(listing: Listing) {
-  const location = [listing.city, listing.state, listing.country]
-    .filter(Boolean)
-    .join(", ");
-  const url = `${BASE_URL}/workspaces/${listing.id}`;
-  const image =
-    (listing.images && listing.images.length > 0 && listing.images[0]) ||
-    listing.logo_url ||
-    undefined;
-  const description = (listing.about || listing.description || "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 300);
-
-  const breadcrumb = {
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: BASE_URL,
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Workspaces",
-        item: `${BASE_URL}/workspaces`,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: listing.company_name,
-        item: url,
-      },
-    ],
-  };
-
-  const localBusiness: Record<string, unknown> = {
-    "@type": "LocalBusiness",
-    "@id": url,
-    name: listing.company_name,
-    url,
-    ...(description ? { description } : {}),
-    ...(image ? { image } : {}),
-    ...(listing.company_type ? { additionalType: listing.company_type } : {}),
-    address: {
-      "@type": "PostalAddress",
-      ...(listing.address ? { streetAddress: listing.address } : {}),
-      ...(listing.city ? { addressLocality: listing.city } : {}),
-      ...(listing.state ? { addressRegion: listing.state } : {}),
-      ...(listing.country ? { addressCountry: listing.country } : {}),
-    },
-  };
-
-  if (listing.website) {
-    localBusiness.sameAs = [listing.website];
-  }
-
-  if (listing.open_hours) {
-    localBusiness.openingHours = listing.open_hours;
-  }
-
-  if (listing.ratings && Number(listing.ratings) > 0) {
-    localBusiness.aggregateRating = {
-      "@type": "AggregateRating",
-      ratingValue: Number(listing.ratings),
-      ...(listing.total_reviews
-        ? { reviewCount: Number(listing.total_reviews) }
-        : {}),
-      bestRating: 5,
-      worstRating: 1,
-    };
-  }
-
-  if (listing.starting_price) {
-    localBusiness.priceRange = String(listing.starting_price);
-  }
-
-  return {
-    "@context": "https://schema.org",
-    "@graph": [breadcrumb, localBusiness],
-  };
-}
-
 export default async function WorkspaceDetailPage({
   params,
 }: {
@@ -216,18 +131,90 @@ export default async function WorkspaceDetailPage({
         : [];
 
   const tags: string[] = Array.isArray(listing.tags) ? listing.tags : [];
-  const jsonLd = buildJsonLd(listing);
+
+  const locationParts = [listing.city, listing.state, listing.country].filter(Boolean);
+  const pageUrl = `${BASE_URL}/workspaces/${listing.id}`;
+  const primaryImage =
+    images[0] || listing.logo_url || undefined;
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: BASE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Workspaces",
+        item: `${BASE_URL}/workspaces`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: listing.company_name,
+        item: pageUrl,
+      },
+    ],
+  };
+
+  // LocalBusiness from real listing fields only — never invent ratings/prices
+  const localBusinessJsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: listing.company_name,
+    url: pageUrl,
+    description: (listing.about || listing.description || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 300) || undefined,
+  };
+  if (listing.company_type) localBusinessJsonLd.additionalType = String(listing.company_type);
+  if (primaryImage) localBusinessJsonLd.image = primaryImage;
+  if (listing.website) localBusinessJsonLd.sameAs = [listing.website];
+  if (listing.address || locationParts.length) {
+    localBusinessJsonLd.address = {
+      "@type": "PostalAddress",
+      ...(listing.address ? { streetAddress: listing.address } : {}),
+      ...(listing.city ? { addressLocality: listing.city } : {}),
+      ...(listing.state ? { addressRegion: listing.state } : {}),
+      ...(listing.country ? { addressCountry: listing.country } : {}),
+    };
+  }
+  if (listing.starting_price) {
+    localBusinessJsonLd.priceRange = String(listing.starting_price);
+  }
+  if (listing.ratings > 0 && listing.total_reviews > 0) {
+    localBusinessJsonLd.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: Number(listing.ratings),
+      reviewCount: Number(listing.total_reviews),
+    };
+  }
+  if (listing.open_hours) {
+    localBusinessJsonLd.openingHours = String(listing.open_hours);
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd),
-        }}
-      />
       <SiteNav />
       <main className="flex-1 pt-28 sm:pt-32">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbJsonLd),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(localBusinessJsonLd),
+          }}
+        />
         {/* Back link */}
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <Link
