@@ -28,9 +28,9 @@ const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "RoamIQ | #1 Digital Nomad & Remote Work Travel Operating System",
+  title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
   description:
-    "RoamIQ (Roam IQ) is the all-in-one digital nomad travel tool & operating system. Explore AI visa intelligence, 1,000+ remote job listings, cost of living data, coworking spaces, and workation planning for remote workers worldwide.",
+    "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
   keywords: [
     "roamiq",
     "roam iq",
@@ -53,9 +53,9 @@ export const metadata: Metadata = {
     apple: "/logo.svg",
   },
   openGraph: {
-    title: "RoamIQ | #1 Digital Nomad & Remote Work Travel Operating System",
+    title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
     description:
-      "RoamIQ is the premier AI-powered digital nomad operating system. Compare cost of living, check visa rules, find remote jobs, and plan workations seamlessly.",
+      "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
     siteName: "RoamIQ",
     type: "website",
     url: BASE_URL,
@@ -70,9 +70,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RoamIQ | #1 Digital Nomad & Remote Work Travel Operating System",
+    title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
     description:
-      "RoamIQ is the premier AI-powered digital nomad operating system. Compare cost of living, check visa rules, find remote jobs, and plan workations seamlessly.",
+      "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
     images: ["/logo.svg"],
   },
 };
@@ -131,8 +131,8 @@ export default function RootLayout({
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
-            gtag(js, new Date());
-            gtag(config, G-QBDK33Q2NZ);
+            gtag('js', new Date());
+            gtag('config', 'G-QBDK33Q2NZ');
           `}
         </Script>
         <ThemeProvider
