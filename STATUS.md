@@ -26,3 +26,5 @@
 - Get `/destinations` list page out of "Discovered - currently not indexed".
 - Only re-add listing detail URLs to sitemap when they have non-empty about + wifi_speed + images (thin-content guard).
 - Resubmit sitemap after deploy and re-check GSC indexed count in a few days.
+- **2026-08-15 (later run)**: Added FAQPage JSON-LD on `/destinations/[id]` pages. Answers are generated only from live city/visa/cost fields (cost of living, internet Mbps, visa difficulty / DN visa flags) — no fabricated ratings or prices.
+
