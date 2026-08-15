@@ -104,6 +104,20 @@ const jsonLd = {
         "query-input": "required name=search_term_string",
       },
     },
+    {
+      "@type": "SoftwareApplication",
+      name: "RoamIQ",
+      applicationCategory: "TravelApplication",
+      operatingSystem: "Web",
+      url: BASE_URL,
+      description:
+        "AI-powered digital nomad platform with visa intelligence, live cost-of-living data, coworking directory, and workation planning for 200+ cities.",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+    },
   ],
 };
 
