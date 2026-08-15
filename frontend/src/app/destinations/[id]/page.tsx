@@ -189,9 +189,41 @@ export default async function CityDetailPage({
     ],
   };
 
+  // FAQ answers are derived only from live city/visa/cost fields — no fabricated claims
+  const faqItems: { q: string; a: string }[] = [
+    {
+      q: `What is the cost of living for digital nomads in ${typedCity.name}?`,
+      a: monthlyTotal != null
+        ? `Estimated monthly cost in ${typedCity.name} is about $${monthlyTotal.toLocaleString()}, with a headline budget near $${Number(typedCity.cost_usd).toLocaleString()}/mo on RoamIQ.`
+        : `RoamIQ lists a headline monthly budget of about $${Number(typedCity.cost_usd).toLocaleString()} for digital nomads in ${typedCity.name}.`,
+    },
+    {
+      q: `How fast is the internet in ${typedCity.name}?`,
+      a: `Average reported internet speed in ${typedCity.name} is about ${Number(typedCity.internet_mbps)} Mbps, with an internet lifestyle score of ${Number(typedCity.internet_score ?? 0).toFixed(1)}/5.`,
+    },
+    {
+      q: `Is ${typedCity.name} visa-friendly for digital nomads?`,
+      a: typedVisa
+        ? `Visa difficulty for ${typedCity.country} is rated ${typedCity.visa_difficulty} on RoamIQ. Tourist stay is listed at ${typedVisa.tourist_days} days${typedVisa.has_dn_visa ? `; a digital nomad visa is available (${typedVisa.dn_visa_duration}, ~${typedVisa.dn_visa_cost})` : "; no dedicated digital nomad visa is listed"}.`
+        : `Visa difficulty for ${typedCity.name}, ${typedCity.country} is rated ${typedCity.visa_difficulty} on RoamIQ.`,
+    },
+  ];
+
+  const faqLd = {
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+
   const jsonLd = {
     "@context": "https://schema.org",
-    "@graph": [destinationLd, breadcrumbLd],
+    "@graph": [destinationLd, breadcrumbLd, faqLd],
   };
 
   return (
