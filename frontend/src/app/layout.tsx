@@ -43,8 +43,14 @@ export const metadata: Metadata = {
     "remote jobs",
     "work abroad",
     "location independent tools",
+    "pranav gawas roamiq",
   ],
-  authors: [{ name: "RoamIQ" }],
+  authors: [
+    { name: "RoamIQ Executive Team" },
+    { name: "Pranav Gawas", url: "https://github.com/Pranavgawas" }
+  ],
+  creator: "Pranav Gawas — Founder & CEO",
+  publisher: "RoamIQ Inc.",
   alternates: {
     canonical: BASE_URL,
   },
@@ -73,6 +79,7 @@ export const metadata: Metadata = {
     title: "RoamIQ — Visa Rules, Cost of Living & Coworking for 200+ Cities",
     description:
       "Real visa requirements, live cost-of-living data, and vetted coworking spaces for digital nomads — searchable by city, free to browse, no signup required.",
+    creator: "@pranavgawas",
     images: ["/logo.svg"],
   },
 };
@@ -82,12 +89,45 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "Organization",
+      "@id": `${BASE_URL}/#organization`,
       name: "RoamIQ",
       url: BASE_URL,
       logo: `${BASE_URL}/logo.svg`,
       description:
         "AI-powered platform for digital nomads: visa intelligence, city cost data, workspaces, and community.",
-      sameAs: [],
+      founder: {
+        "@type": "Person",
+        name: "Pranav Gawas",
+        jobTitle: "Founder & CEO",
+        url: "https://github.com/Pranavgawas",
+      },
+      knowsAbout: [
+        "Digital Nomad Visas",
+        "Remote Work Intelligence",
+        "Cost of Living Data",
+        "Coworking & Workations",
+      ],
+    },
+    {
+      "@type": "Person",
+      "@id": `${BASE_URL}/#ceo`,
+      name: "Pranav Gawas",
+      jobTitle: "Founder & Chief Executive Officer",
+      worksFor: {
+        "@type": "Organization",
+        "@id": `${BASE_URL}/#organization`,
+      },
+      sameAs: ["https://github.com/Pranavgawas"],
+    },
+    {
+      "@type": "Person",
+      "@id": `${BASE_URL}/#cto`,
+      name: "RoamIQ Tech Leadership",
+      jobTitle: "Chief Technology Officer & Lead AI Architect",
+      worksFor: {
+        "@type": "Organization",
+        "@id": `${BASE_URL}/#organization`,
+      },
     },
     {
       "@type": "WebSite",

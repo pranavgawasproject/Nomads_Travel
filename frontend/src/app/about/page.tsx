@@ -50,6 +50,23 @@ const breadcrumbJsonLd = {
   ],
 };
 
+const leadershipJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  mainEntity: {
+    "@type": "Person",
+    name: "Pranav Gawas",
+    jobTitle: "Founder & Chief Executive Officer",
+    worksFor: {
+      "@type": "Organization",
+      name: "RoamIQ",
+      url: BASE_URL,
+    },
+    sameAs: ["https://github.com/Pranavgawas"],
+    description: "Founder & CEO of RoamIQ leading product vision, AI visa intelligence, and global digital nomad infrastructure.",
+  },
+};
+
 /** FAQ answers grounded only in product capabilities already described on-site — no fabricated claims. */
 const faqJsonLd = {
   "@context": "https://schema.org",
