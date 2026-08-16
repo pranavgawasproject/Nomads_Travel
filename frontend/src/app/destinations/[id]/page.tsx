@@ -313,11 +313,20 @@ export default async function CityDetailPage({
               </div>
 
               {typedVisa && (
-                <div className="mt-10 rounded-3xl border border-border bg-card p-6">
-                  <h3 className="font-serif text-xl font-semibold">
-                    Visa for {typedVisa.flag} {typedVisa.country}
-                  </h3>
-                  <div className="mt-4 grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
+                <div className="mt-10 rounded-3xl border border-border bg-card p-6 sm:p-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-border pb-4">
+                    <div>
+                      <span className="text-xs font-semibold uppercase tracking-wider text-forest">Visa Intelligence</span>
+                      <h3 className="font-serif text-xl font-semibold">
+                        Visa & Entry Rules for {typedVisa.flag} {typedVisa.country}
+                      </h3>
+                    </div>
+                    <span className="inline-flex items-center gap-1 text-xs font-medium rounded-full bg-secondary px-3 py-1 self-start sm:self-auto">
+                      Difficulty: <strong className="text-foreground">{typedCity.visa_difficulty}</strong>
+                    </span>
+                  </div>
+
+                  <div className="mt-5 grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
                     <InfoBlock label="Tourist stay" value={`${typedVisa.tourist_days} days`} />
                     <InfoBlock
                       label="Nomad visa"
@@ -325,24 +334,46 @@ export default async function CityDetailPage({
                     />
                     {typedVisa.has_dn_visa && (
                       <>
-                        <InfoBlock label="Cost" value={typedVisa.dn_visa_cost} />
-                        <InfoBlock label="Duration" value={typedVisa.dn_visa_duration} />
+                        <InfoBlock label="Application Fee" value={typedVisa.dn_visa_cost || "Varies"} />
+                        <InfoBlock label="Visa Duration" value={typedVisa.dn_visa_duration || "1 year"} />
                         {typedVisa.min_income && (
-                          <InfoBlock label="Min. Income" value={typedVisa.min_income} />
+                          <InfoBlock label="Min. Income Req." value={typedVisa.min_income} />
                         )}
                         <InfoBlock
-                          label="Tax Residency"
-                          value={typedVisa.tax_residency_days ? `${typedVisa.tax_residency_days}d rule` : "183d rule"}
+                          label="Tax Residency Rule"
+                          value={typedVisa.tax_residency_days ? `${typedVisa.tax_residency_days}d residency` : "183-day rule"}
                         />
                       </>
                     )}
                   </div>
-                  <Link
-                    href="/visa"
-                    className="mt-4 inline-block text-sm font-medium text-forest hover:text-forest/80"
-                  >
-                    See all countries' visa rules →
-                  </Link>
+
+                  {typedVisa.has_dn_visa && (
+                    <div className="mt-5 rounded-2xl border border-border bg-secondary/40 p-4 space-y-2 text-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                        <span className="font-semibold text-foreground">Processing Time:</span>
+                        <span className="text-muted-foreground">{typedVisa.processing_time || "2–6 weeks average"}</span>
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                        <span className="font-semibold text-foreground">Path to Residency:</span>
+                        <span className="text-muted-foreground">{typedVisa.path_to_residency || (typedVisa.country === "Portugal" ? "Pathway to EU permanent residency after 5 years" : typedVisa.country === "Spain" ? "Pathway to residency under Beckham Law" : "Renewable stay while maintaining remote employment")}</span>
+                      </div>
+                      {typedVisa.tax_notes && (
+                        <div className="pt-1 text-muted-foreground">
+                          <span className="font-semibold text-foreground">Tax Notes: </span>
+                          {typedVisa.tax_notes}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
+                    <Link
+                      href="/visa"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-forest hover:underline"
+                    >
+                      Compare all {typedVisa.country} visa rules & limits →
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>

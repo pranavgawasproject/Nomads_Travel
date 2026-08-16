@@ -40,6 +40,12 @@ export type City = {
   avg_temp: number;
   visa_difficulty: string;
   air_quality: string;
+  english_proficiency?: string | null;
+  quality_of_life_score?: number | null;
+  coworking_desk_usd?: number | null;
+  one_bed_rent_usd?: number | null;
+  meal_price_usd?: number | null;
+  coffee_price_usd?: number | null;
 };
 
 export type CostOfLiving = {
@@ -70,6 +76,10 @@ export type VisaInfo = {
   min_income?: string | null;
   tax_residency_days?: number | null;
   tax_notes?: string | null;
+  processing_time?: string | null;
+  required_docs?: string[] | null;
+  path_to_residency?: string | null;
+  tax_exemption_status?: string | null;
 };
 
 export type Listing = {
@@ -93,6 +103,8 @@ export type Listing = {
   about: string | null;
   starting_price: string | null;
   wifi_speed: string | null;
+  upload_speed_mbps?: number | null;
+  latency_ms?: number | null;
   ratings: number;
   total_reviews: number;
   tags: string[] | null;
