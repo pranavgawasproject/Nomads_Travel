@@ -7,9 +7,9 @@ const pillars = [
   {
     icon: Brain,
     title: "AI that knows nomads",
-    body: "Our planner is trained on 4M+ nomad trips, cost reports, and visa outcomes. Ask in plain English — get an itinerary, a budget, and a visa checklist in one shot. It knows the difference between a beach town with fiber and one with a single 4G tower.",
-    stat: "4M+",
-    statLabel: "trips analyzed",
+    body: "Our planner draws on real cost reports and visa outcomes for 190+ countries. Ask in plain English — get an itinerary, a budget, and a visa checklist in one shot. It knows the difference between a beach town with fiber and one with a single 4G tower.",
+    stat: "190+",
+    statLabel: "countries covered",
   },
   {
     icon: Scale,
