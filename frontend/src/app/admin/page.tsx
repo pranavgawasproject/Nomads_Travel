@@ -73,15 +73,10 @@ export default function AdminPage() {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         setLeads(data);
       } else {
-        // Fallback sample data for demonstration if DB is empty or table pending
-        setLeads([
-          { id: "1", email: "alex.dev@gmail.com", source: "homepage_cta", created_at: new Date(Date.now() - 3600000 * 2).toISOString() },
-          { id: "2", email: "sarah.nomad@tech.io", source: "homepage_cta", created_at: new Date(Date.now() - 3600000 * 5).toISOString() },
-          { id: "3", email: "pranav.gawas@work.com", source: "beta_invite", created_at: new Date(Date.now() - 3600000 * 12).toISOString() },
-        ]);
+        setLeads([]);
       }
     } catch {
       setLeads([]);
