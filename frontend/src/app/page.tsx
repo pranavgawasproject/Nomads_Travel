@@ -3,7 +3,6 @@ import { Hero } from "@/components/site/hero";
 import { Features } from "@/components/site/features";
 import { DestinationsPreview } from "@/components/site/destinations-preview";
 import { WhyRoamIQ } from "@/components/site/why-roamiq";
-import { Testimonials } from "@/components/site/testimonials";
 import { CTA } from "@/components/site/cta";
 import { Footer } from "@/components/site/footer";
 
@@ -18,7 +17,6 @@ export default function Page() {
         <Features />
         <DestinationsPreview />
         <WhyRoamIQ />
-        <Testimonials />
         <CTA />
       </main>
       <Footer />
