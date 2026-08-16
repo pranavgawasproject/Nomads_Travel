@@ -49,7 +49,6 @@ async function getVisaInfo(search?: string) {
   }
 }
 
-
 export default async function VisaPage({
   searchParams,
 }: {
@@ -59,26 +58,90 @@ export default async function VisaPage({
   const countries = await getVisaInfo(params.search);
   const withDnVisa = countries.filter((c) => c.has_dn_visa).length;
 
-  
   const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
-      { "@type": "ListItem", position: 2, name: "Visa Intelligence", item: `${BASE_URL}/visa` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Visa Intelligence",
+        item: `${BASE_URL}/visa`,
+      },
     ],
   };
 
-return (
+  // CollectionPage + ItemList from live visa_info rows (no fabricated entries)
+  const itemListJsonLd = {
+    "@type": "ItemList",
+    name: "Digital nomad and tourist visa rules by country on RoamIQ",
+    numberOfItems: countries.length,
+    itemListElement: countries.slice(0, 50).map((c, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: c.country,
+      description: c.has_dn_visa
+        ? `Tourist stay ${c.tourist_days} days; digital nomad visa available (${c.dn_visa_duration || "duration varies"}${c.dn_visa_cost ? `, ${c.dn_visa_cost}` : ""})`
+        : `Tourist stay ${c.tourist_days} days; no dedicated digital nomad visa listed`,
+    })),
+  };
+
+  const collectionJsonLd = {
+    "@type": "CollectionPage",
+    name: "Visa Intelligence | RoamIQ",
+    description:
+      "Tourist stay limits and digital nomad visa options by country for remote workers and digital nomads.",
+    url: `${BASE_URL}/visa`,
+    isPartOf: { "@type": "WebSite", name: "RoamIQ", url: BASE_URL },
+    mainEntity: itemListJsonLd,
+  };
+
+  // FAQ answers only from live counts and page purpose — no fabricated fees or rules
+  const faqJsonLd = {
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How many countries does RoamIQ cover for visa rules?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `RoamIQ lists tourist stay limits and digital nomad visa flags for ${countries.length} countries in this view${params.search ? ` matching \"${params.search}\"` : ""}.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How many of those countries offer a dedicated digital nomad visa?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: `Of the countries shown, ${withDnVisa} currently have a dedicated digital nomad (remote-work) visa marked as available in RoamIQ's database.`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: "What visa information does RoamIQ show for each country?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "For each country RoamIQ shows typical tourist stay length in days, whether a digital nomad visa is offered, and when available the listed cost and duration from the live visa_info data — not legal advice; always verify with official sources before travel.",
+        },
+      },
+    ],
+  };
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [breadcrumbJsonLd, collectionJsonLd, faqJsonLd],
+  };
+
+  return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteNav />
       <main className="flex-1 pt-28 sm:pt-32">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbJsonLd),
-        }}
-      />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd),
+          }}
+        />
 
         <section className="border-b border-border bg-secondary/40 py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">
