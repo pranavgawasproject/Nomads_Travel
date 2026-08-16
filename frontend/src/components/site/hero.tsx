@@ -14,9 +14,9 @@ const examples = [
 ];
 
 const stats = [
-  { value: "35M", label: "Digital nomads worldwide" },
+  { value: "20+", label: "Cities live" },
   { value: "190+", label: "Countries indexed" },
-  { value: "$1.2B", label: "Annual savings routed" },
+  { value: "8,200+", label: "Workspaces listed" },
 ];
 
 export function Hero() {
