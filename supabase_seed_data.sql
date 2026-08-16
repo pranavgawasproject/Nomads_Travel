@@ -22,7 +22,15 @@ INSERT INTO cities (id, name, country, flag, image, continent, overall_score, co
 ('mexicocity', 'Mexico City', 'Mexico', '🇲🇽', 'https://images.unsplash.com/photo-1516482362041-8b87b69ed28d?w=800', 'North America', 3.7, 3.8, 3.0, 2.5, 4.3, 3.2, 4.5, 2.2, 1300, 28, 17, 'Easy', 'Poor'),
 ('budapest', 'Budapest', 'Hungary', '🇭🇺', 'https://images.unsplash.com/photo-1551867633-194f125bddfa?w=800', 'Europe', 4.2, 3.5, 4.2, 4.0, 4.0, 4.0, 4.3, 3.5, 1600, 90, 12, 'Medium', 'Moderate'),
 ('dubai', 'Dubai', 'UAE', '🇦🇪', 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800', 'Asia', 3.8, 1.8, 4.5, 4.8, 3.8, 2.5, 3.5, 2.0, 3500, 120, 33, 'Easy', 'Poor'),
-('tbilisi', 'Tbilisi', 'Georgia', '🇬🇪', 'https://images.unsplash.com/photo-1548786811-dd6e453ccca7?w=800', 'Europe', 3.9, 4.5, 3.0, 4.0, 3.5, 3.5, 3.8, 3.8, 900, 25, 15, 'Easy', 'Good');
+('tbilisi', 'Tbilisi', 'Georgia', '🇬🇪', 'https://images.unsplash.com/photo-1548786811-dd6e453ccca7?w=800', 'Europe', 3.9, 4.5, 3.0, 4.0, 3.5, 3.5, 3.8, 3.8, 900, 25, 15, 'Easy', 'Good'),
+('da-nang', 'Da Nang', 'Vietnam', '🇻🇳', 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800', 'Asia', 4.3, 4.6, 3.8, 4.1, 4.0, 3.2, 3.5, 4.0, 800, 65, 26, 'Easy', 'Good'),
+('buenos-aires', 'Buenos Aires', 'Argentina', '🇦🇷', 'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=800', 'South America', 4.1, 4.4, 3.5, 3.2, 4.7, 4.2, 4.6, 3.8, 1000, 40, 18, 'Easy', 'Good'),
+('cape-town', 'Cape Town', 'South Africa', '🇿🇦', 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=800', 'Africa', 4.2, 3.6, 3.6, 3.0, 4.8, 3.2, 4.2, 4.5, 1400, 50, 17, 'Medium', 'Good'),
+('valencia', 'Valencia', 'Spain', '🇪🇸', 'https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=800', 'Europe', 4.4, 3.5, 4.2, 4.4, 4.3, 4.6, 4.1, 4.3, 1900, 90, 19, 'Medium', 'Good'),
+('tallinn', 'Tallinn', 'Estonia', '🇪🇪', 'https://images.unsplash.com/photo-15417971875076-8f970d573be6?w=800', 'Europe', 4.3, 3.3, 4.7, 4.6, 3.7, 4.1, 3.6, 4.5, 1800, 110, 7, 'Easy', 'Good'),
+('prague', 'Prague', 'Czech Republic', '🇨🇿', 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=800', 'Europe', 4.3, 3.4, 4.2, 4.5, 4.4, 4.7, 4.5, 3.9, 1700, 85, 11, 'Medium', 'Good'),
+('taipei', 'Taipei', 'Taiwan', '🇹🇼', 'https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800', 'Asia', 4.4, 3.5, 4.8, 4.9, 4.2, 4.6, 4.0, 3.8, 1600, 120, 23, 'Medium', 'Good'),
+('kuala-lumpur', 'Kuala Lumpur', 'Malaysia', '🇲🇾', 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800', 'Asia', 4.1, 4.2, 4.0, 3.9, 4.1, 3.0, 4.0, 3.2, 1100, 75, 28, 'Easy', 'Moderate');
 
 -- ── Cost of Living ──
 INSERT INTO cost_of_living (city_id, housing, coworking, food, transport, internet, entertainment, health, visa, misc, tip1, tip2, tip3) VALUES
@@ -35,22 +43,36 @@ INSERT INTO cost_of_living (city_id, housing, coworking, food, transport, intern
 ('barcelona', 1050, 170, 420, 50, 35, 180, 130, 60, 205, 'Consider Gràcia or Poblenou for better value', 'Use the T-Casual card for discounted metro rides', 'Eat menú del día for affordable lunch deals'),
 ('budapest', 600, 150, 300, 35, 20, 120, 90, 50, 135, 'Live in District 8 or 9 for affordable central living', 'Eat at étkezdekek (local canteens) for cheap meals', 'Use Bubi bike sharing for daily commuting'),
 ('dubai', 1500, 250, 600, 100, 80, 300, 250, 100, 320, 'Consider Sharjah for much cheaper rent nearby', 'Use the metro and avoid taxis during peak hours', 'Look for happy hour deals at upscale restaurants'),
-('chiangmai', 300, 100, 200, 30, 20, 80, 50, 30, 40, 'Nimman area has the best coworking and cafe scene', 'Rent a scooter for affordable daily transport', 'Eat at university area food courts for 40 baht meals');
+('chiangmai', 300, 100, 200, 30, 20, 80, 50, 30, 40, 'Nimman area has the best coworking and cafe scene', 'Rent a scooter for affordable daily transport', 'Eat at university area food courts for 40 baht meals'),
+('da-nang', 350, 90, 220, 30, 20, 90, 45, 25, 60, 'Rent an apartment near An Thuong beach', 'Use Grab or rent a scooter for $45/mo', 'Enjoy fresh seafood at local beachside canteens'),
+('buenos-aires', 450, 110, 250, 25, 20, 110, 60, 30, 70, 'Palermo and Recoleta offer great walkable coworking', 'Use Subte metro for fast budget transport', 'Take advantage of local currency exchanges'),
+('cape-town', 650, 140, 320, 60, 30, 150, 80, 40, 110, 'Kloof Street & Sea Point have fast fiber coworking', 'Use MyCiTi bus or Uber for safe commuting', 'Shop at local farmers markets on weekends'),
+('valencia', 850, 160, 380, 40, 30, 160, 110, 50, 120, 'Russafa neighborhood has high density coworking', 'Use Valenbisi bicycle sharing system', 'Eat lunch set menus (menú del día) for $12'),
+('tallinn', 800, 170, 370, 35, 25, 140, 100, 40, 120, 'Rotermann Quarter features top tech workspace hubs', 'Public transport is free for registered residents', 'Explore e-Residency digital business tools'),
+('prague', 750, 160, 360, 30, 25, 150, 95, 40, 110, 'Vinohrady and Karlín offer great digital nomad cafes', 'Buy a monthly PID transit pass for $25', 'Enjoy affordable lunch specials at local hospoda'),
+('taipei', 700, 150, 320, 35, 25, 140, 80, 30, 120, 'Da-an and Xinyi have world-class 24/7 cafes', 'Use YouBike and EasyCard for MRT travel', 'Eat at night markets for under $5 per meal'),
+('kuala-lumpur', 480, 120, 260, 35, 25, 110, 60, 30, 80, 'KLCC & Bangsar offer modern air-conditioned hubs', 'Use the free GoKL bus lines across downtown', 'Food courts in Megamalls offer great cheap eats');
 
 -- ── Visa Info ──
-INSERT INTO visa_info (country, flag, tourist_days, has_dn_visa, dn_visa_cost, dn_visa_duration) VALUES
-('Thailand', '🇹🇭', 60, true, '$500', '6 months'),
-('Portugal', '🇵🇹', 90, true, '€180', '1 year'),
-('Indonesia', '🇮🇩', 30, true, '$300', '6 months'),
-('Spain', '🇪🇸', 90, true, '€70', '1 year'),
-('Germany', '🇩🇪', 90, true, '€100', '1-3 years'),
-('Colombia', '🇨🇴', 90, true, '$170', '2 years'),
-('Georgia', '🇬🇪', 365, false, 'N/A', 'N/A'),
-('Croatia', '🇭🇷', 90, true, '€80', '1 year'),
-('Estonia', '🇪🇪', 90, true, '€100', '1 year'),
-('UAE', '🇦🇪', 30, true, '$287', '1 year'),
-('Mexico', '🇲🇽', 180, false, 'N/A', 'N/A'),
-('Brazil', '🇧🇷', 90, true, 'R$168', '1 year');
+INSERT INTO visa_info (country, flag, tourist_days, has_dn_visa, dn_visa_cost, dn_visa_duration, min_income, tax_residency_days, tax_notes) VALUES
+('Thailand', '🇹🇭', 60, true, '$500', '6 months', '$2,000/mo', 180, 'DTV visa allows 180-day stays renewable for 5 years'),
+('Portugal', '🇵🇹', 90, true, '€180', '1 year', '€3,280/mo', 183, 'D8 visa with pathway to temporary residency'),
+('Indonesia', '🇮🇩', 30, true, '$300', '6 months', '$2,000/mo', 183, 'E33G Remote Worker Visa or B211A social visa'),
+('Spain', '🇪🇸', 90, true, '€70', '1 year', '€2,646/mo', 183, 'Digital Nomad Visa with 15% flat Beckham tax regime'),
+('Germany', '🇩🇪', 90, true, '€100', '1-3 years', 'Proof of funds', 183, 'Freiberufler freelance visa available'),
+('Colombia', '🇨🇴', 90, true, '$170', '2 years', '$1,500/mo', 183, 'V Digital Nomad Visa valid up to 2 years'),
+('Georgia', '🇬🇪', 365, false, 'N/A', 'N/A', 'N/A', 183, '365-day visa free stay for 95+ nationalities'),
+('Croatia', '🇭🇷', 90, true, '€80', '1 year', '€2,539/mo', 183, 'Exempt from local income tax during visa stay'),
+('Estonia', '🇪🇪', 90, true, '€100', '1 year', '€3,500/mo', 183, 'Digital Nomad Visa C & D options available'),
+('UAE', '🇦🇪', 30, true, '$287', '1 year', '$3,500/mo', 183, '0% personal income tax on foreign income'),
+('Mexico', '🇲🇽', 180, false, 'N/A', 'N/A', 'N/A', 183, '180-day tourist visa on arrival for many passports'),
+('Brazil', '🇧🇷', 90, true, 'R$168', '1 year', '$1,500/mo', 183, '1-year renewable digital nomad residency'),
+('Vietnam', '🇻🇳', 90, false, 'N/A', 'N/A', 'N/A', 183, '90-day e-visa available for all nationalities'),
+('Argentina', '🇦🇷', 90, true, '$200', '180 days', 'Proof of income', 183, 'Rentista and Digital Nomad visa options'),
+('South Africa', '🇿🇦', 90, true, 'R1,000', '1 year', 'R1,000,000/yr', 183, 'Remote Work Visa newly launched for global remote workers'),
+('Czech Republic', '🇨🇿', 90, true, 'CZK 2,500', '1 year', 'CZK 60,000/mo', 183, 'Zivno business license visa for freelancers'),
+('Taiwan', '🇹🇼', 90, true, '$100', '1-3 years', '$5,700/mo', 183, 'Employment Gold Card multi-year visa'),
+('Malaysia', '🇲🇾', 90, true, 'RM 1,000', '1-2 years', '$24,000/yr', 183, 'DE Rantau Nomad Pass for digital professionals');
 
 -- ── Meetups ──
 INSERT INTO meetups (id, title, type, date, time, city, location, attendees, max_attendees, icon) VALUES

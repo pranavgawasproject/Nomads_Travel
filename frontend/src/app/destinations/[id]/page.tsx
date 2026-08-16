@@ -319,6 +319,13 @@ export default async function CityDetailPage({
                       <>
                         <InfoBlock label="Cost" value={typedVisa.dn_visa_cost} />
                         <InfoBlock label="Duration" value={typedVisa.dn_visa_duration} />
+                        {typedVisa.min_income && (
+                          <InfoBlock label="Min. Income" value={typedVisa.min_income} />
+                        )}
+                        <InfoBlock
+                          label="Tax Residency"
+                          value={typedVisa.tax_residency_days ? `${typedVisa.tax_residency_days}d rule` : "183d rule"}
+                        />
                       </>
                     )}
                   </div>

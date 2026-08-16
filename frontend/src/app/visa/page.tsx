@@ -192,6 +192,8 @@ export default async function VisaPage({
                       <th className="px-5 py-4 font-medium">Nomad visa</th>
                       <th className="px-5 py-4 font-medium">Cost</th>
                       <th className="px-5 py-4 font-medium">Duration</th>
+                      <th className="px-5 py-4 font-medium">Min. Income</th>
+                      <th className="px-5 py-4 font-medium">Tax Residency</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -219,6 +221,12 @@ export default async function VisaPage({
                         </td>
                         <td className="px-5 py-4 text-foreground/80">
                           {c.has_dn_visa ? c.dn_visa_duration : "\u2014"}
+                        </td>
+                        <td className="px-5 py-4 text-foreground/80">
+                          {c.has_dn_visa ? (c.min_income || "Varies") : "\u2014"}
+                        </td>
+                        <td className="px-5 py-4 text-xs text-muted-foreground">
+                          {c.tax_residency_days ? `${c.tax_residency_days}d rule` : "183d rule"}
                         </td>
                       </tr>
                     ))}

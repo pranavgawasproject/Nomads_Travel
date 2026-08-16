@@ -54,6 +54,9 @@ CREATE TABLE IF NOT EXISTS visa_info (
   has_dn_visa BOOLEAN DEFAULT FALSE,
   dn_visa_cost TEXT DEFAULT 'N/A',
   dn_visa_duration TEXT DEFAULT 'N/A',
+  min_income TEXT DEFAULT 'N/A',
+  tax_residency_days INTEGER DEFAULT 183,
+  tax_notes TEXT DEFAULT '',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

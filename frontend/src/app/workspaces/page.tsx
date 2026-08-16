@@ -49,6 +49,7 @@ async function getListings(params: {
   search?: string;
   type?: string;
   city?: string;
+  min_wifi?: string;
   page?: string;
 }) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
@@ -74,6 +75,9 @@ async function getListings(params: {
     if (params.city) {
       query = query.ilike("city", `%${params.city}%`);
     }
+    if (params.min_wifi) {
+      query = query.not("wifi_speed", "is", null);
+    }
 
     const { data, error, count } = await query
       .order("ratings", { ascending: false })
@@ -93,7 +97,7 @@ async function getListings(params: {
 export default async function WorkspacesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; type?: string; city?: string; page?: string }>;
+  searchParams: Promise<{ search?: string; type?: string; city?: string; min_wifi?: string; page?: string }>;
 }) {
   const params = await searchParams;
   const { listings, count, page } = await getListings(params);
@@ -104,6 +108,7 @@ export default async function WorkspacesPage({
     if (params.search) qs.set("search", params.search);
     if (params.type) qs.set("type", params.type);
     if (params.city) qs.set("city", params.city);
+    if (params.min_wifi) qs.set("min_wifi", params.min_wifi);
     qs.set("page", String(targetPage));
     return `/workspaces?${qs.toString()}`;
   };
@@ -139,7 +144,7 @@ return (
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted-foreground">
               Coworking desks, coliving houses, workations, hostels, cafés and
-              meeting rooms — filter to find your fit.
+              meeting rooms — filter by location, category, and Wi-Fi speed.
             </p>
 
             <form className="mt-8 flex flex-wrap gap-3" action="/workspaces">
@@ -167,6 +172,14 @@ return (
                     {t.label}
                   </option>
                 ))}
+              </select>
+              <select
+                name="min_wifi"
+                defaultValue={params.min_wifi ?? ""}
+                className="rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+              >
+                <option value="">Any Wi-Fi speed</option>
+                <option value="verified">Verified Wi-Fi listed</option>
               </select>
               <button
                 type="submit"

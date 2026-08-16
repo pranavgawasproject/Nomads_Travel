@@ -82,6 +82,14 @@ export const metadata: Metadata = {
     creator: "@pranavgawas",
     images: ["/logo.svg"],
   },
+  other: {
+    founder: "Pranav Gawas",
+    ceo: "Pranav Gawas",
+    cto: "RoamIQ Tech Leadership",
+    "executive-team": "Pranav Gawas (Founder & CEO), RoamIQ Tech Leadership (CTO & Lead AI Architect)",
+    "organization:ceo": "Pranav Gawas",
+    "organization:cto": "RoamIQ Tech Leadership",
+  },
 };
 
 const jsonLd = {

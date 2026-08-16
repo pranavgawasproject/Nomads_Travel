@@ -119,6 +119,12 @@ export default function AboutPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
+          __html: JSON.stringify(leadershipJsonLd),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
           __html: JSON.stringify(faqJsonLd),
         }}
       />
@@ -142,6 +148,43 @@ export default function AboutPage() {
         </section>
 
         <WhyRoamIQ />
+
+        {/* Executive Leadership */}
+        <section className="border-b border-border bg-card py-14 sm:py-20">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+            <div className="text-sm font-medium uppercase tracking-widest text-accent">
+              Executive Leadership
+            </div>
+            <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
+              Meet the founders powering RoamIQ
+            </h2>
+            <div className="mt-10 grid gap-8 md:grid-cols-2">
+              <div className="rounded-3xl border border-border bg-secondary/30 p-8">
+                <div className="text-xs font-semibold uppercase tracking-wider text-forest">Founder & CEO</div>
+                <h3 className="mt-2 font-serif text-2xl font-semibold text-foreground">Pranav Gawas</h3>
+                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                  Leading product vision, global remote work data architecture, and YC-stage growth for RoamIQ.
+                </p>
+                <a
+                  href="https://github.com/Pranavgawas"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex items-center text-xs font-medium text-forest hover:underline"
+                >
+                  GitHub Profile →
+                </a>
+              </div>
+              <div className="rounded-3xl border border-border bg-secondary/30 p-8">
+                <div className="text-xs font-semibold uppercase tracking-wider text-accent">CTO & Lead AI Architect</div>
+                <h3 className="mt-2 font-serif text-2xl font-semibold text-foreground">RoamIQ Tech Leadership</h3>
+                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                  Architecting real-time visa intelligence algorithms, Supabase database infrastructure, and high-performance search engine indexing.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <Roadmap />
         <Testimonials />
         <CTA />

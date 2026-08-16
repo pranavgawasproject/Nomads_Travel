@@ -67,6 +67,9 @@ export type VisaInfo = {
   has_dn_visa: boolean;
   dn_visa_cost: string;
   dn_visa_duration: string;
+  min_income?: string | null;
+  tax_residency_days?: number | null;
+  tax_notes?: string | null;
 };
 
 export type Listing = {
