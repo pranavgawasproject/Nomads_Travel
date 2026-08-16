@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
 
 const perks = [
   "Free during public beta — no card required",
@@ -12,6 +14,36 @@ const perks = [
 ];
 
 export function CTA() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.trim()) return;
+
+    setStatus("loading");
+    setErrorMsg("");
+
+    const { error } = await supabase
+      .from("waitlist_signups")
+      .insert({ email: email.trim().toLowerCase(), source: "homepage_cta" });
+
+    if (error) {
+      if (error.code === "23505") {
+        // Duplicate email — treat as success from the user's perspective.
+        setStatus("success");
+      } else {
+        setStatus("error");
+        setErrorMsg("Something went wrong. Please try again.");
+      }
+      return;
+    }
+
+    setStatus("success");
+    setEmail("");
+  }
+
   return (
     <section id="cta" className="relative scroll-mt-24 py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -66,7 +98,7 @@ export function CTA() {
 
             {/* Email form */}
             <form
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={handleSubmit}
               className="rounded-2xl border border-primary-foreground/15 bg-primary-foreground/5 p-6 backdrop-blur-md sm:p-7"
             >
               <label
@@ -75,28 +107,45 @@ export function CTA() {
               >
                 Get your invite
               </label>
-              <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-                <input
-                  id="cta-email"
-                  type="email"
-                  required
-                  placeholder="you@nomad.life"
-                  className="min-w-0 flex-1 rounded-xl border border-primary-foreground/20 bg-background/95 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sunset"
-                />
-                <Button
-                  type="submit"
-                  className="h-12 shrink-0 rounded-xl bg-accent px-5 text-accent-foreground shadow-md hover:bg-accent/90"
-                >
-                  Claim my spot
-                  <ArrowRight className="ml-1.5 h-4 w-4" />
-                </Button>
-              </div>
-              <p className="mt-3 text-xs text-primary-foreground/60">
-                Already have an account?{" "}
-                <a href="#" className="font-medium text-primary-foreground underline-offset-4 hover:underline">
-                  Log in
-                </a>
-              </p>
+
+              {status === "success" ? (
+                <div className="mt-3 flex items-center gap-2 rounded-xl border border-primary-foreground/20 bg-background/95 px-4 py-3 text-sm text-foreground">
+                  <Check className="h-4 w-4 shrink-0 text-emerald-600" />
+                  You&apos;re on the list — we&apos;ll be in touch soon.
+                </div>
+              ) : (
+                <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+                  <input
+                    id="cta-email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={status === "loading"}
+                    placeholder="you@nomad.life"
+                    className="min-w-0 flex-1 rounded-xl border border-primary-foreground/20 bg-background/95 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sunset disabled:opacity-60"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={status === "loading"}
+                    className="h-12 shrink-0 rounded-xl bg-accent px-5 text-accent-foreground shadow-md hover:bg-accent/90 disabled:opacity-70"
+                  >
+                    {status === "loading" ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        Claim my spot
+                        <ArrowRight className="ml-1.5 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {status === "error" && (
+                <p className="mt-2 text-xs text-red-300">{errorMsg}</p>
+              )}
+
               <div className="mt-5 flex items-center gap-3 border-t border-primary-foreground/15 pt-5">
                 <p className="text-xs text-primary-foreground/70">
                   Free during public beta — no credit card required.
