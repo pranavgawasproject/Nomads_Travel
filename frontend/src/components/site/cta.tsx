@@ -48,7 +48,7 @@ export function CTA() {
                 Start roaming.
               </h2>
               <p className="mt-5 max-w-md text-lg leading-relaxed text-primary-foreground/80">
-                Join 35,000+ nomads using RoamIQ to plan their next move.
+                Join the public beta and start planning your next move.
                 It takes two minutes to set up — and one to fall in love.
               </p>
 
@@ -98,24 +98,8 @@ export function CTA() {
                 </a>
               </p>
               <div className="mt-5 flex items-center gap-3 border-t border-primary-foreground/15 pt-5">
-                <div className="flex -space-x-2">
-                  {[
-                    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80",
-                    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80",
-                    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=80&q=80",
-                    "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=80&q=80",
-                  ].map((src) => (
-                    <div
-                      key={src}
-                      className="h-8 w-8 rounded-full border-2 border-primary bg-cover bg-center"
-                      style={{ backgroundImage: `url('${src}')` }}
-                      aria-hidden
-                    />
-                  ))}
-                </div>
                 <p className="text-xs text-primary-foreground/70">
-                  <span className="font-semibold text-primary-foreground">35,128</span>{" "}
-                  nomads joined this month
+                  Free during public beta — no credit card required.
                 </p>
               </div>
             </form>
