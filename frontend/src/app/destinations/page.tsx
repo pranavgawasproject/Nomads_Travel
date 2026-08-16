@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { CityCard } from "@/components/site/city-card";
 import { supabase, type City } from "@/lib/supabase";
-import { Compass } from "lucide-react";
+import { Compass, ArrowLeftRight } from "lucide-react";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -156,6 +157,15 @@ export default async function DestinationsPage({
               cost of living, internet speed, safety, and visa difficulty,
               side by side.
             </p>
+
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <Link
+                href="/destinations/compare"
+                className="inline-flex items-center gap-2 rounded-full border border-forest/30 bg-forest/10 px-4 py-2 text-xs font-semibold text-forest hover:bg-forest/20 transition-colors"
+              >
+                <ArrowLeftRight className="h-3.5 w-3.5" /> Side-by-Side City Cost Comparator →
+              </Link>
+            </div>
 
             <form className="mt-8 flex flex-wrap gap-3" action="/destinations">
               <input

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "Destinations", href: "/destinations" },
+  { label: "Compare", href: "/destinations/compare" },
   { label: "Workspaces", href: "/workspaces" },
   { label: "Visa Finder", href: "/visa" },
   { label: "Community", href: "/community" },
