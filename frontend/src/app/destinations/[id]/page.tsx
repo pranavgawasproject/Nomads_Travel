@@ -437,16 +437,16 @@ export default async function CityDetailPage({
                   </div>
                   <h3 className="mt-3 font-serif text-lg font-semibold">Instant eSIM for {typedCity.country}</h3>
                   <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    Connect instantly upon airport landing. No physical SIM cards or passport registration needed.
+                    Connect instantly upon airport landing. Get $3.00 off with code <code className="rounded bg-accent/10 px-1.5 py-0.5 font-mono font-semibold text-accent">PRANAV0734</code>.
                   </p>
                 </div>
                 <a
-                  href={`https://www.airalo.com/${typedCity.country.toLowerCase().replace(/\s+/g, "-")}-esim`}
+                  href={`https://www.airalo.com/${typedCity.country.toLowerCase().replace(/\s+/g, "-")}-esim?referral=PRANAV0734`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
                 >
-                  Get Airalo eSIM →
+                  Get Airalo eSIM ($3 Off) →
                 </a>
               </div>
 
