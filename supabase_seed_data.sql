@@ -8,6 +8,7 @@ ALTER TABLE cities DISABLE ROW LEVEL SECURITY;
 ALTER TABLE cost_of_living DISABLE ROW LEVEL SECURITY;
 ALTER TABLE visa_info DISABLE ROW LEVEL SECURITY;
 ALTER TABLE meetups DISABLE ROW LEVEL SECURITY;
+ALTER TABLE listings DISABLE ROW LEVEL SECURITY;
 
 -- ── Cities ──
 INSERT INTO cities (id, name, country, flag, image, continent, overall_score, cost_score, internet_score, safety_score, fun_score, walkability_score, nightlife_score, air_score, cost_usd, internet_mbps, avg_temp, visa_difficulty, air_quality) VALUES
@@ -72,7 +73,14 @@ INSERT INTO visa_info (country, flag, tourist_days, has_dn_visa, dn_visa_cost, d
 ('South Africa', '🇿🇦', 90, true, 'R1,000', '1 year', 'R1,000,000/yr', 183, 'Remote Work Visa newly launched for global remote workers'),
 ('Czech Republic', '🇨🇿', 90, true, 'CZK 2,500', '1 year', 'CZK 60,000/mo', 183, 'Zivno business license visa for freelancers'),
 ('Taiwan', '🇹🇼', 90, true, '$100', '1-3 years', '$5,700/mo', 183, 'Employment Gold Card multi-year visa'),
-('Malaysia', '🇲🇾', 90, true, 'RM 1,000', '1-2 years', '$24,000/yr', 183, 'DE Rantau Nomad Pass for digital professionals');
+('Malaysia', '🇲🇾', 90, true, 'RM 1,000', '1-2 years', '$24,000/yr', 183, 'DE Rantau Nomad Pass for digital professionals'),
+('Japan', '🇯🇵', 90, true, '¥159', '6 months', '¥10,000,000/yr', 183, 'Must provide private health insurance and proof of remote employment'),
+('Hungary', '🇭🇺', 90, true, '€110', '1 year', '€3,000/mo', 183, 'White Card digital nomad visa; exempt from Hungarian income tax for 6 months'),
+('Italy', '🇮🇹', 90, true, '€116', '1 year', '€28,000/yr', 183, 'Digital nomad visa for highly skilled remote professionals'),
+('Greece', '🇬🇷', 90, true, '€75', '1 year', '€3,500/mo', 183, '50% income tax reduction for 7 years if tax residency transferred'),
+('Costa Rica', '🇨🇷', 180, true, '$100', '1 year', '$3,000/mo', 183, 'Exempt from local income tax on foreign income'),
+('Malta', '🇲🇹', 90, true, '€300', '1 year', '€42,000/yr', 183, 'Nomad Residence Permit for non-EU remote workers'),
+('Mauritius', '🇲🇺', 180, true, 'Free', '1 year', '$1,500/mo', 183, 'Premium Visa free of charge with online application');
 
 -- ── Meetups ──
 INSERT INTO meetups (id, title, type, date, time, city, location, attendees, max_attendees, icon) VALUES
@@ -83,8 +91,16 @@ INSERT INTO meetups (id, title, type, date, time, city, location, attendees, max
 ('a1b2c3d4-0005-4000-8000-000000000005', 'Medellín Workshop: Remote Taxes', 'Workshop', 'Jun 18, 2025', '2:00 PM', 'Medellín', 'Selina Co-work', 15, 25, '📚'),
 ('a1b2c3d4-0006-4000-8000-000000000006', 'Budapest Nomad Walking Tour', 'Networking Event', 'Jun 19, 2025', '11:00 AM', 'Budapest', 'Deák Ferenc tér', 10, 20, '🚶');
 
+-- ── Listings ──
+INSERT INTO listings (id, business_id, company_name, company_title, company_type, address, city, state, country, continent, wifi_speed, starting_price, ratings, total_reviews, is_public, is_active, about, inclusions) VALUES
+('b1b2c3d4-0001-4000-8000-000000000001', 'the-hive-thonglor', 'The Hive Thonglor', 'The Hive Thonglor — Boutique Coworking in Bangkok', 'coworking', '46/9 Soi Sukhumvit 49, Khwaeng Khlong Tan Nuea, Watthana', 'Bangkok', 'Bangkok', 'Thailand', 'Asia', '250 Mbps', '$150/mo', 4.8, 42, true, true, 'Multi-story workspace with rooftop cafe, fast fiber Wi-Fi, ergonomically designed desks, and thriving international community.', '24/7 Access, High-Speed Fiber Internet, Free Coffee & Tea, Meeting Rooms'),
+('b1b2c3d4-0002-4000-8000-000000000002', 'second-home-lisbon', 'Second Home Lisboa', 'Second Home Lisboa — Plant-filled Coworking Hub', 'coworking', 'Mercado da Ribeira, Av. 24 de Julho 1st floor', 'Lisbon', 'Lisbon', 'Portugal', 'Europe', '300 Mbps', '€235/mo', 4.9, 88, true, true, 'Surrounded by over 1,000 plants inside the iconic Mercado da Ribeira. Premier Lisbon workspace with weekly cultural events.', 'Ergonomic Seating, 300 Mbps Fiber, Weekly Community Drinks, Phone Booths'),
+('b1b2c3d4-0003-4000-8000-000000000003', 'hub53-canggu', 'Hub53 Canggu', 'Hub53 Canggu — Coliving & Coworking Oasis', 'coliving', 'Jl. Pantai Batu Bolong No. 53', 'Bali', 'Bali', 'Indonesia', 'Asia', '150 Mbps', '$650/mo', 4.7, 35, true, true, 'Tropical coliving house featuring private en-suite rooms, swimming pool, high-speed dedicated line, and daily community breakfasts.', 'Private Room, Pool Access, 150 Mbps Wi-Fi, Scooter Rental Assistance'),
+('b1b2c3d4-0004-4000-8000-000000000004', 'betahaus-berlin', 'Betahaus Berlin', 'Betahaus Berlin — Pioneer Nomad Workspace', 'coworking', 'Rudi-Dutschke-Straße 26', 'Berlin', 'Berlin', 'Germany', 'Europe', '500 Mbps', '€200/mo', 4.6, 110, true, true, 'One of Europe’s original coworking spaces located in Kreuzberg, offering maker spaces, event venues, and top-tier fiber speeds.', '500 Mbps Fiber Internet, Cafe, Event Hall, Hardware Lab');
+
 -- ── Re-enable RLS ──
 ALTER TABLE cities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cost_of_living ENABLE ROW LEVEL SECURITY;
 ALTER TABLE visa_info ENABLE ROW LEVEL SECURITY;
 ALTER TABLE meetups ENABLE ROW LEVEL SECURITY;
+ALTER TABLE listings ENABLE ROW LEVEL SECURITY;

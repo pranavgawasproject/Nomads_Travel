@@ -3,25 +3,25 @@ import type { Metadata } from "next";
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Community — Nomad meetups, forums & remote-worker events | RoamIQ",
+  title: "Nomad Community & Discussions — Meetups, Forum & Q&A | RoamIQ",
   description:
-    "Join digital nomad meetups, browse the community forum, and connect with remote workers worldwide. Discover events near you and share tips on visas, cities, and workations.",
+    "Join the RoamIQ digital nomad community. Connect with remote workers, join local meetups, ask tax/visa questions, and share city advice.",
   alternates: {
     canonical: `${BASE_URL}/community`,
   },
   openGraph: {
-    title: "Community — Nomad meetups, forums & remote-worker events | RoamIQ",
+    title: "Nomad Community & Discussions | RoamIQ",
     description:
-      "Join digital nomad meetups, browse the community forum, and connect with remote workers worldwide. Discover events and share tips on visas, cities, and workations.",
+      "Connect with remote workers, join local meetups, ask tax/visa questions, and share city advice on RoamIQ.",
     url: `${BASE_URL}/community`,
     siteName: "RoamIQ",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Community — Nomad meetups, forums & remote-worker events | RoamIQ",
+    title: "Nomad Community & Discussions | RoamIQ",
     description:
-      "Join digital nomad meetups, browse the community forum, and connect with remote workers worldwide.",
+      "Connect with remote workers, join local meetups, ask tax/visa questions, and share city advice on RoamIQ.",
   },
   other: {
     founder: "Pranav Gawas",
@@ -32,10 +32,39 @@ export const metadata: Metadata = {
   },
 };
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: BASE_URL,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Community",
+      item: `${BASE_URL}/community`,
+    },
+  ],
+};
+
 export default function CommunityLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd),
+        }}
+      />
+      {children}
+    </>
+  );
 }

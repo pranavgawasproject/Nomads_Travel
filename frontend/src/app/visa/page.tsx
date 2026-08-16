@@ -3,6 +3,7 @@ import { Globe2, CheckCircle2, XCircle } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { supabase, type VisaInfo } from "@/lib/supabase";
+import { NomadVisaScreener } from "@/components/site/nomad-visa-screener";
 
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
@@ -194,7 +195,9 @@ export default async function VisaPage({
         </section>
 
         <section className="py-14 sm:py-20">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 space-y-12">
+            <NomadVisaScreener initialCountries={countries} />
+
             {countries.length === 0 ? (
               <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border py-20 text-center">
                 <Globe2 className="h-8 w-8 text-muted-foreground" />
