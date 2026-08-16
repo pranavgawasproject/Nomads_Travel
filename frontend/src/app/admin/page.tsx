@@ -73,12 +73,17 @@ export default function AdminPage() {
         .select("*")
         .order("created_at", { ascending: false });
 
+      if (error) {
+        console.error("Failed to fetch waitlist signups:", error);
+      }
+
       if (!error && data) {
         setLeads(data);
       } else {
         setLeads([]);
       }
-    } catch {
+    } catch (err) {
+      console.error("Error in fetchLeads:", err);
       setLeads([]);
     } finally {
       setLoading(false);
