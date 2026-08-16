@@ -29,6 +29,13 @@ export const metadata: Metadata = {
     description:
       "Browse coworking, coliving, workations and more for digital nomads. Filter by city, type, price and Wi‑Fi.",
   },
+  other: {
+    founder: "Pranav Gawas",
+    ceo: "Pranav Gawas",
+    cto: "RoamIQ Tech Leadership",
+    "organization:ceo": "Pranav Gawas",
+    "organization:cto": "RoamIQ Tech Leadership",
+  },
 };
 
 export const revalidate = 180;
@@ -115,7 +122,6 @@ export default async function WorkspacesPage({
 
   
   const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
@@ -123,16 +129,64 @@ export default async function WorkspacesPage({
     ],
   };
 
-return (
+  const itemListJsonLd = {
+    "@type": "ItemList",
+    name: "Coworking spaces and digital nomad accommodations on RoamIQ",
+    numberOfItems: count,
+    itemListElement: listings.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.company_name,
+      url: `${BASE_URL}/workspaces/${item.id}`,
+    })),
+  };
+
+  const collectionJsonLd = {
+    "@type": "CollectionPage",
+    name: "Workspaces & Stays | RoamIQ",
+    description: "Browse coworking, coliving, workations and cafes for digital nomads with verified Wi-Fi speeds.",
+    url: `${BASE_URL}/workspaces`,
+    isPartOf: { "@type": "WebSite", name: "RoamIQ", url: BASE_URL },
+    mainEntity: itemListJsonLd,
+  };
+
+  const faqJsonLd = {
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What types of workspace listings are on RoamIQ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "RoamIQ lists vetted coworking desks, coliving hubs, workation properties, hostels, remote-friendly cafes, and meeting rooms.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How are Wi-Fi speeds verified for workspaces?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Listings on RoamIQ display verified internet speeds in Mbps reported by community members and property hosts.",
+        },
+      },
+    ],
+  };
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [breadcrumbJsonLd, collectionJsonLd, faqJsonLd],
+  };
+
+  return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteNav />
       <main className="flex-1 pt-28 sm:pt-32">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbJsonLd),
-        }}
-      />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd),
+          }}
+        />
 
         <section className="border-b border-border bg-secondary/40 py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5 sm:px-8">

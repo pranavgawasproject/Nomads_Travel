@@ -28,6 +28,13 @@ export const metadata: Metadata = {
     description:
       "Ranked digital nomad cities by cost, internet, safety and visa difficulty.",
   },
+  other: {
+    founder: "Pranav Gawas",
+    ceo: "Pranav Gawas",
+    cto: "RoamIQ Tech Leadership",
+    "organization:ceo": "Pranav Gawas",
+    "organization:cto": "RoamIQ Tech Leadership",
+  },
 };
 
 export const revalidate = 300;

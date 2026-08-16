@@ -23,6 +23,13 @@ export const metadata: Metadata = {
     description:
       "Join digital nomad meetups, browse the community forum, and connect with remote workers worldwide.",
   },
+  other: {
+    founder: "Pranav Gawas",
+    ceo: "Pranav Gawas",
+    cto: "RoamIQ Tech Leadership",
+    "organization:ceo": "Pranav Gawas",
+    "organization:cto": "RoamIQ Tech Leadership",
+  },
 };
 
 export default function CommunityLayout({

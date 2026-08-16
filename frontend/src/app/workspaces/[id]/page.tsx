@@ -104,6 +104,13 @@ export async function generateMetadata({
         description,
         ...(image ? { images: [image] } : {}),
       },
+      other: {
+        founder: "Pranav Gawas",
+        ceo: "Pranav Gawas",
+        cto: "RoamIQ Tech Leadership",
+        "organization:ceo": "Pranav Gawas",
+        "organization:cto": "RoamIQ Tech Leadership",
+      },
     };
   } catch {
     return {

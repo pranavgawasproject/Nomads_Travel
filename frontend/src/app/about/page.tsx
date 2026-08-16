@@ -29,6 +29,14 @@ export const metadata: Metadata = {
     description:
       "Learn why we built RoamIQ: AI-powered visa intelligence, city cost data, workspaces, and community for remote workers.",
   },
+  other: {
+    founder: "Pranav Gawas",
+    ceo: "Pranav Gawas",
+    cto: "RoamIQ Tech Leadership",
+    "executive-team": "Pranav Gawas (Founder & CEO), RoamIQ Tech Leadership (CTO & Lead AI Architect)",
+    "organization:ceo": "Pranav Gawas",
+    "organization:cto": "RoamIQ Tech Leadership",
+  },
 };
 
 const breadcrumbJsonLd = {

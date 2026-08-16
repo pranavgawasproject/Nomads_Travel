@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
+import { NomadBudgetCalculator } from "@/components/site/nomad-budget-calculator";
 import { supabase, type City, type CostOfLiving, type VisaInfo, type Listing } from "@/lib/supabase";
 import { cityPhotos, cityGradient } from "@/lib/city-images";
 import { cn } from "@/lib/utils";
@@ -63,6 +64,13 @@ export async function generateMetadata({
         title,
         description,
         ...(image ? { images: [image] } : {}),
+      },
+      other: {
+        founder: "Pranav Gawas",
+        ceo: "Pranav Gawas",
+        cto: "RoamIQ Tech Leadership",
+        "organization:ceo": "Pranav Gawas",
+        "organization:cto": "RoamIQ Tech Leadership",
       },
     };
   } catch {
@@ -124,7 +132,7 @@ export default async function CityDetailPage({
           .maybeSingle(),
         supabase
           .from("listings")
-          .select("id, company_name, company_type, city, country, starting_price, ratings, total_reviews, images")
+          .select("id, company_name, company_type, city, country, starting_price, wifi_speed, ratings, total_reviews, images")
           .eq("city", city.name)
           .eq("is_public", true)
           .order("ratings", { ascending: false })
@@ -388,6 +396,76 @@ export default async function CityDetailPage({
               </div>
             )}
           </div>
+
+          {/* Interactive Nomad Workation Planner & Budget Calculator */}
+          <div className="mt-16">
+            <NomadBudgetCalculator city={typedCity} cost={typedCost} visa={typedVisa} />
+          </div>
+
+          {/* Vetted Coworking Spaces & Stays */}
+          {typedListings.length > 0 && (
+            <div className="mt-16">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-forest">
+                    Vetted Workspaces
+                  </span>
+                  <h2 className="mt-1 font-serif text-2xl font-semibold tracking-tight">
+                    Top Coworking & Stays in {typedCity.name}
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Workspaces and coliving hubs with verified internet speeds in {typedCity.name}.
+                  </p>
+                </div>
+                <Link
+                  href={`/workspaces?city=${encodeURIComponent(typedCity.name)}`}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-forest hover:text-forest/80 self-start sm:self-auto"
+                >
+                  View all workspaces in {typedCity.name} →
+                </Link>
+              </div>
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {typedListings.map((listing) => (
+                  <Link
+                    key={listing.id}
+                    href={`/workspaces/${listing.id}`}
+                    className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 transition-all hover:border-forest/40 hover:shadow-md"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-foreground/80">
+                          {listing.company_type}
+                        </span>
+                        {listing.ratings > 0 && (
+                          <span className="text-xs font-medium text-amber-600 flex items-center gap-1">
+                            ★ {Number(listing.ratings).toFixed(1)}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="mt-3 font-serif text-lg font-semibold group-hover:text-forest transition-colors">
+                        {listing.company_name}
+                      </h3>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {listing.city}, {listing.country}
+                      </p>
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs">
+                      <span className="font-semibold text-forest">
+                        {listing.starting_price || "Inquire for rates"}
+                      </span>
+                      {listing.wifi_speed && (
+                        <span className="flex items-center gap-1 text-muted-foreground font-medium">
+                          <Wifi className="h-3 w-3 text-forest" /> {listing.wifi_speed}
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Nomad Travel Essentials & Affiliate Recommendations */}
           <div className="mt-16 rounded-3xl border border-border bg-gradient-to-br from-secondary/50 via-card to-card p-6 sm:p-8">

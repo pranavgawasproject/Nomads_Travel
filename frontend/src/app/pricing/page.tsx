@@ -28,10 +28,16 @@ export const metadata: Metadata = {
     description:
       "Free Explorer plan to browse destinations and visas, or Nomad plan for trip saving, community, and priority AI planning.",
   },
+  other: {
+    founder: "Pranav Gawas",
+    ceo: "Pranav Gawas",
+    cto: "RoamIQ Tech Leadership",
+    "organization:ceo": "Pranav Gawas",
+    "organization:cto": "RoamIQ Tech Leadership",
+  },
 };
 
 const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
     {
@@ -47,6 +53,33 @@ const breadcrumbJsonLd = {
       item: `${BASE_URL}/pricing`,
     },
   ],
+};
+
+const offerCatalogJsonLd = {
+  "@type": "OfferCatalog",
+  name: "RoamIQ Subscription Plans",
+  url: `${BASE_URL}/pricing`,
+  itemListElement: [
+    {
+      "@type": "Offer",
+      name: "Explorer Plan",
+      price: "0",
+      priceCurrency: "USD",
+      description: "Everything you need to start researching your next move: destinations, visa rules, and workspaces.",
+    },
+    {
+      "@type": "Offer",
+      name: "Nomad Plan",
+      price: "9",
+      priceCurrency: "USD",
+      description: "For nomads actively planning and tracking trips: save trips, visa-stay tracking, community, and priority AI planning.",
+    },
+  ],
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [breadcrumbJsonLd, offerCatalogJsonLd],
 };
 
 const plans = [
@@ -82,7 +115,7 @@ export default function PricingPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbJsonLd),
+          __html: JSON.stringify(jsonLd),
         }}
       />
       <SiteNav />

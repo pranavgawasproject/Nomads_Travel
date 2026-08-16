@@ -23,19 +23,29 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Visa Intelligence \u2014 Digital nomad & tourist stay rules | RoamIQ",
+    title: "Visa Intelligence — Digital nomad & tourist stay rules | RoamIQ",
     description:
       "Tourist stay limits and digital nomad visa options for 190+ countries. Know costs, durations, and which places offer dedicated nomad visas.",
+  },
+  other: {
+    founder: "Pranav Gawas",
+    ceo: "Pranav Gawas",
+    cto: "RoamIQ Tech Leadership",
+    "organization:ceo": "Pranav Gawas",
+    "organization:cto": "RoamIQ Tech Leadership",
   },
 };
 
 export const revalidate = 300;
 
-async function getVisaInfo(search?: string) {
+async function getVisaInfo(params: { search?: string; dn_only?: string }) {
   try {
     let query = supabase.from("visa_info").select("*").order("country");
-    if (search) {
-      query = query.ilike("country", `%${search}%`);
+    if (params.search) {
+      query = query.ilike("country", `%${params.search}%`);
+    }
+    if (params.dn_only === "true") {
+      query = query.eq("has_dn_visa", true);
     }
     const { data, error } = await query;
     if (error) {
@@ -52,10 +62,10 @@ async function getVisaInfo(search?: string) {
 export default async function VisaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>;
+  searchParams: Promise<{ search?: string; dn_only?: string }>;
 }) {
   const params = await searchParams;
-  const countries = await getVisaInfo(params.search);
+  const countries = await getVisaInfo(params);
   const withDnVisa = countries.filter((c) => c.has_dn_visa).length;
 
   const breadcrumbJsonLd = {
@@ -157,14 +167,22 @@ export default async function VisaPage({
               dedicated nomad visa.
             </p>
 
-            <form className="mt-8 flex gap-3" action="/visa">
+            <form className="mt-8 flex flex-wrap gap-3" action="/visa">
               <input
                 type="text"
                 name="search"
                 defaultValue={params.search ?? ""}
-                placeholder="Search a country\u2026"
+                placeholder="Search a country…"
                 className="w-full max-w-sm rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
               />
+              <select
+                name="dn_only"
+                defaultValue={params.dn_only ?? "false"}
+                className="rounded-xl border border-border bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+              >
+                <option value="false">All Countries</option>
+                <option value="true">Digital Nomad Visa Offered Only</option>
+              </select>
               <button
                 type="submit"
                 className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
