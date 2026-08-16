@@ -389,45 +389,90 @@ export default async function CityDetailPage({
             )}
           </div>
 
-          {/* Workspaces in this city */}
-          {typedListings.length > 0 && (
-            <div className="mt-16">
-              <div className="flex items-center justify-between">
-                <h2 className="font-serif text-2xl font-semibold tracking-tight">
-                  Workspaces & stays in {typedCity.name}
+          {/* Nomad Travel Essentials & Affiliate Recommendations */}
+          <div className="mt-16 rounded-3xl border border-border bg-gradient-to-br from-secondary/50 via-card to-card p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+                  Nomad Essentials
+                </span>
+                <h2 className="mt-1 font-serif text-2xl font-semibold tracking-tight">
+                  Travel & Work Essentials for {typedCity.name}
                 </h2>
-                <Link
-                  href={`/workspaces?city=${encodeURIComponent(typedCity.name)}`}
-                  className="text-sm font-medium text-forest hover:text-forest/80"
-                >
-                  View all →
-                </Link>
-              </div>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {typedListings.map((l) => (
-                  <div
-                    key={l.id}
-                    className="rounded-2xl border border-border bg-card p-5"
-                  >
-                    <span className="rounded-full bg-secondary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground/70">
-                      {l.company_type}
-                    </span>
-                    <h3 className="mt-3 font-serif text-lg font-semibold">{l.company_name}</h3>
-                    {l.starting_price && (
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        From {l.starting_price}
-                      </p>
-                    )}
-                    {l.ratings > 0 && (
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        ★ {Number(l.ratings).toFixed(1)} ({l.total_reviews} reviews)
-                      </p>
-                    )}
-                  </div>
-                ))}
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Hand-picked resources for location-independent workers in {typedCity.country}.
+                </p>
               </div>
             </div>
-          )}
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              {/* SafetyWing Insurance */}
+              <div className="flex flex-col justify-between rounded-2xl border border-border bg-background p-5 shadow-xs transition-all hover:border-forest/40 hover:shadow-sm">
+                <div>
+                  <div className="flex items-center gap-2 text-forest">
+                    <ShieldCheck className="h-5 w-5" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Health Insurance</span>
+                  </div>
+                  <h3 className="mt-3 font-serif text-lg font-semibold">Nomad Health Coverage</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    Worldwide medical insurance covering illness, injury, and travel delay while in {typedCity.country}.
+                  </p>
+                </div>
+                <a
+                  href="https://safetywing.com/nomad-insurance?referenceID=roamiq"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-forest px-4 py-2.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                >
+                  Get SafetyWing (~$45/mo) →
+                </a>
+              </div>
+
+              {/* Airalo eSIM */}
+              <div className="flex flex-col justify-between rounded-2xl border border-border bg-background p-5 shadow-xs transition-all hover:border-accent/40 hover:shadow-sm">
+                <div>
+                  <div className="flex items-center gap-2 text-accent">
+                    <Wifi className="h-5 w-5" />
+                    <span className="text-xs font-bold uppercase tracking-wider">5G Mobile Data</span>
+                  </div>
+                  <h3 className="mt-3 font-serif text-lg font-semibold">Instant eSIM for {typedCity.country}</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    Connect instantly upon airport landing. No physical SIM cards or passport registration needed.
+                  </p>
+                </div>
+                <a
+                  href={`https://www.airalo.com/${typedCity.country.toLowerCase().replace(/\s+/g, "-")}-esim`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                >
+                  Get Airalo eSIM →
+                </a>
+              </div>
+
+              {/* Coliving Stays */}
+              <div className="flex flex-col justify-between rounded-2xl border border-border bg-background p-5 shadow-xs transition-all hover:border-sunset/40 hover:shadow-sm">
+                <div>
+                  <div className="flex items-center gap-2 text-sunset">
+                    <DollarSign className="h-5 w-5" />
+                    <span className="text-xs font-bold uppercase tracking-wider">Stays & Coliving</span>
+                  </div>
+                  <h3 className="mt-3 font-serif text-lg font-semibold">Work-Friendly Stays</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    Compare verified coworking apartments and nomad stays in {typedCity.name}.
+                  </p>
+                </div>
+                <a
+                  href={`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(typedCity.name)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-border bg-secondary px-4 py-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-secondary/80"
+                >
+                  Find Stays in {typedCity.name} →
+                </a>
+              </div>
+            </div>
+          </div>
         </section>
       </main>
       <Footer />
