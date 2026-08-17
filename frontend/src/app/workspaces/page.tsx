@@ -67,7 +67,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about",
+        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about, has_24_7_access, has_standing_desks, download_speed_mbps, upload_speed_mbps",
         { count: "exact" }
       )
       .eq("is_public", true)
@@ -330,9 +330,21 @@ function ListingCard({ listing }: { listing: Listing }) {
             <Building2 className="h-12 w-12 text-muted-foreground/50" />
           </div>
         )}
-        <span className="absolute left-3 top-3 rounded-full bg-card/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground/80 backdrop-blur-sm">
-          {listing.company_type}
-        </span>
+        <div className="absolute left-3 top-3 flex items-center gap-1.5">
+          <span className="rounded-full bg-card/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground/80 backdrop-blur-sm">
+            {listing.company_type}
+          </span>
+          {listing.has_24_7_access && (
+            <span className="rounded-full bg-emerald-500/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+              24/7 Access
+            </span>
+          )}
+        </div>
+        {listing.has_standing_desks && (
+          <span className="absolute right-3 top-3 rounded-full bg-card/90 px-2 py-0.5 text-[9px] font-semibold text-foreground/80 backdrop-blur-sm">
+            Standing Desks
+          </span>
+        )}
       </div>
 
       {/* Content */}

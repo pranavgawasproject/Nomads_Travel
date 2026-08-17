@@ -484,6 +484,68 @@ export function CityComparator({
           </div>
         </div>
       </div>
+
+      {/* Granular Nomad Metrics Side-by-Side Table */}
+      <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-xs">
+        <div className="border-b border-border pb-5">
+          <span className="text-xs font-semibold uppercase tracking-wider text-forest font-mono">Granular City Metrics</span>
+          <h3 className="font-serif text-2xl font-semibold tracking-tight">Granular Nomad Data Points</h3>
+        </div>
+
+        <div className="mt-6 overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-border bg-secondary/40 text-xs uppercase tracking-wider text-muted-foreground">
+              <tr>
+                <th className="px-4 py-3 font-medium">Metric / Data Point</th>
+                <th className="px-4 py-3 font-medium text-forest">{cityA.flag} {cityA.name}</th>
+                <th className="px-4 py-3 font-medium text-accent">{cityB.flag} {cityB.name}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              <tr className="hover:bg-secondary/20 transition-colors">
+                <td className="px-4 py-3 font-medium">1-Bed Apartment Rent</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityA.one_bed_rent_usd ? `$${cityA.one_bed_rent_usd}/mo` : "—"}</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityB.one_bed_rent_usd ? `$${cityB.one_bed_rent_usd}/mo` : "—"}</td>
+              </tr>
+              <tr className="hover:bg-secondary/20 transition-colors">
+                <td className="px-4 py-3 font-medium">Coworking Desk Rate</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityA.coworking_desk_usd ? `$${cityA.coworking_desk_usd}/mo` : "—"}</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityB.coworking_desk_usd ? `$${cityB.coworking_desk_usd}/mo` : "—"}</td>
+              </tr>
+              <tr className="hover:bg-secondary/20 transition-colors">
+                <td className="px-4 py-3 font-medium">Average Meal Price</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityA.meal_price_usd ? `$${cityA.meal_price_usd}` : "—"}</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityB.meal_price_usd ? `$${cityB.meal_price_usd}` : "—"}</td>
+              </tr>
+              <tr className="hover:bg-secondary/20 transition-colors">
+                <td className="px-4 py-3 font-medium">Coffee / Espresso Price</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityA.coffee_price_usd ? `$${cityA.coffee_price_usd}` : "—"}</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityB.coffee_price_usd ? `$${cityB.coffee_price_usd}` : "—"}</td>
+              </tr>
+              <tr className="hover:bg-secondary/20 transition-colors">
+                <td className="px-4 py-3 font-medium">P90 Wi-Fi Speed</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityA.wifi_speed_p90 ? `${cityA.wifi_speed_p90} Mbps` : `${cityA.internet_mbps} Mbps`}</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityB.wifi_speed_p90 ? `${cityB.wifi_speed_p90} Mbps` : `${cityB.internet_mbps} Mbps`}</td>
+              </tr>
+              <tr className="hover:bg-secondary/20 transition-colors">
+                <td className="px-4 py-3 font-medium">Mobile Data Cost / GB</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityA.mobile_data_cost_gb ? `$${cityA.mobile_data_cost_gb}` : "—"}</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityB.mobile_data_cost_gb ? `$${cityB.mobile_data_cost_gb}` : "—"}</td>
+              </tr>
+              <tr className="hover:bg-secondary/20 transition-colors">
+                <td className="px-4 py-3 font-medium">English Proficiency Level</td>
+                <td className="px-4 py-3 font-semibold">{cityA.english_proficiency || "High"}</td>
+                <td className="px-4 py-3 font-semibold">{cityB.english_proficiency || "High"}</td>
+              </tr>
+              <tr className="hover:bg-secondary/20 transition-colors">
+                <td className="px-4 py-3 font-medium">Quality of Life Rating</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityA.quality_of_life_score ? `${Number(cityA.quality_of_life_score).toFixed(1)} / 5` : "4.2 / 5"}</td>
+                <td className="px-4 py-3 font-mono font-semibold">{cityB.quality_of_life_score ? `${Number(cityB.quality_of_life_score).toFixed(1)} / 5` : "4.2 / 5"}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

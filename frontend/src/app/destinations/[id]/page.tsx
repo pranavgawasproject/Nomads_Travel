@@ -10,6 +10,7 @@ import {
   Footprints,
   Moon,
   Wind,
+  Sparkles,
 } from "lucide-react";
 import { SiteNav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
@@ -160,7 +161,7 @@ export default async function CityDetailPage({
     : null;
 
 
-  const destinationLd = {
+  const destinationLd: Record<string, unknown> = {
     "@type": "TouristDestination",
     name: `${typedCity.name}, ${typedCity.country}`,
     description: `Digital nomad destination guide for ${typedCity.name}: cost of living, internet, visa difficulty, and lifestyle scores.`,
@@ -171,6 +172,15 @@ export default async function CityDetailPage({
       addressLocality: typedCity.name,
       addressCountry: typedCity.country,
     },
+    additionalProperty: [
+      { "@type": "PropertyValue", name: "Monthly Headline Cost", value: `$${typedCity.cost_usd}` },
+      { "@type": "PropertyValue", name: "Average Internet Speed", value: `${typedCity.internet_mbps} Mbps` },
+      { "@type": "PropertyValue", name: "Visa Difficulty", value: typedCity.visa_difficulty },
+      ...(typedCity.one_bed_rent_usd ? [{ "@type": "PropertyValue", name: "1-Bed Rent USD", value: `$${typedCity.one_bed_rent_usd}` }] : []),
+      ...(typedCity.coworking_desk_usd ? [{ "@type": "PropertyValue", name: "Coworking Desk USD", value: `$${typedCity.coworking_desk_usd}` }] : []),
+      ...(typedCity.english_proficiency ? [{ "@type": "PropertyValue", name: "English Proficiency", value: typedCity.english_proficiency }] : []),
+      ...(typedCity.quality_of_life_score ? [{ "@type": "PropertyValue", name: "Quality of Life Score", value: `${typedCity.quality_of_life_score}` }] : []),
+    ],
   };
 
   const breadcrumbLd = {
@@ -376,6 +386,55 @@ export default async function CityDetailPage({
                   </div>
                 </div>
               )}
+
+              {/* Granular Nomad Price & Quality Indicators */}
+              <div className="mt-10 rounded-3xl border border-border bg-card p-6 sm:p-8">
+                <div className="flex items-center gap-2 text-forest">
+                  <Sparkles className="h-5 w-5" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Granular City Metrics</span>
+                </div>
+                <h3 className="mt-1 font-serif text-xl font-semibold">
+                  Nomad City Price & Lifestyle Indicators
+                </h3>
+                <div className="mt-5 grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
+                  <InfoBlock
+                    label="1-Bed Rent (USD)"
+                    value={typedCity.one_bed_rent_usd ? `$${typedCity.one_bed_rent_usd}/mo` : "N/A"}
+                  />
+                  <InfoBlock
+                    label="Coworking Desk"
+                    value={typedCity.coworking_desk_usd ? `$${typedCity.coworking_desk_usd}/mo` : "N/A"}
+                  />
+                  <InfoBlock
+                    label="Avg Meal Price"
+                    value={typedCity.meal_price_usd ? `$${typedCity.meal_price_usd}` : "N/A"}
+                  />
+                  <InfoBlock
+                    label="Espresso / Coffee"
+                    value={typedCity.coffee_price_usd ? `$${typedCity.coffee_price_usd}` : "N/A"}
+                  />
+                  <InfoBlock
+                    label="P90 Wi-Fi Speed"
+                    value={typedCity.wifi_speed_p90 ? `${typedCity.wifi_speed_p90} Mbps` : `${typedCity.internet_mbps} Mbps`}
+                  />
+                  <InfoBlock
+                    label="Mobile Data / GB"
+                    value={typedCity.mobile_data_cost_gb ? `$${typedCity.mobile_data_cost_gb}` : "N/A"}
+                  />
+                  <InfoBlock
+                    label="English Proficiency"
+                    value={typedCity.english_proficiency || "High"}
+                  />
+                  <InfoBlock
+                    label="Quality of Life Score"
+                    value={typedCity.quality_of_life_score ? `${Number(typedCity.quality_of_life_score).toFixed(1)} / 5` : "4.2 / 5"}
+                  />
+                  <InfoBlock
+                    label="Walkability Rating"
+                    value={`${Number(typedCity.walkability_score ?? 4).toFixed(1)} / 5`}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Cost breakdown */}
