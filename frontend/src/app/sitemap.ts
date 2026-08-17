@@ -6,7 +6,7 @@ const BASE_URL = "https://nomads-travel-indol.vercel.app";
 /** Fallback city IDs when Supabase is unavailable at sitemap generation time.
  *  Keeps destination detail URLs discoverable for Google even if the DB call fails. */
 const FALLBACK_CITY_IDS = [
-  "chiang-mai",
+  "chiangmai",
   "taipei",
   "tallinn",
   "lisbon",
@@ -14,18 +14,18 @@ const FALLBACK_CITY_IDS = [
   "da-nang",
   "cape-town",
   "valencia",
-  "tenerife",
   "medellin",
-  "oaxaca",
-  "canggu",
+  "berlin",
+  "tokyo",
+  "bali",
   "barcelona",
   "tbilisi",
   "bangkok",
-  "mexico-city",
-  "athens",
+  "mexicocity",
+  "budapest",
+  "dubai",
   "buenos-aires",
   "kuala-lumpur",
-  "bogota",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

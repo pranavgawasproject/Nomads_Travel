@@ -11,27 +11,27 @@ ALTER TABLE meetups DISABLE ROW LEVEL SECURITY;
 ALTER TABLE listings DISABLE ROW LEVEL SECURITY;
 
 -- ── Cities ──
-INSERT INTO cities (id, name, country, flag, image, continent, overall_score, cost_score, internet_score, safety_score, fun_score, walkability_score, nightlife_score, air_score, cost_usd, internet_mbps, avg_temp, visa_difficulty, air_quality) VALUES
-('bangkok', 'Bangkok', 'Thailand', '🇹🇭', 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800', 'Asia', 4.2, 3.8, 3.5, 3.2, 4.8, 3.0, 4.7, 2.8, 950, 45, 28, 'Easy', 'Moderate'),
-('lisbon', 'Lisbon', 'Portugal', '🇵🇹', 'https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=800', 'Europe', 4.5, 3.2, 4.0, 4.2, 4.3, 4.0, 4.0, 4.2, 2200, 85, 18, 'Medium', 'Good'),
-('bali', 'Bali', 'Indonesia', '🇮🇩', 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800', 'Asia', 4.0, 4.2, 2.8, 3.5, 4.5, 2.5, 3.8, 3.0, 1100, 25, 27, 'Easy', 'Moderate'),
-('medellin', 'Medellín', 'Colombia', '🇨🇴', 'https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?w=800', 'South America', 3.9, 4.0, 3.2, 2.8, 4.5, 3.5, 4.5, 3.5, 1200, 35, 22, 'Easy', 'Moderate'),
-('berlin', 'Berlin', 'Germany', '🇩🇪', 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800', 'Europe', 4.3, 2.5, 4.5, 4.0, 4.2, 4.5, 4.8, 3.8, 2800, 100, 10, 'Hard', 'Good'),
-('tokyo', 'Tokyo', 'Japan', '🇯🇵', 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800', 'Asia', 4.4, 2.0, 4.8, 4.8, 4.5, 4.8, 4.2, 3.5, 3200, 150, 16, 'Medium', 'Moderate'),
-('chiangmai', 'Chiang Mai', 'Thailand', '🇹🇭', 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=800', 'Asia', 4.1, 4.5, 3.2, 3.5, 3.8, 2.8, 3.5, 2.5, 750, 30, 26, 'Easy', 'Poor'),
-('barcelona', 'Barcelona', 'Spain', '🇪🇸', 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800', 'Europe', 4.3, 2.8, 4.0, 3.8, 4.7, 4.5, 4.5, 4.0, 2500, 80, 17, 'Medium', 'Good'),
-('mexicocity', 'Mexico City', 'Mexico', '🇲🇽', 'https://images.unsplash.com/photo-1516482362041-8b87b69ed28d?w=800', 'North America', 3.7, 3.8, 3.0, 2.5, 4.3, 3.2, 4.5, 2.2, 1300, 28, 17, 'Easy', 'Poor'),
-('budapest', 'Budapest', 'Hungary', '🇭🇺', 'https://images.unsplash.com/photo-1551867633-194f125bddfa?w=800', 'Europe', 4.2, 3.5, 4.2, 4.0, 4.0, 4.0, 4.3, 3.5, 1600, 90, 12, 'Medium', 'Moderate'),
-('dubai', 'Dubai', 'UAE', '🇦🇪', 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800', 'Asia', 3.8, 1.8, 4.5, 4.8, 3.8, 2.5, 3.5, 2.0, 3500, 120, 33, 'Easy', 'Poor'),
-('tbilisi', 'Tbilisi', 'Georgia', '🇬🇪', 'https://images.unsplash.com/photo-1548786811-dd6e453ccca7?w=800', 'Europe', 3.9, 4.5, 3.0, 4.0, 3.5, 3.5, 3.8, 3.8, 900, 25, 15, 'Easy', 'Good'),
-('da-nang', 'Da Nang', 'Vietnam', '🇻🇳', 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800', 'Asia', 4.3, 4.6, 3.8, 4.1, 4.0, 3.2, 3.5, 4.0, 800, 65, 26, 'Easy', 'Good'),
-('buenos-aires', 'Buenos Aires', 'Argentina', '🇦🇷', 'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=800', 'South America', 4.1, 4.4, 3.5, 3.2, 4.7, 4.2, 4.6, 3.8, 1000, 40, 18, 'Easy', 'Good'),
-('cape-town', 'Cape Town', 'South Africa', '🇿🇦', 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=800', 'Africa', 4.2, 3.6, 3.6, 3.0, 4.8, 3.2, 4.2, 4.5, 1400, 50, 17, 'Medium', 'Good'),
-('valencia', 'Valencia', 'Spain', '🇪🇸', 'https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=800', 'Europe', 4.4, 3.5, 4.2, 4.4, 4.3, 4.6, 4.1, 4.3, 1900, 90, 19, 'Medium', 'Good'),
-('tallinn', 'Tallinn', 'Estonia', '🇪🇪', 'https://images.unsplash.com/photo-15417971875076-8f970d573be6?w=800', 'Europe', 4.3, 3.3, 4.7, 4.6, 3.7, 4.1, 3.6, 4.5, 1800, 110, 7, 'Easy', 'Good'),
-('prague', 'Prague', 'Czech Republic', '🇨🇿', 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=800', 'Europe', 4.3, 3.4, 4.2, 4.5, 4.4, 4.7, 4.5, 3.9, 1700, 85, 11, 'Medium', 'Good'),
-('taipei', 'Taipei', 'Taiwan', '🇹🇼', 'https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800', 'Asia', 4.4, 3.5, 4.8, 4.9, 4.2, 4.6, 4.0, 3.8, 1600, 120, 23, 'Medium', 'Good'),
-('kuala-lumpur', 'Kuala Lumpur', 'Malaysia', '🇲🇾', 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800', 'Asia', 4.1, 4.2, 4.0, 3.9, 4.1, 3.0, 4.0, 3.2, 1100, 75, 28, 'Easy', 'Moderate');
+INSERT INTO cities (id, name, country, flag, image, continent, overall_score, cost_score, internet_score, safety_score, fun_score, walkability_score, nightlife_score, air_score, cost_usd, internet_mbps, avg_temp, visa_difficulty, air_quality, english_proficiency, quality_of_life_score, coworking_desk_usd, one_bed_rent_usd, meal_price_usd, coffee_price_usd, wifi_speed_p90, mobile_data_cost_gb) VALUES
+('bangkok', 'Bangkok', 'Thailand', '🇹🇭', 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800', 'Asia', 4.2, 3.8, 3.5, 3.2, 4.8, 3.0, 4.7, 2.8, 950, 45, 28, 'Easy', 'Moderate', 'Moderate', 4.1, 120, 500, 3.50, 2.20, 95, 0.80),
+('lisbon', 'Lisbon', 'Portugal', '🇵🇹', 'https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=800', 'Europe', 4.5, 3.2, 4.0, 4.2, 4.3, 4.0, 4.0, 4.2, 2200, 85, 18, 'Medium', 'Good', 'High', 4.5, 180, 1100, 12.00, 2.50, 150, 1.20),
+('bali', 'Bali', 'Indonesia', '🇮🇩', 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800', 'Asia', 4.0, 4.2, 2.8, 3.5, 4.5, 2.5, 3.8, 3.0, 1100, 25, 27, 'Easy', 'Moderate', 'High', 4.2, 150, 550, 4.00, 2.00, 75, 0.60),
+('medellin', 'Medellín', 'Colombia', '🇨🇴', 'https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?w=800', 'South America', 3.9, 4.0, 3.2, 2.8, 4.5, 3.5, 4.5, 3.5, 1200, 35, 22, 'Easy', 'Moderate', 'Moderate', 4.0, 130, 600, 5.00, 1.80, 85, 0.90),
+('berlin', 'Berlin', 'Germany', '🇩🇪', 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800', 'Europe', 4.3, 2.5, 4.5, 4.0, 4.2, 4.5, 4.8, 3.8, 2800, 100, 10, 'Hard', 'Good', 'High', 4.4, 200, 1200, 14.00, 3.80, 200, 1.50),
+('tokyo', 'Tokyo', 'Japan', '🇯🇵', 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800', 'Asia', 4.4, 2.0, 4.8, 4.8, 4.5, 4.8, 4.2, 3.5, 3200, 150, 16, 'Medium', 'Moderate', 'Moderate', 4.7, 200, 1300, 10.00, 3.20, 300, 2.20),
+('chiangmai', 'Chiang Mai', 'Thailand', '🇹🇭', 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=800', 'Asia', 4.1, 4.5, 3.2, 3.5, 3.8, 2.8, 3.5, 2.5, 750, 30, 26, 'Easy', 'Poor', 'High', 4.3, 100, 350, 2.50, 1.80, 80, 0.50),
+('barcelona', 'Barcelona', 'Spain', '🇪🇸', 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800', 'Europe', 4.3, 2.8, 4.0, 3.8, 4.7, 4.5, 4.5, 4.0, 2500, 80, 17, 'Medium', 'Good', 'High', 4.4, 170, 1150, 13.00, 2.80, 160, 1.30),
+('mexicocity', 'Mexico City', 'Mexico', '🇲🇽', 'https://images.unsplash.com/photo-1516482362041-8b87b69ed28d?w=800', 'North America', 3.7, 3.8, 3.0, 2.5, 4.3, 3.2, 4.5, 2.2, 1300, 28, 17, 'Easy', 'Poor', 'Moderate', 4.1, 140, 700, 6.00, 2.20, 70, 1.10),
+('budapest', 'Budapest', 'Hungary', '🇭🇺', 'https://images.unsplash.com/photo-1551867633-194f125bddfa?w=800', 'Europe', 4.2, 3.5, 4.2, 4.0, 4.0, 4.0, 4.3, 3.5, 1600, 90, 12, 'Medium', 'Moderate', 'High', 4.3, 150, 650, 8.00, 2.10, 180, 1.00),
+('dubai', 'Dubai', 'UAE', '🇦🇪', 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800', 'Asia', 3.8, 1.8, 4.5, 4.8, 3.8, 2.5, 3.5, 2.0, 3500, 120, 33, 'Easy', 'Poor', 'High', 4.2, 250, 1600, 18.00, 4.50, 250, 3.00),
+('tbilisi', 'Tbilisi', 'Georgia', '🇬🇪', 'https://images.unsplash.com/photo-1548786811-dd6e453ccca7?w=800', 'Europe', 3.9, 4.5, 3.0, 4.0, 3.5, 3.5, 3.8, 3.8, 900, 25, 15, 'Easy', 'Good', 'Moderate', 4.0, 120, 500, 6.00, 1.90, 65, 0.70),
+('da-nang', 'Da Nang', 'Vietnam', '🇻🇳', 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800', 'Asia', 4.3, 4.6, 3.8, 4.1, 4.0, 3.2, 3.5, 4.0, 800, 65, 26, 'Easy', 'Good', 'Moderate', 4.3, 90, 400, 3.00, 1.50, 120, 0.40),
+('buenos-aires', 'Buenos Aires', 'Argentina', '🇦🇷', 'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=800', 'South America', 4.1, 4.4, 3.5, 3.2, 4.7, 4.2, 4.6, 3.8, 1000, 40, 18, 'Easy', 'Good', 'High', 4.2, 110, 450, 7.00, 1.80, 85, 0.80),
+('cape-town', 'Cape Town', 'South Africa', '🇿🇦', 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=800', 'Africa', 4.2, 3.6, 3.6, 3.0, 4.8, 3.2, 4.2, 4.5, 1400, 50, 17, 'Medium', 'Good', 'Very High', 4.2, 140, 700, 9.00, 2.00, 110, 1.40),
+('valencia', 'Valencia', 'Spain', '🇪🇸', 'https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=800', 'Europe', 4.4, 3.5, 4.2, 4.4, 4.3, 4.6, 4.1, 4.3, 1900, 90, 19, 'Medium', 'Good', 'High', 4.5, 160, 900, 11.00, 2.40, 175, 1.10),
+('tallinn', 'Tallinn', 'Estonia', '🇪🇪', 'https://images.unsplash.com/photo-15417971875076-8f970d573be6?w=800', 'Europe', 4.3, 3.3, 4.7, 4.6, 3.7, 4.1, 3.6, 4.5, 1800, 110, 7, 'Easy', 'Good', 'Very High', 4.6, 170, 850, 10.00, 2.80, 220, 1.20),
+('prague', 'Prague', 'Czech Republic', '🇨🇿', 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=800', 'Europe', 4.3, 3.4, 4.2, 4.5, 4.4, 4.7, 4.5, 3.9, 1700, 85, 11, 'Medium', 'Good', 'High', 4.4, 160, 800, 9.00, 2.50, 165, 1.20),
+('taipei', 'Taipei', 'Taiwan', '🇹🇼', 'https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800', 'Asia', 4.4, 3.5, 4.8, 4.9, 4.2, 4.6, 4.0, 3.8, 1600, 120, 23, 'Medium', 'Good', 'High', 4.6, 150, 750, 5.00, 2.00, 240, 1.00),
+('kuala-lumpur', 'Kuala Lumpur', 'Malaysia', '🇲🇾', 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800', 'Asia', 4.1, 4.2, 4.0, 3.9, 4.1, 3.0, 4.0, 3.2, 1100, 75, 28, 'Easy', 'Moderate', 'Very High', 4.3, 120, 500, 4.00, 1.90, 150, 0.70);
 
 -- ── Cost of Living ──
 INSERT INTO cost_of_living (city_id, housing, coworking, food, transport, internet, entertainment, health, visa, misc, tip1, tip2, tip3) VALUES
@@ -55,32 +55,32 @@ INSERT INTO cost_of_living (city_id, housing, coworking, food, transport, intern
 ('kuala-lumpur', 480, 120, 260, 35, 25, 110, 60, 30, 80, 'KLCC & Bangsar offer modern air-conditioned hubs', 'Use the free GoKL bus lines across downtown', 'Food courts in Megamalls offer great cheap eats');
 
 -- ── Visa Info ──
-INSERT INTO visa_info (country, flag, tourist_days, has_dn_visa, dn_visa_cost, dn_visa_duration, min_income, tax_residency_days, tax_notes) VALUES
-('Thailand', '🇹🇭', 60, true, '$500', '6 months', '$2,000/mo', 180, 'DTV visa allows 180-day stays renewable for 5 years'),
-('Portugal', '🇵🇹', 90, true, '€180', '1 year', '€3,280/mo', 183, 'D8 visa with pathway to temporary residency'),
-('Indonesia', '🇮🇩', 30, true, '$300', '6 months', '$2,000/mo', 183, 'E33G Remote Worker Visa or B211A social visa'),
-('Spain', '🇪🇸', 90, true, '€70', '1 year', '€2,646/mo', 183, 'Digital Nomad Visa with 15% flat Beckham tax regime'),
-('Germany', '🇩🇪', 90, true, '€100', '1-3 years', 'Proof of funds', 183, 'Freiberufler freelance visa available'),
-('Colombia', '🇨🇴', 90, true, '$170', '2 years', '$1,500/mo', 183, 'V Digital Nomad Visa valid up to 2 years'),
-('Georgia', '🇬🇪', 365, false, 'N/A', 'N/A', 'N/A', 183, '365-day visa free stay for 95+ nationalities'),
-('Croatia', '🇭🇷', 90, true, '€80', '1 year', '€2,539/mo', 183, 'Exempt from local income tax during visa stay'),
-('Estonia', '🇪🇪', 90, true, '€100', '1 year', '€3,500/mo', 183, 'Digital Nomad Visa C & D options available'),
-('UAE', '🇦🇪', 30, true, '$287', '1 year', '$3,500/mo', 183, '0% personal income tax on foreign income'),
-('Mexico', '🇲🇽', 180, false, 'N/A', 'N/A', 'N/A', 183, '180-day tourist visa on arrival for many passports'),
-('Brazil', '🇧🇷', 90, true, 'R$168', '1 year', '$1,500/mo', 183, '1-year renewable digital nomad residency'),
-('Vietnam', '🇻🇳', 90, false, 'N/A', 'N/A', 'N/A', 183, '90-day e-visa available for all nationalities'),
-('Argentina', '🇦🇷', 90, true, '$200', '180 days', 'Proof of income', 183, 'Rentista and Digital Nomad visa options'),
-('South Africa', '🇿🇦', 90, true, 'R1,000', '1 year', 'R1,000,000/yr', 183, 'Remote Work Visa newly launched for global remote workers'),
-('Czech Republic', '🇨🇿', 90, true, 'CZK 2,500', '1 year', 'CZK 60,000/mo', 183, 'Zivno business license visa for freelancers'),
-('Taiwan', '🇹🇼', 90, true, '$100', '1-3 years', '$5,700/mo', 183, 'Employment Gold Card multi-year visa'),
-('Malaysia', '🇲🇾', 90, true, 'RM 1,000', '1-2 years', '$24,000/yr', 183, 'DE Rantau Nomad Pass for digital professionals'),
-('Japan', '🇯🇵', 90, true, '¥159', '6 months', '¥10,000,000/yr', 183, 'Must provide private health insurance and proof of remote employment'),
-('Hungary', '🇭🇺', 90, true, '€110', '1 year', '€3,000/mo', 183, 'White Card digital nomad visa; exempt from Hungarian income tax for 6 months'),
-('Italy', '🇮🇹', 90, true, '€116', '1 year', '€28,000/yr', 183, 'Digital nomad visa for highly skilled remote professionals'),
-('Greece', '🇬🇷', 90, true, '€75', '1 year', '€3,500/mo', 183, '50% income tax reduction for 7 years if tax residency transferred'),
-('Costa Rica', '🇨🇷', 180, true, '$100', '1 year', '$3,000/mo', 183, 'Exempt from local income tax on foreign income'),
-('Malta', '🇲🇹', 90, true, '€300', '1 year', '€42,000/yr', 183, 'Nomad Residence Permit for non-EU remote workers'),
-('Mauritius', '🇲🇺', 180, true, 'Free', '1 year', '$1,500/mo', 183, 'Premium Visa free of charge with online application');
+INSERT INTO visa_info (country, flag, tourist_days, has_dn_visa, dn_visa_cost, dn_visa_duration, min_income, tax_residency_days, tax_notes, processing_time, required_docs, path_to_residency, tax_exemption_status, application_fee_usd, application_method) VALUES
+('Thailand', '🇹🇭', 60, true, '$500', '6 months', '$2,000/mo', 180, 'DTV visa allows 180-day stays renewable for 5 years', '2-4 weeks', '{"Passport","Proof of 500k THB funds","Employment contract"}', 'DTV renewable 5 years', 'Exempt on foreign income not remitted in same tax year', 500, 'Online Portal / Embassy'),
+('Portugal', '🇵🇹', 90, true, '€180', '1 year', '€3,280/mo', 183, 'D8 visa with pathway to temporary residency', '4-8 weeks', '{"Passport","Proof of €3,280/mo income","NIF","Bank statement"}', 'Path to permanent residency after 5 years', 'D8 Visa tax options', 180, 'VFS Global / Embassy'),
+('Indonesia', '🇮🇩', 30, true, '$300', '6 months', '$2,000/mo', 183, 'E33G Remote Worker Visa or B211A social visa', '1-3 weeks', '{"Passport","Proof of $2,000/mo income","Bank statement"}', '6-month renewable stay', 'Exempt on foreign source income', 300, 'Molina Online Portal'),
+('Spain', '🇪🇸', 90, true, '€70', '1 year', '€2,646/mo', 183, 'Digital Nomad Visa with 15% flat Beckham tax regime', '3-6 weeks', '{"Passport","Proof of €2,646/mo income","Criminal record check"}', 'Beckham Law 15% flat tax regime & residency pathway', '15% Beckham Tax Regime', 80, 'Consulate / UGE Spain'),
+('Germany', '🇩🇪', 90, true, '€100', '1-3 years', 'Proof of funds', 183, 'Freiberufler freelance visa available', '4-12 weeks', '{"Passport","Proof of funds","Freelance portfolio"}', 'Path to permanent residence after 3 years', 'Standard German tax brackets applies', 100, 'Ausländerbehörde / Embassy'),
+('Colombia', '🇨🇴', 90, true, '$170', '2 years', '$1,500/mo', 183, 'V Digital Nomad Visa valid up to 2 years', '1-3 weeks', '{"Passport","Proof of $1,500/mo income","Health insurance"}', 'V Digital Nomad Visa up to 2 years', 'Foreign income exempt under 183 days', 170, 'Cancillería Online Portal'),
+('Georgia', '🇬🇪', 365, false, 'N/A', 'N/A', 'N/A', 183, '365-day visa free stay for 95+ nationalities', 'Instant (Visa Free)', '{"Passport"}', '365-day visa-free stay; 1% tax Individual Entrepreneur status', '1% Small Business Tax Scheme', 0, 'Visa-Free Entry'),
+('Croatia', '🇭🇷', 90, true, '€80', '1 year', '€2,539/mo', 183, 'Exempt from local income tax during visa stay', '2-4 weeks', '{"Passport","Proof of €2,539/mo income","Background check"}', '1-year stay renewable after 6 months gap', '100% exempt from Croatian income tax', 80, 'MUP Online Portal'),
+('Estonia', '🇪🇪', 90, true, '€100', '1 year', '€3,500/mo', 183, 'Digital Nomad Visa C & D options available', '2-4 weeks', '{"Passport","Proof of €3,500/mo income","Employment contract"}', 'D-Visa 1 year stay', 'Tax exempt for first 183 days', 100, 'Estonian Embassy / e-Residency'),
+('UAE', '🇦🇪', 30, true, '$287', '1 year', '$3,500/mo', 183, '0% personal income tax on foreign income', '1-2 weeks', '{"Passport","Proof of $3,500/mo income","Contract"}', '1-year remote work residency card', '0% personal income tax on foreign income', 287, 'GDRFA Online Portal'),
+('Mexico', '🇲🇽', 180, false, 'N/A', 'N/A', 'N/A', 183, '180-day tourist visa on arrival for many passports', 'Instant (Tourist)', '{"Passport","FMM Card"}', '180-day tourist stay', 'No local tax on tourist stays', 0, 'Immigration Entry'),
+('Brazil', '🇧🇷', 90, true, 'R$168', '1 year', '$1,500/mo', 183, '1-year renewable digital nomad residency', '2-4 weeks', '{"Passport","Proof of $1,500/mo income","Clean record"}', '1-year renewable digital nomad residency', 'Exempt under 183 days', 168, 'e-Consular Portal'),
+('Vietnam', '🇻🇳', 90, false, 'N/A', 'N/A', 'N/A', 183, '90-day e-visa available for all nationalities', '3-5 days', '{"Passport"}', '90-day multi-entry e-visa', 'Exempt for non-residents under 183 days', 25, 'National E-Visa Portal'),
+('Argentina', '🇦🇷', 90, true, '$200', '180 days', 'Proof of income', 183, 'Rentista and Digital Nomad visa options', '2-4 weeks', '{"Passport","Proof of income"}', '180-day nomad visa option', 'Exempt during nomad visa validity', 200, 'Migraciones Portal'),
+('South Africa', '🇿🇦', 90, true, 'R1,000', '1 year', 'R1,000,000/yr', 183, 'Remote Work Visa newly launched for global remote workers', '3-6 weeks', '{"Passport","Proof of R1,000,000/yr income","Health insurance"}', '1-year remote work visa', 'Exempt for foreign remote workers', 100, 'VFS / Embassy'),
+('Czech Republic', '🇨🇿', 90, true, 'CZK 2,500', '1 year', 'CZK 60,000/mo', 183, 'Zivno business license visa for freelancers', '4-8 weeks', '{"Passport","Zivno license","Trade register"}', 'Zivno business visa renewable', 'Flat tax rate option (Paušální daň)', 110, 'Czech Embassy'),
+('Taiwan', '🇹🇼', 90, true, '$100', '1-3 years', '$5,700/mo', 183, 'Employment Gold Card multi-year visa', '3-6 weeks', '{"Passport","Proof of $5,700/mo income"}', 'Employment Gold Card 1-3 years', '50% tax reduction on income over NT$3M', 100, 'Gold Card Online Portal'),
+('Malaysia', '🇲🇾', 90, true, 'RM 1,000', '1-2 years', '$24,000/yr', 183, 'DE Rantau Nomad Pass for digital professionals', '2-4 weeks', '{"Passport","Proof of $24,000/yr income"}', 'DE Rantau Pass 1-2 years', 'Foreign income exempt', 220, 'MDEC Portal'),
+('Japan', '🇯🇵', 90, true, '¥159', '6 months', '¥10,000,000/yr', 183, 'Must provide private health insurance and proof of remote employment', '2-4 weeks', '{"Passport","Proof of ¥10,000,000/yr income","Insurance"}', '6-month non-renewable visa', 'Exempt from Japanese tax', 15, 'Japanese Embassy / Consulate'),
+('Hungary', '🇭🇺', 90, true, '€110', '1 year', '€3,000/mo', 183, 'White Card digital nomad visa; exempt from Hungarian income tax for 6 months', '3-5 weeks', '{"Passport","Proof of €3,000/mo income"}', 'White Card 1 year renewable', 'Exempt from Hungarian tax for first 6 months', 110, 'Enter Hungary Portal'),
+('Italy', '🇮🇹', 90, true, '€116', '1 year', '€28,000/yr', 183, 'Digital nomad visa for highly skilled remote professionals', '4-8 weeks', '{"Passport","Proof of €28,000/yr income"}', '1-year digital nomad visa', 'Potential tax incentives for moving tax residency', 116, 'Italian Consulate'),
+('Greece', '🇬🇷', 90, true, '€75', '1 year', '€3,500/mo', 183, '50% income tax reduction for 7 years if tax residency transferred', '3-6 weeks', '{"Passport","Proof of €3,500/mo income"}', '1-year visa renewable for 2 years', '50% income tax reduction for 7 years', 75, 'Greek Consulate'),
+('Costa Rica', '🇨🇷', 180, true, '$100', '1 year', '$3,000/mo', 183, 'Exempt from local income tax on foreign income', '2-4 weeks', '{"Passport","Proof of $3,000/mo income"}', '1-year nomad visa renewable for 2nd year', 'Exempt from Costa Rican income tax', 100, 'Tramite Ya Portal'),
+('Malta', '🇲🇹', 90, true, '€300', '1 year', '€42,000/yr', 183, 'Nomad Residence Permit for non-EU remote workers', '3-5 weeks', '{"Passport","Proof of €42,000/yr income"}', 'Nomad Residence Permit 1 year renewable', '10% flat nomad tax rate', 300, 'Residency Malta Agency'),
+('Mauritius', '🇲🇺', 180, true, 'Free', '1 year', '$1,500/mo', 183, 'Premium Visa free of charge with online application', '1-2 weeks', '{"Passport","Proof of $1,500/mo income"}', 'Premium Visa 1 year free of charge', 'Exempt if funds not remitted to Mauritius bank', 0, 'EDB Mauritius Portal');
 
 -- ── Meetups ──
 INSERT INTO meetups (id, title, type, date, time, city, location, attendees, max_attendees, icon) VALUES
