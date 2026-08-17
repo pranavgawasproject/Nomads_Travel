@@ -46,6 +46,8 @@ export type City = {
   one_bed_rent_usd?: number | null;
   meal_price_usd?: number | null;
   coffee_price_usd?: number | null;
+  wifi_speed_p90?: number | null;
+  mobile_data_cost_gb?: number | null;
 };
 
 export type CostOfLiving = {
@@ -80,6 +82,8 @@ export type VisaInfo = {
   required_docs?: string[] | null;
   path_to_residency?: string | null;
   tax_exemption_status?: string | null;
+  application_fee_usd?: number | null;
+  application_method?: string | null;
 };
 
 export type Listing = {
@@ -104,7 +108,10 @@ export type Listing = {
   starting_price: string | null;
   wifi_speed: string | null;
   upload_speed_mbps?: number | null;
+  download_speed_mbps?: number | null;
   latency_ms?: number | null;
+  has_24_7_access?: boolean | null;
+  has_standing_desks?: boolean | null;
   ratings: number;
   total_reviews: number;
   tags: string[] | null;
