@@ -97,5 +97,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Sitemap: failed to fetch workspace listings", error);
   }
 
-  return [...staticEntries, ...cityEntries, ...workspaceEntries];
+  const topComparisonPairs = [
+    "?cityA=lisbon&cityB=chiangmai",
+    "?cityA=bali&cityB=medellin",
+    "?cityA=bangkok&cityB=tokyo",
+    "?cityA=berlin&cityB=barcelona",
+    "?cityA=mexicocity&cityB=buenos-aires",
+    "?cityA=valencia&cityB=tallinn",
+  ];
+
+  const comparisonEntries: MetadataRoute.Sitemap = topComparisonPairs.map((params) => ({
+    url: `${BASE_URL}/destinations/compare${params}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticEntries, ...cityEntries, ...comparisonEntries, ...workspaceEntries];
 }

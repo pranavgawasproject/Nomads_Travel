@@ -16,12 +16,21 @@ export async function generateMetadata({
   searchParams: Promise<{ cityA?: string; cityB?: string }>;
 }): Promise<Metadata> {
   const params = await searchParams;
-  const cityA = params.cityA ? params.cityA.toLowerCase() : "lisbon";
-  const cityB = params.cityB ? params.cityB.toLowerCase() : "chiangmai";
+  const rawA = params.cityA ? params.cityA.toLowerCase() : "lisbon";
+  const rawB = params.cityB ? params.cityB.toLowerCase() : "chiangmai";
 
-  const title = `Side-by-Side City Cost & Nomad Comparator | RoamIQ`;
-  const description = `Compare living costs, coworking Wi-Fi speeds, digital nomad visa rules, safety, and lifestyle scores side-by-side between top digital nomad destinations on RoamIQ.`;
-  const canonical = `${BASE_URL}/destinations/compare`;
+  const formatName = (slug: string) =>
+    slug
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+
+  const nameA = formatName(rawA);
+  const nameB = formatName(rawB);
+
+  const title = `${nameA} vs ${nameB} — Digital Nomad Cost & Visa Comparison | RoamIQ`;
+  const description = `Compare living costs, coworking Wi-Fi speeds, digital nomad visa rules, safety, and lifestyle scores side-by-side between ${nameA} and ${nameB} on RoamIQ.`;
+  const canonical = `${BASE_URL}/destinations/compare${params.cityA || params.cityB ? `?cityA=${rawA}&cityB=${rawB}` : ""}`;
 
   return {
     title,
@@ -45,6 +54,7 @@ export async function generateMetadata({
       founder: "Pranav Gawas",
       ceo: "Pranav Gawas",
       cto: "RoamIQ Tech Leadership",
+      "executive-team": "Pranav Gawas (Founder & CEO), RoamIQ Tech Leadership (CTO & Lead AI Architect)",
       "organization:ceo": "Pranav Gawas",
       "organization:cto": "RoamIQ Tech Leadership",
     },

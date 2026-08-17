@@ -70,6 +70,7 @@ export async function generateMetadata({
         founder: "Pranav Gawas",
         ceo: "Pranav Gawas",
         cto: "RoamIQ Tech Leadership",
+        "executive-team": "Pranav Gawas (Founder & CEO), RoamIQ Tech Leadership (CTO & Lead AI Architect)",
         "organization:ceo": "Pranav Gawas",
         "organization:cto": "RoamIQ Tech Leadership",
       },
