@@ -29,7 +29,12 @@ interface Lead {
 
 export default function AdminPage() {
   const [password, setPassword] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("roamiq_admin_auth") === "true";
+    }
+    return false;
+  });
   const [authError, setAuthError] = useState("");
 
   const [activeTab, setActiveTab] = useState<"leads" | "cities" | "affiliates">("leads");
@@ -38,14 +43,12 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
 
-  // Check session storage on mount
+  // Fetch leads when authenticated
   useEffect(() => {
-    const sessionAuth = sessionStorage.getItem("roamiq_admin_auth");
-    if (sessionAuth === "true") {
-      setIsAuthenticated(true);
+    if (isAuthenticated) {
       fetchLeads();
     }
-  }, []);
+  }, [isAuthenticated]);
 
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();

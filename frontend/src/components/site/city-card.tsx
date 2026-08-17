@@ -61,14 +61,24 @@ export function CityCard({ city }: { city: City }) {
               <div className="font-serif text-xl font-semibold">
                 ${city.cost_usd.toLocaleString()}
               </div>
+              {city.one_bed_rent_usd && (
+                <div className="text-[10px] font-medium text-white/75">
+                  1-Bed: ${city.one_bed_rent_usd}/mo
+                </div>
+              )}
             </div>
             <div className="text-right">
               <div className="flex items-center justify-end gap-1 text-[10px] uppercase tracking-wider text-white/60">
                 <Wifi className="h-3 w-3" /> Internet
               </div>
               <div className="font-serif text-xl font-semibold">
-                {city.internet_mbps} Mbps
+                {city.wifi_speed_p90 ? `${city.wifi_speed_p90} Mbps` : `${city.internet_mbps} Mbps`}
               </div>
+              {city.coworking_desk_usd && (
+                <div className="text-[10px] font-medium text-white/75">
+                  Desk: ${city.coworking_desk_usd}/mo
+                </div>
+              )}
             </div>
             <span className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white backdrop-blur-md transition-all group-hover:bg-accent group-hover:text-accent-foreground">
               <ArrowUpRight className="h-4 w-4" />

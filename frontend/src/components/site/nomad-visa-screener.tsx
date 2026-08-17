@@ -16,23 +16,36 @@ export function NomadVisaScreener({ initialCountries }: NomadVisaScreenerProps) 
 
   // Helper to parse income minimum string into USD numerical value
   const parseMinIncomeUsd = (incomeStr?: string | null): number | null => {
-    if (!incomeStr || incomeStr === "N/A" || incomeStr === "Varies" || incomeStr === "Proof of funds") return null;
+    if (!incomeStr || incomeStr === "N/A" || incomeStr === "Varies" || incomeStr === "Proof of funds" || incomeStr === "Proof of income") return null;
 
-    // Check for Euro, USD, R$, etc.
     const cleanStr = incomeStr.replace(/,/g, "");
+    const isYearly = cleanStr.includes("/yr") || cleanStr.includes("/year");
+
     const matchUsd = cleanStr.match(/\$(\d+)/);
     const matchEuro = cleanStr.match(/€(\d+)/);
+    const matchYen = cleanStr.match(/¥(\d+)/);
+    const matchReais = cleanStr.match(/R\$(\d+)/);
+    const matchCzk = cleanStr.match(/CZK\s*(\d+)/i);
+    const matchRm = cleanStr.match(/RM\s*(\d+)/i);
+    const matchRand = cleanStr.match(/R\s*(\d+)/i);
     const matchNumber = cleanStr.match(/(\d+)/);
 
-    if (cleanStr.includes("/yr") || cleanStr.includes("/year")) {
-      const yearlyVal = matchNumber ? parseInt(matchNumber[1], 10) : 0;
-      return Math.round(yearlyVal / 12);
+    let val: number | null = null;
+
+    if (matchUsd) val = parseInt(matchUsd[1], 10);
+    else if (matchEuro) val = Math.round(parseInt(matchEuro[1], 10) * 1.08);
+    else if (matchYen) val = Math.round(parseInt(matchYen[1], 10) / 155);
+    else if (matchCzk) val = Math.round(parseInt(matchCzk[1], 10) / 23);
+    else if (matchRm) val = Math.round(parseInt(matchRm[1], 10) / 4.4);
+    else if (matchRand) val = Math.round(parseInt(matchRand[1], 10) / 18);
+    else if (matchReais) val = Math.round(parseInt(matchReais[1], 10) / 5.5);
+    else if (matchNumber) val = parseInt(matchNumber[1], 10);
+
+    if (val && isYearly) {
+      val = Math.round(val / 12);
     }
 
-    if (matchUsd) return parseInt(matchUsd[1], 10);
-    if (matchEuro) return Math.round(parseInt(matchEuro[1], 10) * 1.08); // Approx EUR/USD rate
-    if (matchNumber) return parseInt(matchNumber[1], 10);
-    return null;
+    return val;
   };
 
   const countriesWithEligibility = initialCountries.map((country) => {
