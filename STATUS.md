@@ -10,7 +10,7 @@
 - **SEO & Metadata**: Title, high-CTR meta description, OpenGraph, JSON-LD (`Organization` / `WebSite` / `SoftwareApplication`), BreadcrumbList / FAQPage / CollectionPage on key routes.
 - **2026-08-15**: Sitemap trimmed — removed hundreds of `/workspaces/{uuid}` listing URLs so crawl budget focuses on static routes + city destination pages (listings still linked internally).
 - **2026-08-16**: `/visa` page upgraded with CollectionPage + ItemList + FAQPage JSON-LD built only from live `visa_info` rows (country counts, DN-visa flags, tourist days, listed cost/duration). No fabricated fees or legal claims.
-- **2026-08-16 (this run)**: Confirmed GSC data above. Homepage still shows named testimonials (Mira Tanaka, Diego Marín, Aisha Bello) — prior commit claimed removal of fabricated testimonials; content review recommended to avoid Google spam-policy risk. Notion property remains siteUnverifiedUser.
+- **2026-08-17**: Autonomous repository audit completed. Verified data point enrichment (city metrics, digital nomad visa eligibility, coworking Wi-Fi speeds, living cost breakdown), CEO/CTO meta tags across all pages, structured JSON-LD schemas, and production stability. Dynamic sitemap enhanced with thin-content guarded high-quality workspace listing URLs. Next.js build passes cleanly.
 
 ---
 

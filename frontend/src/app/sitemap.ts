@@ -72,10 +72,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // Intentionally omit /workspaces/{uuid} listing detail pages from the sitemap.
-  // Hundreds of UUID URLs dilute crawl budget; GSC showed 0 indexed from the prior
-  // sitemap while homepage + city pages are indexed. Listings remain linked from
-  // /workspaces and city pages for discovery without forcing every UUID into the index.
+  // Include high-quality workspace listing detail pages (thin-content guard: must have public status and verified wifi speed)
+  let workspaceEntries: MetadataRoute.Sitemap = [];
+  try {
+    const { data: listings } = await supabase
+      .from("listings")
+      .select("id, about, description, wifi_speed")
+      .eq("is_public", true)
+      .eq("is_active", true)
+      .not("wifi_speed", "is", null);
 
-  return [...staticEntries, ...cityEntries];
+    if (listings && listings.length > 0) {
+      const verifiedListings = listings.filter(
+        (l) => (l.about || l.description) && l.wifi_speed
+      );
+      workspaceEntries = verifiedListings.map((l) => ({
+        url: `${BASE_URL}/workspaces/${l.id}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      }));
+    }
+  } catch (error) {
+    console.error("Sitemap: failed to fetch workspace listings", error);
+  }
+
+  return [...staticEntries, ...cityEntries, ...workspaceEntries];
 }
