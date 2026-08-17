@@ -23,8 +23,26 @@ CREATE TABLE IF NOT EXISTS cities (
   avg_temp INTEGER DEFAULT 0,
   visa_difficulty TEXT DEFAULT 'Medium',
   air_quality TEXT DEFAULT 'Moderate',
+  english_proficiency TEXT DEFAULT 'High',
+  quality_of_life_score NUMERIC(3,2) DEFAULT 4.0,
+  coworking_desk_usd INTEGER DEFAULT 150,
+  one_bed_rent_usd INTEGER DEFAULT 800,
+  meal_price_usd NUMERIC(5,2) DEFAULT 8.00,
+  coffee_price_usd NUMERIC(4,2) DEFAULT 3.00,
+  wifi_speed_p90 INTEGER DEFAULT 100,
+  mobile_data_cost_gb NUMERIC(4,2) DEFAULT 1.50,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Schema Migration Alterations for Existing Installations
+ALTER TABLE cities ADD COLUMN IF NOT EXISTS english_proficiency TEXT DEFAULT 'High';
+ALTER TABLE cities ADD COLUMN IF NOT EXISTS quality_of_life_score NUMERIC(3,2) DEFAULT 4.0;
+ALTER TABLE cities ADD COLUMN IF NOT EXISTS coworking_desk_usd INTEGER DEFAULT 150;
+ALTER TABLE cities ADD COLUMN IF NOT EXISTS one_bed_rent_usd INTEGER DEFAULT 800;
+ALTER TABLE cities ADD COLUMN IF NOT EXISTS meal_price_usd NUMERIC(5,2) DEFAULT 8.00;
+ALTER TABLE cities ADD COLUMN IF NOT EXISTS coffee_price_usd NUMERIC(4,2) DEFAULT 3.00;
+ALTER TABLE cities ADD COLUMN IF NOT EXISTS wifi_speed_p90 INTEGER DEFAULT 100;
+ALTER TABLE cities ADD COLUMN IF NOT EXISTS mobile_data_cost_gb NUMERIC(4,2) DEFAULT 1.50;
 
 -- 2. COST OF LIVING TABLE (public read)
 CREATE TABLE IF NOT EXISTS cost_of_living (
@@ -57,8 +75,21 @@ CREATE TABLE IF NOT EXISTS visa_info (
   min_income TEXT DEFAULT 'N/A',
   tax_residency_days INTEGER DEFAULT 183,
   tax_notes TEXT DEFAULT '',
+  processing_time TEXT DEFAULT '2-4 weeks',
+  required_docs TEXT[] DEFAULT '{}',
+  path_to_residency TEXT DEFAULT 'Renewable stay option',
+  tax_exemption_status TEXT DEFAULT 'Exempt or flat tax rate available',
+  application_fee_usd INTEGER DEFAULT 100,
+  application_method TEXT DEFAULT 'Online Portal',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE visa_info ADD COLUMN IF NOT EXISTS processing_time TEXT DEFAULT '2-4 weeks';
+ALTER TABLE visa_info ADD COLUMN IF NOT EXISTS required_docs TEXT[] DEFAULT '{}';
+ALTER TABLE visa_info ADD COLUMN IF NOT EXISTS path_to_residency TEXT DEFAULT 'Renewable stay option';
+ALTER TABLE visa_info ADD COLUMN IF NOT EXISTS tax_exemption_status TEXT DEFAULT 'Exempt or flat tax rate available';
+ALTER TABLE visa_info ADD COLUMN IF NOT EXISTS application_fee_usd INTEGER DEFAULT 100;
+ALTER TABLE visa_info ADD COLUMN IF NOT EXISTS application_method TEXT DEFAULT 'Online Portal';
 
 -- 4. NOMAD PROFILES TABLE (public read, user write)
 CREATE TABLE IF NOT EXISTS nomad_profiles (
@@ -194,6 +225,11 @@ CREATE TABLE IF NOT EXISTS listings (
 
   -- Quick Stats (for AiProduct detail page)
   wifi_speed TEXT,                             -- e.g. "250 Mbps"
+  upload_speed_mbps INTEGER DEFAULT 50,
+  download_speed_mbps INTEGER DEFAULT 250,
+  latency_ms INTEGER DEFAULT 12,
+  has_24_7_access BOOLEAN DEFAULT true,
+  has_standing_desks BOOLEAN DEFAULT true,
   starting_price TEXT,                         -- e.g. "$150/mo"
   open_hours TEXT,                             -- e.g. "24/7 Access", "8am - 10pm"
   capacity TEXT,                               -- e.g. "120 Seats"
@@ -221,6 +257,12 @@ CREATE TABLE IF NOT EXISTS listings (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS upload_speed_mbps INTEGER DEFAULT 50;
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS download_speed_mbps INTEGER DEFAULT 250;
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS latency_ms INTEGER DEFAULT 12;
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS has_24_7_access BOOLEAN DEFAULT true;
+ALTER TABLE listings ADD COLUMN IF NOT EXISTS has_standing_desks BOOLEAN DEFAULT true;
 
 -- 12. LISTING REVIEWS TABLE (public read, auth write)
 CREATE TABLE IF NOT EXISTS listing_reviews (
