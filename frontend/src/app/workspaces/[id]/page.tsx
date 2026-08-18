@@ -170,10 +170,17 @@ export default async function WorkspaceDetailPage({
     ],
   };
 
+  const schemaType =
+    listing.company_type === "coworking"
+      ? "CoworkingSpace"
+      : listing.company_type === "coliving" || listing.company_type === "hostel" || listing.company_type === "workation"
+      ? "LodgingBusiness"
+      : "LocalBusiness";
+
   // LocalBusiness from real listing fields only — never invent ratings/prices
   const localBusinessJsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": schemaType,
     name: listing.company_name,
     url: pageUrl,
     description: (listing.about || listing.description || "")
@@ -205,6 +212,24 @@ export default async function WorkspaceDetailPage({
   }
   if (listing.open_hours) {
     localBusinessJsonLd.openingHours = String(listing.open_hours);
+  }
+  if (tags.length > 0 || listing.wifi_speed) {
+    localBusinessJsonLd.amenityFeature = [
+      ...(listing.wifi_speed
+        ? [
+            {
+              "@type": "LocationFeatureSpecification",
+              name: "Wi-Fi Speed",
+              value: listing.wifi_speed,
+            },
+          ]
+        : []),
+      ...tags.map((tag) => ({
+        "@type": "LocationFeatureSpecification",
+        name: tag,
+        value: true,
+      })),
+    ];
   }
 
   return (
