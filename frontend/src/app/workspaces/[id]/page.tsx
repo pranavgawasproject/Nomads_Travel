@@ -213,7 +213,7 @@ export default async function WorkspaceDetailPage({
   if (listing.open_hours) {
     localBusinessJsonLd.openingHours = String(listing.open_hours);
   }
-  if (tags.length > 0 || listing.wifi_speed) {
+  if (tags.length > 0 || listing.wifi_speed || listing.download_speed_mbps) {
     localBusinessJsonLd.amenityFeature = [
       ...(listing.wifi_speed
         ? [
@@ -221,6 +221,51 @@ export default async function WorkspaceDetailPage({
               "@type": "LocationFeatureSpecification",
               name: "Wi-Fi Speed",
               value: listing.wifi_speed,
+            },
+          ]
+        : []),
+      ...(listing.download_speed_mbps
+        ? [
+            {
+              "@type": "LocationFeatureSpecification",
+              name: "Download Speed",
+              value: `${listing.download_speed_mbps} Mbps`,
+            },
+          ]
+        : []),
+      ...(listing.upload_speed_mbps
+        ? [
+            {
+              "@type": "LocationFeatureSpecification",
+              name: "Upload Speed",
+              value: `${listing.upload_speed_mbps} Mbps`,
+            },
+          ]
+        : []),
+      ...(listing.latency_ms
+        ? [
+            {
+              "@type": "LocationFeatureSpecification",
+              name: "Wi-Fi Latency",
+              value: `${listing.latency_ms} ms`,
+            },
+          ]
+        : []),
+      ...(listing.has_24_7_access
+        ? [
+            {
+              "@type": "LocationFeatureSpecification",
+              name: "24/7 Access",
+              value: true,
+            },
+          ]
+        : []),
+      ...(listing.has_standing_desks
+        ? [
+            {
+              "@type": "LocationFeatureSpecification",
+              name: "Standing Desks",
+              value: true,
             },
           ]
         : []),
@@ -387,9 +432,17 @@ export default async function WorkspaceDetailPage({
 
                 <div className="mt-5 space-y-3 text-sm">
                   {listing.wifi_speed && (
-                    <div className="flex items-center gap-2.5 text-foreground/80">
-                      <Wifi className="h-4 w-4 text-muted-foreground" />
-                      {listing.wifi_speed}
+                    <div className="flex flex-col gap-1 text-foreground/80">
+                      <div className="flex items-center gap-2.5">
+                        <Wifi className="h-4 w-4 text-forest shrink-0" />
+                        <span className="font-semibold">{listing.wifi_speed}</span>
+                      </div>
+                      {(listing.download_speed_mbps || listing.upload_speed_mbps) && (
+                        <div className="pl-6 text-xs text-muted-foreground">
+                          ↓ {listing.download_speed_mbps || "—"} Mbps / ↑ {listing.upload_speed_mbps || "—"} Mbps
+                          {listing.latency_ms ? ` · ${listing.latency_ms}ms latency` : ""}
+                        </div>
+                      )}
                     </div>
                   )}
                   {listing.open_hours && (
@@ -408,6 +461,21 @@ export default async function WorkspaceDetailPage({
                     <div className="flex items-start gap-2.5 text-foreground/80">
                       <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                       {listing.address}
+                    </div>
+                  )}
+
+                  {(listing.has_24_7_access || listing.has_standing_desks) && (
+                    <div className="mt-4 flex flex-wrap gap-1.5 pt-3 border-t border-border">
+                      {listing.has_24_7_access && (
+                        <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                          ✓ 24/7 Access
+                        </span>
+                      )}
+                      {listing.has_standing_desks && (
+                        <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
+                          ✓ Standing Desks
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
