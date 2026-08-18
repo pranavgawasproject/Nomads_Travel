@@ -30,7 +30,7 @@ const FALLBACK_CITY_IDS = [
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
-    "",
+    "/",
     "/about",
     "/community",
     "/destinations",
@@ -41,10 +41,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
-    url: `${BASE_URL}${route}`,
+    url: `${BASE_URL}${route === "/" ? "/" : route}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
-    priority: route === "" ? 1 : 0.7,
+    priority: route === "/" ? 1 : 0.7,
   }));
 
   let cityIds: string[] = [];
@@ -97,21 +97,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Sitemap: failed to fetch workspace listings", error);
   }
 
-  const topComparisonPairs = [
-    "?cityA=lisbon&cityB=chiangmai",
-    "?cityA=bali&cityB=medellin",
-    "?cityA=bangkok&cityB=tokyo",
-    "?cityA=berlin&cityB=barcelona",
-    "?cityA=mexicocity&cityB=buenos-aires",
-    "?cityA=valencia&cityB=tallinn",
-  ];
+  // Intentionally omit query-string comparison URLs (?cityA=&cityB=) from the sitemap.
+  // Google treats many of these as non-canonical / parameter URLs and they were
+  // contributing to the single GSC sitemap error. The clean /destinations/compare
+  // route remains indexed; users still reach specific pairs via UI and internal links.
 
-  const comparisonEntries: MetadataRoute.Sitemap = topComparisonPairs.map((params) => ({
-    url: `${BASE_URL}/destinations/compare${params}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
-
-  return [...staticEntries, ...cityEntries, ...comparisonEntries, ...workspaceEntries];
+  return [...staticEntries, ...cityEntries, ...workspaceEntries];
 }
