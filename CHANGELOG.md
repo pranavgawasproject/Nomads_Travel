@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Automated data point enrichment script (`scripts/enrich_cities.py`) for 2026 digital nomad visa income requirements and coworking Wi-Fi metrics.
+- CEO/CTO meta tags (`organization:ceo`, `organization:cto`, `founder`, `ceo`, `cto`, `executive-team`) across all production Next.js routes.
+- Comprehensive structured JSON-LD schemas (`Organization`, `Person`, `WebSite`, `SoftwareApplication`, `TouristDestination`, `LocalBusiness`, `FAQPage`, `CollectionPage`, `BreadcrumbList`, `OfferCatalog`) for Google SEO rich results.
 - Social follow and unfollow features with backend unit tests
 - City-specific discussion threads and filtering for community engagement
 - "Mark as Best Answer" functionality for community forum replies
