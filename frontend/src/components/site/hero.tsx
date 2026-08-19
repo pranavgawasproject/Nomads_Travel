@@ -8,9 +8,10 @@ import { ArrowRight, Sparkles, MapPin, Wifi, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const examples = [
-  "Best cities for remote workers in Asia",
-  "Visa-free countries under $1k/mo",
-  "Beach towns with fiber internet",
+  { label: "Cities in Asia", href: "/destinations?continent=Asia" },
+  { label: "Europe", href: "/destinations?continent=Europe" },
+  { label: "Cheapest cities", href: "/destinations?sort=cost_usd_asc" },
+  { label: "Fastest Wi-Fi", href: "/destinations?sort=internet_mbps" },
 ];
 
 const stats = [
@@ -133,11 +134,11 @@ export function Hero() {
               <span className="text-xs text-white/60">Try:</span>
               {examples.map((ex) => (
                 <Link
-                  key={ex}
-                  href={`/destinations?search=${encodeURIComponent(ex)}`}
+                  key={ex.label}
+                  href={ex.href}
                   className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-white/80 transition-colors hover:bg-white/15 hover:text-white"
                 >
-                  {ex}
+                  {ex.label}
                 </Link>
               ))}
             </div>
