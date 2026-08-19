@@ -4,9 +4,10 @@ import { supabase } from "@/lib/supabase";
 const BASE_URL = "https://nomads-travel-indol.vercel.app";
 
 /** Fallback city IDs when Supabase is unavailable at sitemap generation time.
- *  Keeps destination detail URLs discoverable for Google even if the DB call fails. */
+ *  Keeps destination detail URLs discoverable for Google even if the DB call fails.
+ *  Slugs must match live /destinations/[id] routes (hyphenated). */
 const FALLBACK_CITY_IDS = [
-  "chiangmai",
+  "chiang-mai",
   "taipei",
   "tallinn",
   "lisbon",
@@ -15,17 +16,17 @@ const FALLBACK_CITY_IDS = [
   "cape-town",
   "valencia",
   "medellin",
-  "berlin",
-  "tokyo",
-  "bali",
+  "tenerife",
+  "oaxaca",
+  "canggu",
   "barcelona",
   "tbilisi",
   "bangkok",
-  "mexicocity",
-  "budapest",
-  "dubai",
+  "mexico-city",
+  "athens",
   "buenos-aires",
   "kuala-lumpur",
+  "bogota",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -41,7 +42,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
-    url: `${BASE_URL}${route === "/" ? "/" : route}`,
+    // Homepage always with trailing slash for canonical consistency with GSC property
+    url: route === "/" ? `${BASE_URL}/` : `${BASE_URL}${route}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: route === "/" ? 1 : 0.7,
@@ -72,7 +74,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // Include high-quality workspace listing detail pages (thin-content guard: must have public status and verified wifi speed)
+  // Include only high-quality workspace listing detail pages
+  // Thin-content guard: must have public status, active, non-empty about/description, and verified wifi_speed
   let workspaceEntries: MetadataRoute.Sitemap = [];
   try {
     const { data: listings } = await supabase
@@ -86,7 +89,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const verifiedListings = listings.filter(
         (l) => (l.about || l.description) && l.wifi_speed
       );
-      workspaceEntries = verifiedListings.map((l) => ({
+      // Cap at 20 strongest listings so crawl budget stays on destinations + static routes
+      workspaceEntries = verifiedListings.slice(0, 20).map((l) => ({
         url: `${BASE_URL}/workspaces/${l.id}`,
         lastModified: new Date(),
         changeFrequency: "weekly" as const,
