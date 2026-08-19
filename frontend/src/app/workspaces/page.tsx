@@ -68,7 +68,7 @@ async function getListings(params: {
     let query = supabase
       .from("listings")
       .select(
-        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about, has_24_7_access, has_standing_desks, download_speed_mbps, upload_speed_mbps",
+        "id, company_name, company_title, company_type, city, state, country, starting_price, wifi_speed, ratings, total_reviews, tags, logo_url, images, about",
         { count: "exact" }
       )
       .eq("is_public", true)
