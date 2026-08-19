@@ -1,24 +1,22 @@
-# 📍 RoamIQ (Nomads_Travel) — Project Status & Future Roadmap
+# 📊 RoamIQ (Nomads_Travel) — Project Status & Future Roadmap
 
-## 📊 Current Project Status
+## 🚦 Current Project Status
 - **Live Vercel Production URL**: [https://nomads-travel-indol.vercel.app](https://nomads-travel-indol.vercel.app)
-- **Google Search Console Performance** (2026-07-21 → 2026-08-17):
-  - Homepage: **16 clicks**, ~261 impressions, avg position **~5.2**, CTR ~6.1%
-  - Top query: `roamiq` (3 clicks / 116 impressions, pos ~6.4)
+- **Google Search Console Performance** (2026-07-20 → 2026-08-17):
+  - Homepage: **16 clicks**, ~273 impressions, avg position **~5.2**, CTR ~5.9%
+  - Top query: `roamiq` (3 clicks / 124 impressions, pos ~6.3)
   - Other pages (destinations/*, workspaces/*): near-zero clicks; thin impressions
-  - Sitemap: https://nomads-travel-indol.vercel.app/sitemap.xml — previously 1 GSC error (query-param URLs)
+  - Sitemap: https://nomads-travel-indol.vercel.app/sitemap.xml — previously 1 GSC error (query-param URLs + stale deploy)
 - **SEO & Metadata**: Title, high-CTR meta description, OpenGraph, JSON-LD (`Organization` / `WebSite` / `SoftwareApplication`), BreadcrumbList / FAQPage / CollectionPage on key routes.
 - **2026-08-15**: Sitemap trimmed — removed hundreds of `/workspaces/{uuid}` listing URLs so crawl budget focuses on static routes + city destination pages (listings still linked internally).
 - **2026-08-16**: `/visa` page upgraded with CollectionPage + ItemList + FAQPage JSON-LD built only from live `visa_info` rows.
 - **2026-08-17–18**: Multiple autonomous audits — data enrichment, CEO/CTO meta, structured schemas, thin-content guarded workspace URLs.
-- **2026-08-18 (20:12 UTC)**: 3-hour autonomous repository audit, data point enrichment verification (city metrics, visa eligibility, coworking Wi-Fi speeds, living cost breakdown), CEO/CTO metadata check, JSON-LD schema validation, and Next.js 16.2.9 production build verification.
-- **2026-08-18 (23:12 UTC)**: 3-hour autonomous audit & workspace data enrichment check. Enriched workspace detail page UI and LocationFeatureSpecification schema with upload/download Wi-Fi speeds (Mbps), latency (ms), 24/7 access, and ergonomic standing desk indicators. Updated `supabase_seed_data.sql` with explicit Wi-Fi and amenity attributes for listings.
-- **2026-08-19 (02:12 UTC)**: 3-hour autonomous repository audit, data point enrichment verification (city metrics, visa eligibility, coworking Wi-Fi speeds, living cost breakdown), CEO/CTO metadata check, JSON-LD schema validation, unit test execution, and Next.js 16.2.9 production build verification.
 - **2026-08-18**: Removed query-string comparison URLs (`?cityA=&cityB=`) from `sitemap.ts` and normalized homepage entry to trailing slash. Goal: clear the single GSC sitemap error. Clean `/destinations/compare` route remains.
+- **2026-08-19 (03:33 UTC)**: Track A — normalized FALLBACK_CITY_IDS to live hyphenated slugs (`chiang-mai`, `mexico-city`, etc.), enforced trailing-slash homepage in sitemap, capped verified workspace entries at 20. Forces redeploy so live sitemap drops stale query-param comparison URLs still served from prior build.
 
 ---
 
-## 🔮 Recommended Future Features & Growth Ideas (What to Build Next)
+## 🎯 Recommended Future Features & Growth Ideas (What to Build Next)
 
 ### 1. 🛂 AI Nomad Visa Eligibility Checker
 - Interactive 3-step wizard matching remote workers with the best digital nomad visas based on monthly income and passport.
@@ -26,7 +24,7 @@
 ### 2. 🏙️ Side-by-Side City Cost Comparator
 - Interactive comparison tool for 2 destination cities across rent, coworking, meals, and Wi-Fi.
 
-### 3. 📄 Programmatic SEO City Landing Pages
+### 3. 📈 Programmatic SEO City Landing Pages
 - Dynamic SEO-optimized routes (e.g., `/cities/bali`, `/cities/lisbon`) for long-tail searches.
 
 ### 4. 🗺️ Coworking Space & Café Review Finder
