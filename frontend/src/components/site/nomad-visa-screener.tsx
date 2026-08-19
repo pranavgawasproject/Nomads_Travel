@@ -175,6 +175,8 @@ export function NomadVisaScreener({ initialCountries }: NomadVisaScreenerProps) 
               <th className="px-5 py-3.5 font-medium">Min. Income Req.</th>
               <th className="px-5 py-3.5 font-medium">Visa Duration</th>
               <th className="px-5 py-3.5 font-medium">Application Fee</th>
+              <th className="px-5 py-3.5 font-medium">Processing Time</th>
+              <th className="px-5 py-3.5 font-medium">Application Method</th>
               <th className="px-5 py-3.5 font-medium">Tax Residency Rule</th>
             </tr>
           </thead>
@@ -211,6 +213,12 @@ export function NomadVisaScreener({ initialCountries }: NomadVisaScreenerProps) 
                 </td>
                 <td className="px-5 py-4 text-foreground/80 text-xs">
                   {c.has_dn_visa ? c.dn_visa_cost : "N/A"}
+                </td>
+                <td className="px-5 py-4 text-xs text-muted-foreground">
+                  {c.has_dn_visa ? (c.processing_time || "2-4 weeks") : "Instant"}
+                </td>
+                <td className="px-5 py-4 text-xs text-muted-foreground">
+                  {c.has_dn_visa ? (c.application_method || "Online Portal") : "Entry Visa"}
                 </td>
                 <td className="px-5 py-4 text-xs text-muted-foreground">
                   {c.tax_residency_days ? `${c.tax_residency_days}d residency` : "183d rule"}

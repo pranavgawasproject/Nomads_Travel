@@ -215,6 +215,8 @@ export default async function VisaPage({
                       <th className="px-5 py-4 font-medium">Cost</th>
                       <th className="px-5 py-4 font-medium">Duration</th>
                       <th className="px-5 py-4 font-medium">Min. Income</th>
+                      <th className="px-5 py-4 font-medium">Processing Time</th>
+                      <th className="px-5 py-4 font-medium">Application Method</th>
                       <th className="px-5 py-4 font-medium">Tax Residency</th>
                     </tr>
                   </thead>
@@ -239,13 +241,19 @@ export default async function VisaPage({
                           )}
                         </td>
                         <td className="px-5 py-4 text-foreground/80">
-                          {c.has_dn_visa ? c.dn_visa_cost : "\u2014"}
+                          {c.has_dn_visa ? c.dn_visa_cost : "—"}
                         </td>
                         <td className="px-5 py-4 text-foreground/80">
-                          {c.has_dn_visa ? c.dn_visa_duration : "\u2014"}
+                          {c.has_dn_visa ? c.dn_visa_duration : "—"}
                         </td>
                         <td className="px-5 py-4 text-foreground/80">
-                          {c.has_dn_visa ? (c.min_income || "Varies") : "\u2014"}
+                          {c.has_dn_visa ? (c.min_income || "Varies") : "—"}
+                        </td>
+                        <td className="px-5 py-4 text-xs text-muted-foreground">
+                          {c.has_dn_visa ? (c.processing_time || "2-4 weeks") : "Instant"}
+                        </td>
+                        <td className="px-5 py-4 text-xs text-muted-foreground">
+                          {c.has_dn_visa ? (c.application_method || "Online Portal") : "Visa-Free / Entry"}
                         </td>
                         <td className="px-5 py-4 text-xs text-muted-foreground">
                           {c.tax_residency_days ? `${c.tax_residency_days}d rule` : "183d rule"}

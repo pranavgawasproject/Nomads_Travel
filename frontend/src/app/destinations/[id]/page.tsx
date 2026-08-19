@@ -177,10 +177,17 @@ export default async function CityDetailPage({
       { "@type": "PropertyValue", name: "Monthly Headline Cost", value: `$${typedCity.cost_usd}` },
       { "@type": "PropertyValue", name: "Average Internet Speed", value: `${typedCity.internet_mbps} Mbps` },
       { "@type": "PropertyValue", name: "Visa Difficulty", value: typedCity.visa_difficulty },
+      ...(typedCity.wifi_speed_p90 ? [{ "@type": "PropertyValue", name: "P90 Wi-Fi Speed", value: `${typedCity.wifi_speed_p90} Mbps` }] : []),
+      ...(typedCity.mobile_data_cost_gb ? [{ "@type": "PropertyValue", name: "Mobile Data Cost / GB", value: `$${typedCity.mobile_data_cost_gb}` }] : []),
       ...(typedCity.one_bed_rent_usd ? [{ "@type": "PropertyValue", name: "1-Bed Rent USD", value: `$${typedCity.one_bed_rent_usd}` }] : []),
       ...(typedCity.coworking_desk_usd ? [{ "@type": "PropertyValue", name: "Coworking Desk USD", value: `$${typedCity.coworking_desk_usd}` }] : []),
+      ...(typedCity.meal_price_usd ? [{ "@type": "PropertyValue", name: "Average Meal Price USD", value: `$${typedCity.meal_price_usd}` }] : []),
+      ...(typedCity.coffee_price_usd ? [{ "@type": "PropertyValue", name: "Coffee / Espresso Price USD", value: `$${typedCity.coffee_price_usd}` }] : []),
       ...(typedCity.english_proficiency ? [{ "@type": "PropertyValue", name: "English Proficiency", value: typedCity.english_proficiency }] : []),
       ...(typedCity.quality_of_life_score ? [{ "@type": "PropertyValue", name: "Quality of Life Score", value: `${typedCity.quality_of_life_score}` }] : []),
+      ...(typedVisa?.dn_visa_cost ? [{ "@type": "PropertyValue", name: "Nomad Visa Cost", value: typedVisa.dn_visa_cost }] : []),
+      ...(typedVisa?.processing_time ? [{ "@type": "PropertyValue", name: "Visa Processing Time", value: typedVisa.processing_time }] : []),
+      ...(typedVisa?.application_method ? [{ "@type": "PropertyValue", name: "Visa Application Method", value: typedVisa.application_method }] : []),
     ],
   };
 
@@ -361,6 +368,10 @@ export default async function CityDetailPage({
                   {typedVisa.has_dn_visa && (
                     <div className="mt-5 rounded-2xl border border-border bg-secondary/40 p-4 space-y-2 text-xs">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                        <span className="font-semibold text-foreground">Application Method:</span>
+                        <span className="text-muted-foreground">{typedVisa.application_method || "Online Portal / Consulate"}</span>
+                      </div>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                         <span className="font-semibold text-foreground">Processing Time:</span>
                         <span className="text-muted-foreground">{typedVisa.processing_time || "2–6 weeks average"}</span>
                       </div>
@@ -368,6 +379,24 @@ export default async function CityDetailPage({
                         <span className="font-semibold text-foreground">Path to Residency:</span>
                         <span className="text-muted-foreground">{typedVisa.path_to_residency || (typedVisa.country === "Portugal" ? "Pathway to EU permanent residency after 5 years" : typedVisa.country === "Spain" ? "Pathway to residency under Beckham Law" : "Renewable stay while maintaining remote employment")}</span>
                       </div>
+                      {typedVisa.tax_exemption_status && (
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                          <span className="font-semibold text-foreground">Tax Status:</span>
+                          <span className="text-muted-foreground">{typedVisa.tax_exemption_status}</span>
+                        </div>
+                      )}
+                      {typedVisa.required_docs && typedVisa.required_docs.length > 0 && (
+                        <div className="pt-1.5 border-t border-border/50">
+                          <span className="font-semibold text-foreground block mb-1">Required Documents:</span>
+                          <div className="flex flex-wrap gap-1">
+                            {typedVisa.required_docs.map((doc: string) => (
+                              <span key={doc} className="rounded-md border border-border bg-card px-2 py-0.5 text-[10px] text-foreground/80">
+                                ✓ {doc}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       {typedVisa.tax_notes && (
                         <div className="pt-1 text-muted-foreground">
                           <span className="font-semibold text-foreground">Tax Notes: </span>

@@ -52,9 +52,72 @@ export const metadata: Metadata = {
 
 export const revalidate = 300;
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${BASE_URL}/#organization`,
+      name: "RoamIQ",
+      url: BASE_URL,
+      logo: `${BASE_URL}/logo.svg`,
+      description:
+        "AI-powered platform for digital nomads: visa intelligence, city cost data, vetted workspaces, and community.",
+      founder: {
+        "@type": "Person",
+        name: "Pranav Gawas",
+        jobTitle: "Founder & CEO",
+        url: "https://github.com/Pranavgawas",
+      },
+    },
+    {
+      "@type": "Person",
+      "@id": `${BASE_URL}/#ceo`,
+      name: "Pranav Gawas",
+      jobTitle: "Founder & Chief Executive Officer",
+      worksFor: {
+        "@type": "Organization",
+        "@id": `${BASE_URL}/#organization`,
+      },
+      sameAs: ["https://github.com/Pranavgawas"],
+    },
+    {
+      "@type": "Person",
+      "@id": `${BASE_URL}/#cto`,
+      name: "RoamIQ Tech Leadership",
+      jobTitle: "Chief Technology Officer & Lead AI Architect",
+      worksFor: {
+        "@type": "Organization",
+        "@id": `${BASE_URL}/#organization`,
+      },
+    },
+    {
+      "@type": "WebSite",
+      name: "RoamIQ",
+      url: BASE_URL,
+      description:
+        "The operating system for digital nomads — discover cities, compare costs, find workspaces, and plan workations.",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${BASE_URL}/destinations?search={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
+};
+
 export default function Page() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
+      />
       <SiteNav />
       <main className="flex-1">
         <Hero />
@@ -67,4 +130,5 @@ export default function Page() {
     </div>
   );
 }
+
 
