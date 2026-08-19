@@ -13,6 +13,7 @@
 - **2026-08-17–18**: Multiple autonomous audits — data enrichment, CEO/CTO meta, structured schemas, thin-content guarded workspace URLs.
 - **2026-08-18 (20:12 UTC)**: 3-hour autonomous repository audit, data point enrichment verification (city metrics, visa eligibility, coworking Wi-Fi speeds, living cost breakdown), CEO/CTO metadata check, JSON-LD schema validation, and Next.js 16.2.9 production build verification.
 - **2026-08-18 (23:12 UTC)**: 3-hour autonomous audit & workspace data enrichment check. Enriched workspace detail page UI and LocationFeatureSpecification schema with upload/download Wi-Fi speeds (Mbps), latency (ms), 24/7 access, and ergonomic standing desk indicators. Updated `supabase_seed_data.sql` with explicit Wi-Fi and amenity attributes for listings.
+- **2026-08-19 (02:12 UTC)**: 3-hour autonomous repository audit, data point enrichment verification (city metrics, visa eligibility, coworking Wi-Fi speeds, living cost breakdown), CEO/CTO metadata check, JSON-LD schema validation, unit test execution, and Next.js 16.2.9 production build verification.
 - **2026-08-18**: Removed query-string comparison URLs (`?cityA=&cityB=`) from `sitemap.ts` and normalized homepage entry to trailing slash. Goal: clear the single GSC sitemap error. Clean `/destinations/compare` route remains.
 
 ---
