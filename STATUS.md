@@ -1,12 +1,12 @@
-# 📍 RoamIQ (Nomads_Travel) — Project Status & Future Roadmap
+# 📋 RoamIQ (Nomads_Travel) — Project Status & Future Roadmap
 
 ## 📊 Current Project Status
 - **Live Vercel Production URL**: [https://nomads-travel-indol.vercel.app](https://nomads-travel-indol.vercel.app)
-- **Google Search Console Performance** (2026-07-01 → 2026-08-18):
-  - Homepage: **17 clicks**, 312 impressions, avg position **~6.5**, CTR ~5.4%
-  - Top query: `roamiq` (4 clicks / 147 impressions, pos ~7.0)
+- **Google Search Console Performance** (2026-07-20 → 2026-08-18):
+  - Homepage: **17 clicks**, 281 impressions, avg position **~5.2**, CTR ~6.0%
+  - Top query (prior): `roamiq` (4 clicks / 147 impressions, pos ~7.0)
   - Other pages (destinations/*, workspaces/*): near-zero clicks; thin impressions
-  - Sitemap: https://nomads-travel-indol.vercel.app/sitemap.xml — **live XML now clean** (0 query-param compare URLs); previously 1 GSC error
+  - Sitemap: https://nomads-travel-indol.vercel.app/sitemap.xml — **live XML clean** (0 query-param compare URLs); previously 1 GSC error. **GSC: 32 submitted, 0 indexed, isPending=true** (last submitted 2026-08-19)
 - **SEO & Metadata**: Title, high-CTR meta description, OpenGraph, JSON-LD (`Organization` / `WebSite` / `SoftwareApplication` / `TouristDestination` / BreadcrumbList / FAQ), canonicals on key routes.
 - **2026-08-15**: Sitemap trimmed — removed hundreds of `/workspaces/{uuid}` listing URLs so crawl budget focuses on static routes + city destination pages (listings still linked internally).
 - **2026-08-16**: `/visa` page upgraded with CollectionPage + ItemList + FAQPage JSON-LD built only from live `visa_info` rows.
@@ -21,18 +21,24 @@
 - **2026-08-19 (20:14 UTC)**: 3-hour autonomous repository audit, data point enrichment verification (city metrics, digital nomad visa eligibility, coworking Wi-Fi speeds, living cost breakdown), CEO/CTO metadata check, structured JSON-LD schema validation, unit test execution (100% pass: 13/13 tests across 5 test suites), and Next.js 16.2.9 production build verification (13 static & dynamic routes compiled cleanly).
 - **2026-08-19 (23:14 UTC)**: 3-hour autonomous repository audit, data point enrichment verification (city metrics, digital nomad visa eligibility, coworking Wi-Fi speeds, living cost breakdown), CEO/CTO metadata check, structured JSON-LD schema validation, unit test execution (100% pass: 13/13 tests across 5 test suites), and Next.js 16.2.9 production build verification (13 static & dynamic routes compiled cleanly).
 - **2026-08-20 (02:14 UTC)**: 3-hour autonomous repository audit, data point enrichment verification (city metrics, digital nomad visa eligibility, coworking Wi-Fi speeds, living cost breakdown), CEO/CTO metadata check, structured JSON-LD schema validation, unit test execution (100% pass: 13/13 tests across 5 test suites), code linting (0 errors/warnings), and Next.js 16.2.9 production build verification (13 static & dynamic routes compiled cleanly).
+- **2026-08-20 (03:30–09:00 IST / ~03:00–03:30 UTC)**: Daily SEO/GSC maintainer run (this session).
+  - Pulled GSC for nomads-travel-indol, roamiq-app, medicare, certify-me, nexus (nexus 403 not verified).
+  - Confirmed homepage still primary traffic driver; workspace/destination pages low volume.
+  - Sitemap still pending index (0/32). No new on-page SEO code gap requiring inventing content; prior Track A (meta, JSON-LD, robots, sitemap trim, MedicalOrganization on medi-care, BreadcrumbList on CertifyMe) completed within last 48h.
+  - Flag: notion-pranav.vercel.app is siteUnverifiedUser; nexus-suite-tau.vercel.app not in GSC properties.
+  - **Next Track A rotation**: nexus-suite (add GSC property + baseline meta/JSON-LD if missing) or Inventory-Management / WeatherTrackerX.
 
 ---
 
-## 🔮 Recommended Future Features & Growth Ideas (What to Build Next)
+## 🧭 Recommended Future Features & Growth Ideas (What to Build Next)
 
 ### 1. 🛂 AI Nomad Visa Eligibility Checker
 - Interactive 3-step wizard matching remote workers with the best digital nomad visas based on monthly income and passport.
 
-### 2. 🏙️ Side-by-Side City Cost Comparator
+### 2. 📊 Side-by-Side City Cost Comparator
 - Interactive comparison tool for 2 destination cities across rent, coworking, meals, and Wi-Fi.
 
-### 3. 📄 Programmatic SEO City Landing Pages
+### 3. 🏙️ Programmatic SEO City Landing Pages
 - Dynamic SEO-optimized routes (e.g., `/cities/bali`, `/cities/lisbon`) for long-tail searches.
 
 ### 4. 🗺️ Coworking Space & Café Review Finder
