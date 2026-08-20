@@ -1,1 +1,1 @@
-PLACEHOLDER
+OPEN /tmp/STATUS_new.md
