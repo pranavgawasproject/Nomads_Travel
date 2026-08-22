@@ -106,6 +106,52 @@ const jsonLd = {
         "query-input": "required name=search_term_string",
       },
     },
+    {
+      "@type": "FAQPage",
+      "@id": `${BASE_URL}/#faq`,
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "What is RoamIQ?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "RoamIQ is an all-in-one platform for digital nomads with AI-powered visa intelligence, city cost and lifestyle data, workspace listings, workation planning, and community — so remote workers do not need a dozen tabs to research a move.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Can I browse destinations and visas without signing up?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. Destinations, visa lookup for many countries, and public workspace listings are free to browse with no signup required during public beta.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What data appears on each destination page?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Each destination page shows cost-of-living breakdowns, internet and lifestyle scores, visa difficulty, and related coworking or coliving workspaces for that city so you can compare locations before you go.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Does RoamIQ include digital nomad visa information?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. RoamIQ includes visa lookup and related intelligence for many countries so you can check stay duration, difficulty, and remote-work considerations before planning a workation.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Are workspace listings free to browse?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Public workspace listings (coworking and coliving) are available on the Workspaces section. You can open individual listing pages for location, Wi-Fi, pricing when provided, and other details published by the space.",
+          },
+        },
+      ],
+    },
   ],
 };
 
@@ -130,5 +176,3 @@ export default function Page() {
     </div>
   );
 }
-
-
