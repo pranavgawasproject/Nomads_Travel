@@ -187,6 +187,16 @@ export default async function WorkspaceDetailPage({
       .replace(/\s+/g, " ")
       .trim()
       .slice(0, 300) || undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "RoamIQ",
+      url: BASE_URL,
+      founder: {
+        "@type": "Person",
+        name: "Pranav Gawas",
+        jobTitle: "Founder & CEO",
+      },
+    },
   };
   if (listing.company_type) localBusinessJsonLd.additionalType = String(listing.company_type);
   if (primaryImage) localBusinessJsonLd.image = primaryImage;

@@ -10,7 +10,7 @@ const columns = [
       { label: "Destinations", href: "/destinations" },
       { label: "Workspaces & stays", href: "/workspaces" },
       { label: "Visa finder", href: "/visa" },
-      { label: "Cost comparison", href: "/pricing" },
+      { label: "Cost comparison", href: "/destinations/compare" },
       { label: "Nomad community", href: "/community" },
     ],
   },

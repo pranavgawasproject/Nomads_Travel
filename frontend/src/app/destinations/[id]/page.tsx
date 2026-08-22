@@ -168,6 +168,18 @@ export default async function CityDetailPage({
     description: `Digital nomad destination guide for ${typedCity.name}: cost of living, internet, visa difficulty, and lifestyle scores.`,
     url: `${BASE_URL}/destinations/${typedCity.id}`,
     ...(photo ? { image: photo } : {}),
+    author: {
+      "@type": "Person",
+      name: "Pranav Gawas",
+      jobTitle: "Founder & CEO",
+      url: "https://github.com/Pranavgawas",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "RoamIQ",
+      url: BASE_URL,
+      logo: `${BASE_URL}/logo.svg`,
+    },
     address: {
       "@type": "PostalAddress",
       addressLocality: typedCity.name,

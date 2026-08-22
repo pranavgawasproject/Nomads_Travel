@@ -28,13 +28,21 @@ export async function DestinationsPreview() {
               Cities nomads are flocking to this season.
             </h2>
           </div>
-          <Link
-            href="/destinations"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-forest hover:gap-2.5 hover:text-forest/80"
-          >
-            See all destinations
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/destinations/compare"
+              className="inline-flex items-center gap-1.5 rounded-full border border-forest/30 bg-forest/10 px-4 py-2 text-xs font-semibold text-forest hover:bg-forest/20 transition-colors"
+            >
+              Side-by-Side City Comparator →
+            </Link>
+            <Link
+              href="/destinations"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-forest hover:gap-2.5 hover:text-forest/80"
+            >
+              See all destinations
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
 
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
