@@ -12,6 +12,14 @@ export const metadata: Metadata = {
   title: "Destinations for Digital Nomads — Cost, Visa & Internet | RoamIQ",
   description:
     "Browse digital nomad destinations ranked by real cost of living, internet speed, safety and visa difficulty. Filter by continent and budget. Plan your next workation on RoamIQ.",
+  keywords: [
+    "digital nomad destinations",
+    "best cities for remote work",
+    "cost of living nomad cities",
+    "digital nomad visa cities",
+    "workation destinations",
+    "nomad city ranking",
+  ],
   alternates: {
     canonical: `${BASE_URL}/destinations`,
   },
@@ -22,12 +30,21 @@ export const metadata: Metadata = {
     url: `${BASE_URL}/destinations`,
     siteName: "RoamIQ",
     type: "website",
+    images: [
+      {
+        url: "/logo.svg",
+        width: 512,
+        height: 512,
+        alt: "RoamIQ digital nomad destinations",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Destinations for Digital Nomads | RoamIQ",
     description:
       "Ranked digital nomad cities by cost, internet, safety and visa difficulty.",
+    images: ["/logo.svg"],
   },
   other: {
     founder: "Pranav Gawas",
