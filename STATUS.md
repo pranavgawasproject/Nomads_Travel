@@ -8,6 +8,7 @@
   - Other pages (destinations/*, workspaces/*): near-zero clicks; thin impressions
   - Sitemap: https://nomads-travel-indol.vercel.app/sitemap.xml — **48 submitted, 0 indexed** (last resubmitted 2026-08-22; lag expected)
 - **SEO & Metadata**: Title, high-CTR meta description, OpenGraph, JSON-LD (`Organization` / `WebSite` / `SoftwareApplication` / `TouristDestination` / BreadcrumbList / FAQ), canonicals on key routes.
+- **2026-08-22 (~03:37 UTC)**: Daily SEO/GSC maintainer run (Track A). Added FAQPage JSON-LD to homepage (`frontend/src/app/page.tsx`) with 5 Q&As grounded only in live product capabilities (browse without signup, destination data fields, visa lookup, workspace listings). Commit: 3774967.
 - **2026-08-22 (~03:30 UTC)**: Daily SEO/GSC maintainer run (Track A). Added OG/Twitter images + keywords to `/destinations` list page metadata (page-level was missing images). Resubmitted sitemap to GSC. Prior audit-only commits noted; rotated review across nexus-suite, CertifyMe, medi-care, Inventory-Management, PixelPerfect — all already had recent SEO code this week. Flag: Notion GSC property remains `siteUnverifiedUser`.
 - **2026-08-15**: Sitemap trimmed — removed hundreds of `/workspaces/{uuid}` listing URLs so crawl budget focuses on static routes + city destination pages (listings still linked internally).
 - **2026-08-16**: `/visa` page upgraded with CollectionPage + ItemList + FAQPage JSON-LD built only from live `visa_info` rows.
